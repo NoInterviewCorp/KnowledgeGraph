@@ -10,7 +10,8 @@ namespace MyProfile{
         public string UserName{get;set;}
         public string FirstName{get;set;}
         public string LastName{get;set;}
-        public byte[] ProfilePic{get;set;}
+       // public byte[] ProfilePic{get;set;}
         public string Description{get;set;}
+        public List<LearningPlan> learningPlans{get;set;}
     }
 }
