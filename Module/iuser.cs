@@ -4,8 +4,9 @@ namespace MyProfile{
     public interface IUserRepo{
         List<User> GetAllNotes();
 
-        bool PostNote(User note);
-         LearningPlan GetNote(string Id);
+        bool PostNote(User userprofiles);
+       LearningPlan GetNote(string Id);
+       void PutNote(string id, LearningPlan userprofiles);
         List<User> GetNote(string text,string type );
 
     }

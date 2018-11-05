@@ -27,9 +27,9 @@ namespace my_profile.Controllers
            /* using( context ){
             return     Ok(context.Students.ToList());
             }*/
-            var notes = context.GetAllNotes();
-            if(notes.Count > 0){
-                return Ok(notes);
+            var userprofiles = context.GetAllNotes();
+            if(userprofiles.Count > 0){
+                return Ok(userprofiles);
             }
             else{
                 return Ok("No Entries Available. Database is Empty");
@@ -37,17 +37,17 @@ namespace my_profile.Controllers
             
         }
  [HttpGet("{id:int}")]
-        public ActionResult<string> Get(string id)
+        public ActionResult<string> Get(string learningplanid)
         {
             //return "value";
-            var noteById = context.GetNote(id);
-            if (noteById != null)
+            var learningplanById = context.GetNote(learningplanid);
+            if (learningplanById != null)
             {
-                return Ok(noteById);
+                return Ok(learningplanById);
             }
             else
             {
-                return NotFound($"Note with {id} not found.");
+                return NotFound($"Note with {learningplanid} not found.");
             }
         }
  [HttpGet("{text}")]
@@ -69,27 +69,9 @@ namespace my_profile.Controllers
         public async Task<IActionResult> Uploads(IFormFileCollection files)
         {
 
-          /*   try
-            {
-                // Full path to file in temp location
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/image",file.FileName);
-                var stream = new FileStream(filePath, FileMode.Create);
-                await file.CopyToAsync(stream);
-
-                return Ok(new { length = file.Length, name = file.Name });
-            }
-            catch(Exception e)
-            {
-                return BadRequest(e.Message);
-            }*/
-           
-
-         long size = files.Sum(f => f.Length);
-
-    // Full path to file in temp location
-   // var filePath = Path.GetTempFileName();
-    try{
-    foreach (var formFile in files)
+        long size = files.Sum(f => f.Length);
+     try{
+     foreach (var formFile in files)
       {
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/image",formFile.FileName);
                 var stream = new FileStream(filePath, FileMode.Create);
@@ -98,14 +80,12 @@ namespace my_profile.Controllers
                 
       }
     return Ok(new { count = files.Count });
-}
- catch(Exception e)
+       }
+    catch(Exception e)
             {
                 return BadRequest(e.Message);
             }
-    // Process uploaded files
-
-    //return Ok(new { count = files.Count, path = filePath});
+   
     }
 [HttpPost]
          public IActionResult Post([FromBody] User value)
@@ -127,6 +107,31 @@ namespace my_profile.Controllers
     // context.Add<Student>(std);
     
     }
+ [HttpPut("{id}")]
+        public IActionResult Put(string id, [FromBody] LearningPlan userprofiles)
+        {
+             try 
+            {
+                // save 
+                context.PutNote(id, userprofiles);
+                return Ok();
+            } 
+            catch(Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+           /*  if(ModelState.IsValid){
+                bool result = context.PutNote(id, userprofiles);
+                if(result){
+                    return Created("/api/values", userprofiles);
+                }
+                else{
+                    return NotFound($"Note with {id} not found.");
+                }
+            }
+            return BadRequest("Invalid Format");*/
+        }
 
 
 
