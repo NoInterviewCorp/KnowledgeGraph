@@ -2,7 +2,7 @@
 
 namespace myprofile.Migrations
 {
-    public partial class myprof5 : Migration
+    public partial class myprofiledbc : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -39,14 +39,41 @@ namespace myprofile.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RP",
+                columns: table => new
+                {
+                    ResourceProgressId = table.Column<string>(nullable: false),
+                    isCheck = table.Column<bool>(nullable: false),
+                    LearningPlanId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RP", x => x.ResourceProgressId);
+                    table.ForeignKey(
+                        name: "FK_RP_LP_LearningPlanId",
+                        column: x => x.LearningPlanId,
+                        principalTable: "LP",
+                        principalColumn: "LearningPlanId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_LP_UserId",
                 table: "LP",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RP_LearningPlanId",
+                table: "RP",
+                column: "LearningPlanId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "RP");
+
             migrationBuilder.DropTable(
                 name: "LP");
 

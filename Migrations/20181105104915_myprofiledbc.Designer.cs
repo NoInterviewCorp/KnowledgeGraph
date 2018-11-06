@@ -9,8 +9,8 @@ using MyProfile;
 namespace myprofile.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20181103095938_myprof5")]
-    partial class myprof5
+    [Migration("20181105104915_myprofiledbc")]
+    partial class myprofiledbc
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,6 +32,22 @@ namespace myprofile.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("LP");
+                });
+
+            modelBuilder.Entity("MyProfile.ResourceProgress", b =>
+                {
+                    b.Property<string>("ResourceProgressId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("LearningPlanId");
+
+                    b.Property<bool>("isCheck");
+
+                    b.HasKey("ResourceProgressId");
+
+                    b.HasIndex("LearningPlanId");
+
+                    b.ToTable("RP");
                 });
 
             modelBuilder.Entity("MyProfile.User", b =>
@@ -56,6 +72,13 @@ namespace myprofile.Migrations
                     b.HasOne("MyProfile.User")
                         .WithMany("learningPlans")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("MyProfile.ResourceProgress", b =>
+                {
+                    b.HasOne("MyProfile.LearningPlan")
+                        .WithMany("ResourceProgresses")
+                        .HasForeignKey("LearningPlanId");
                 });
 #pragma warning restore 612, 618
         }

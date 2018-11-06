@@ -2,88 +2,128 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Microsoft.EntityFrameworkCore;
-namespace MyProfile {
-    public class UserData : IUserRepo{
-        
-        UserContext userprofile=null;
-        public UserData( UserContext _not)
+namespace MyProfile
+{
+    public class UserData : IUserRepo
+    {
+
+        UserContext userprofile = null;
+        public UserData(UserContext _not)
         {
-            this.userprofile=_not;
+            this.userprofile = _not;
         }
-        
-        
-        public List<User> GetAllNotes(){
-            using(userprofile)
+
+
+        public List<User> GetAllNotes()
+        {
+            using (userprofile)
             {
-                
-               // not.CC.Include(n=>n.topicLinks).ToList();
-               // not.LP.Include(n=>n.CourseContents).ToList();
-                 return userprofile.Use.Include(n=>n.learningPlans).ToList();
+
+                // not.CC.Include(n=>n.topicLinks).ToList();
+                 userprofile.LP.Include(n=>n.ResourceProgresses).ToList();
+                return userprofile.Use.Include(n => n.learningPlans).ToList();
             }
         }
-          public bool PostNote(User userprofiles){
-            if(userprofile.Use.FirstOrDefault(n => n.UserId == userprofiles.UserId) == null){
+        public bool PostNote(User userprofiles)
+        {
+            if (userprofile.Use.FirstOrDefault(n => n.UserId == userprofiles.UserId) == null)
+            {
                 userprofile.Use.Add(userprofiles);
-                PostChecklist(userprofiles);
-               userprofile.SaveChanges();
+                PostLearningPlan(userprofiles);
+                userprofile.SaveChanges();
                 return true;
             }
-            else{
+            else
+            {
                 return false;
             }
         }
-        void PostChecklist(User userprofiles){
-            foreach(LearningPlan cl in userprofiles.learningPlans){
-                userprofile.LP.Add(cl);
-            }
-            userprofile.SaveChanges();
-        }
-         public LearningPlan GetNote(string id){
-            using(userprofile)
-            {
-            return userprofile.LP.ToList().FirstOrDefault(userprofiles => userprofiles.LearningPlanId == id);
-            }
-        }
-        public List<User> GetNote(string text,string type){
-            List<User> Final = new List<User>();
-            using(userprofile)
+        void PostLearningPlan(User userprofiles)
+        {
+             if (userprofiles.learningPlans == null)
+                {
+                    userprofiles.learningPlans = new List<LearningPlan>();
+                }
+            foreach (LearningPlan cl in userprofiles.learningPlans)
             {
 
-                if(type=="username")    
+                userprofile.LP.Add(cl);
+                PostResourceProgress(cl);
+            }
+            // userprofile.SaveChanges();
+        }
+        void PostResourceProgress(LearningPlan learning)
+        {
+             if (learning.ResourceProgresses == null)
                 {
-                    List<User> S_all = userprofile.Use.Where(s=> s.UserName==text).Include(n=>n.learningPlans).ToList();
-                    return S_all;
-            //return not.Stu.Include(n=>n.labels).Include(n=>n.checkLists).ToList().FirstOrDefault(note => note.Title == text);
+                    learning.ResourceProgresses = new List<ResourceProgress>();
                 }
-               
+            foreach (ResourceProgress rp in learning.ResourceProgresses)
+            {
+             
+                userprofile.RP.Add(rp);
+                //  PostResourceProgress(cl);
+
+            }
+            
+             userprofile.SaveChanges();
+        }
+        public User GetNote(string id)
+        {
+
+            using (userprofile)
+            {
+                // Console.WriteLine(userprofile.Use);
+                userprofile.LP.Include(n => n.ResourceProgresses).ToList();
+                return userprofile.Use.Include(n => n.learningPlans).ToList().FirstOrDefault(userprofiles => userprofiles.UserId == id);
+            }
+        }
+        public List<User> GetNote(string text, string type)
+        {
+            List<User> Final = new List<User>();
+            using (userprofile)
+            {
+
+                if (type == "username")
+                {
+                   userprofile.LP.Include(n => n.ResourceProgresses).ToList();
+                    List<User> S_all = userprofile.Use.Where(s => s.UserName == text).Include(n => n.learningPlans).ToList();
+                    return S_all;
+                    //return not.Stu.Include(n=>n.labels).Include(n=>n.checkLists).ToList().FirstOrDefault(note => note.Title == text);
+                }
+
             }
             return Final;
         }
-         public void PutNote(string id, LearningPlan userprofiles){
-             User retrievedNote = userprofile.Use.FirstOrDefault(n => n.UserId == id);
-             //LearningPlan learn=new LearningPlan();
-             if( retrievedNote != null){
-          //  var user = not.use.Find(userParam.Id);
-                if(retrievedNote.learningPlans==null){
+        public void PutNote(string id, LearningPlan learningPlan)
+        {
+            User retrievedNote = userprofile.Use.FirstOrDefault(n => n.UserId == id);
+            //LearningPlan learn=new LearningPlan();
+            if (retrievedNote != null)
+            {
+                //  var user = not.use.Find(userParam.Id);
+                if (retrievedNote.learningPlans == null)
+                {
                     retrievedNote.learningPlans = new List<LearningPlan>();
                 }
-               retrievedNote.learningPlans.Add(userprofiles);
+                
+                retrievedNote.learningPlans.Add(learningPlan);
                 // not.Stu.Add(note);
                 userprofile.SaveChanges();
-               // return true;
-             }
+                // return true;
+            }
             // }
             // else{
             //     return false;
             // }
         }
 
-     
-        
 
-       
 
-        
-       
+
+
+
+
+
     }
 }

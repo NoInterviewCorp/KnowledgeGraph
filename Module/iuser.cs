@@ -5,7 +5,7 @@ namespace MyProfile{
         List<User> GetAllNotes();
 
         bool PostNote(User userprofiles);
-       LearningPlan GetNote(string Id);
+       User GetNote(string Id);
        void PutNote(string id, LearningPlan userprofiles);
         List<User> GetNote(string text,string type );
 

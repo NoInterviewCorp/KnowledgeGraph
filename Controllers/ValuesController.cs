@@ -36,18 +36,18 @@ namespace my_profile.Controllers
             }
             
         }
- [HttpGet("{id:int}")]
-        public ActionResult<string> Get(string learningplanid)
+ [HttpGet("{id}")]
+        public ActionResult<string> Get(string id)
         {
             //return "value";
-            var learningplanById = context.GetNote(learningplanid);
-            if (learningplanById != null)
+            var userById = context.GetNote(id);
+            if (userById != null)
             {
-                return Ok(learningplanById);
+                return Ok(userById);
             }
             else
             {
-                return NotFound($"Note with {learningplanid} not found.");
+                return NotFound($"User with {id} not found.");
             }
         }
  [HttpGet("{text}")]
@@ -108,12 +108,12 @@ namespace my_profile.Controllers
     
     }
  [HttpPut("{id}")]
-        public IActionResult Put(string id, [FromBody] LearningPlan userprofiles)
+        public IActionResult Put(string id, [FromBody] LearningPlan learningPlan)
         {
              try 
             {
                 // save 
-                context.PutNote(id, userprofiles);
+                context.PutNote(id, learningPlan);
                 return Ok();
             } 
             catch(Exception ex)
@@ -121,16 +121,7 @@ namespace my_profile.Controllers
                 // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
-           /*  if(ModelState.IsValid){
-                bool result = context.PutNote(id, userprofiles);
-                if(result){
-                    return Created("/api/values", userprofiles);
-                }
-                else{
-                    return NotFound($"Note with {id} not found.");
-                }
-            }
-            return BadRequest("Invalid Format");*/
+          
         }
 
 

@@ -32,6 +32,22 @@ namespace myprofile.Migrations
                     b.ToTable("LP");
                 });
 
+            modelBuilder.Entity("MyProfile.ResourceProgress", b =>
+                {
+                    b.Property<string>("ResourceProgressId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("LearningPlanId");
+
+                    b.Property<bool>("isCheck");
+
+                    b.HasKey("ResourceProgressId");
+
+                    b.HasIndex("LearningPlanId");
+
+                    b.ToTable("RP");
+                });
+
             modelBuilder.Entity("MyProfile.User", b =>
                 {
                     b.Property<string>("UserId");
@@ -54,6 +70,13 @@ namespace myprofile.Migrations
                     b.HasOne("MyProfile.User")
                         .WithMany("learningPlans")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("MyProfile.ResourceProgress", b =>
+                {
+                    b.HasOne("MyProfile.LearningPlan")
+                        .WithMany("ResourceProgresses")
+                        .HasForeignKey("LearningPlanId");
                 });
 #pragma warning restore 612, 618
         }
