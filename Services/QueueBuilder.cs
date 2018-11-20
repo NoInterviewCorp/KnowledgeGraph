@@ -21,6 +21,7 @@ namespace KnowledgeGraph.Services {
             _model.QueueDeclare ("QuizEngine_KnowledgeGraph", false, false, false, null);
             _model.QueueDeclare ("KnowledgeGraph_IDs", false, false, false, null);
             _model.QueueDeclare ("Contributer_Questions", false, false, false, null);
+            _model.QueueBind ("Contributer_KnowledgeGraph", "KnowldegeGraphExchange","Models.LearningPlan");
         }
     }
 }
