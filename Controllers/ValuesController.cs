@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-
+using KnowledgeGraph.Services;
 namespace KnowledgeGraph.Controllers
 {
     [Route("api/[controller]")]
@@ -12,9 +12,10 @@ namespace KnowledgeGraph.Controllers
     {
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            var queue = new QueueBuilder();
+            return Ok();
         }
 
         // GET api/values/5
