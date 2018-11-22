@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using KnowledgeGraph.Database.Models;
+using KnowledgeGraph.Database.Persistence;
+using KnowledgeGraph.Services;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

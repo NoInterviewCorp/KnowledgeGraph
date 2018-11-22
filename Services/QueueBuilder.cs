@@ -10,11 +10,11 @@ using RabbitMQ.Client.Framing;
 
 namespace KnowledgeGraph.Services {
     public class QueueBuilder {
-        public static Question questions;
-        private static ConnectionFactory _factory;
-        public static IConnection _connection;
-        public static IModel _model;
-        private const string ExchangeNme = "KnowledgeExchange";
+        public List<Question> questions;
+        private ConnectionFactory _factory;
+        public IConnection connection;
+        public IModel _model;
+        public const string ExchangeNme = "KnowldegeGraphExchange";
         public QueueBuilder () {
             _factory = new ConnectionFactory {
                 HostName = "localhost",
@@ -22,8 +22,8 @@ namespace KnowledgeGraph.Services {
                 Password = "guest",
                 DispatchConsumersAsync = true
             };
-            _connection = _factory.CreateConnection ();
-            _model = _connection.CreateModel ();
+            connection = _factory.CreateConnection ();
+            _model = connection.CreateModel ();
             _model.ExchangeDeclare ("KnowldegeGraphExchange", "topic");
             _model.QueueDeclare ("Contributer_KnowledgeGraph", false, false, false, null);
             _model.QueueDeclare ("QuizEngine_KnowledgeGraph", false, false, false, null);
@@ -40,12 +40,13 @@ namespace KnowledgeGraph.Services {
             _model.BasicPublish (ExchangeNme, RoutingKey, props, message);
         }
         public void FetchQuestions () {
-            var channel = _connection.CreateModel ();
+            var channel = connection.CreateModel ();
             var consumer = new AsyncEventingBasicConsumer (channel);
             consumer.Received += async (model, ea) => {
                 var body = ea.Body;
                 var json = Encoding.Default.GetString (body);
-                questions = JsonConvert.DeserializeObject<Question>(json);
+                questions.Clear ();
+                questions.AddRange (JsonConvert.DeserializeObject<List<Question>> (json));
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine (" - Routing Key <{0}>", routingKey);
                 channel.BasicAck (ea.DeliveryTag, false);
