@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using my_profile;
 using Swashbuckle.AspNetCore.Swagger;
-using my_profile.Services;
-
-namespace my_profile
+namespace My_Profile
 {
     public class Startup
     {
@@ -29,11 +19,18 @@ namespace my_profile
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-             services.AddCors();
-             services.AddSingleton<GraphDbConnection>();
+            services.AddCors();
+            services.AddTransient<IUserContext, UserContext>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.Configure<Settings>(
+            options =>
+           {
+            options.ConnectionString = Configuration.GetSection("MongoDb:ConnectionString").Value;
+            options.Database = Configuration.GetSection("MongoDb:Database").Value;
+           });
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Feedback_BackEnd", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "My_Profile", Version = "v1" });
             });
 
         }
@@ -49,13 +46,13 @@ namespace my_profile
             {
                 app.UseHsts();
             }
-           app.UseSwagger();
+            app.UseSwagger();
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Feeback_BackEnd");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My_Profile");
                 c.RoutePrefix = string.Empty;
             });
             // app.UseHttpsRedirection();

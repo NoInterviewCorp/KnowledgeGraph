@@ -11,6 +11,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
+    <PackageReference Include="mongocsharpdriver" Version="2.7.2" />
+    <PackageReference Include="MongoDB.Bson" Version="2.7.2" />
+    <PackageReference Include="MongoDB.Driver" Version="2.7.2" />
+    <PackageReference Include="MongoDB.Driver.Core" Version="2.7.2" />
     <PackageReference Include="Neo4j.Driver" Version="1.7.0" />
     <PackageReference Include="Neo4jClient" Version="3.0.1.23" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />

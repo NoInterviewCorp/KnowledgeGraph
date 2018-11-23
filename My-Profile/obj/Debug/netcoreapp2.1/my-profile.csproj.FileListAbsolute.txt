@@ -40,3 +40,17 @@ c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile\obj\Debug\netcoreapp2.1\my-
 c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile\obj\Debug\netcoreapp2.1\my-profile.RazorTargetAssemblyInfo.cache
 c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile\obj\Debug\netcoreapp2.1\my-profile.dll
 c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile\obj\Debug\netcoreapp2.1\my-profile.pdb
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\bin\Debug\netcoreapp2.1\my-profile.deps.json
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\bin\Debug\netcoreapp2.1\my-profile.runtimeconfig.json
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\bin\Debug\netcoreapp2.1\my-profile.runtimeconfig.dev.json
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\bin\Debug\netcoreapp2.1\my-profile.dll
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\bin\Debug\netcoreapp2.1\my-profile.pdb
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\obj\Debug\netcoreapp2.1\my-profile.csprojAssemblyReference.cache
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\obj\Debug\netcoreapp2.1\my-profile.csproj.CoreCompileInputs.cache
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\obj\Debug\netcoreapp2.1\my-profile.RazorAssemblyInfo.cache
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\obj\Debug\netcoreapp2.1\my-profile.RazorAssemblyInfo.cs
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\obj\Debug\netcoreapp2.1\my-profile.AssemblyInfoInputs.cache
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\obj\Debug\netcoreapp2.1\my-profile.AssemblyInfo.cs
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\obj\Debug\netcoreapp2.1\my-profile.RazorTargetAssemblyInfo.cache
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\obj\Debug\netcoreapp2.1\my-profile.dll
+c:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile\obj\Debug\netcoreapp2.1\my-profile.pdb

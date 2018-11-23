@@ -1,88 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MongoDB.Driver.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using my_profile;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Web.Http;
-using my_profile.Services;
-
-namespace my_profile.Controllers
+namespace My_Profile.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IUserRepository _userRepository;
+    public ValuesController(IUserRepository userRepository)
+    {
+        _userRepository = userRepository;
+    }
+
         // GET api/values
-
-        GraphDbConnection client;
-        public ValuesController(GraphDbConnection _client)
-        {
-            this.client = _client;
-
-        }
-         [HttpGet]
-       public async Task<IActionResult> Get()
-
-        {
-
-
-            var results1 =await client.client.Cypher
-             .Match("(user:User)")
-             .Return(user => user.As<User>())
-             .ResultsAsync;
-            return Ok(results1);
-        }
-        // GET api/values/5
-        ////Get user by id
-        [HttpGet("user/{userid}")]
-        public async Task<IActionResult> Get(int userid)
-        {
-            var results =await client.client.Cypher
-           .Match("(user:User)")
-           .Where((User user) => user.UserId == userid)
-           .Return(user => user.As<User>())
-           .ResultsAsync;
-            return Ok(results);
-        }
-        //Get learningplan by id
-       
-       //Get resource by id
-      
-        // POST api/values
-        [HttpPost("UserNode")]
-        public IActionResult UserPost([FromBody] User newUser)
-        {
-            try
-            {
-                // save 
-                client.client.Cypher
-                .Merge("(user:User { UserId: {id} })")
-                .OnCreate()
-                .Set("user = {newUser}")
-                .WithParams(new
-                {
-                    id = newUser.UserId,
-                    newUser
-                })
-              .ExecuteWithoutResults();
-               return Ok();
-            }
-            catch (Exception ex)
-            {
-                // return error message if there was an exception
-                return BadRequest(new { message = ex.Message });
-            }
-            //newUser =new  List<User>();
-
-
-        }
-        //post learningplan
-        
-       // upload userprofilepic
-        [HttpPost("UploadsProfilePic")]
+       [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        return new ObjectResult(await _userRepository.GetAllGames());
+    }
+    // GET: api/Game/name
+    [HttpGet("{name}", Name = "Get")]
+    public async Task<IActionResult> Get(string name)
+    {
+        var user = await _userRepository.GetUser(name);
+        if (user == null)
+            return new NotFoundResult();
+        return new ObjectResult(user);
+    }
+    // POST: api/Game
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody]User user)
+    {
+        await _userRepository.Create(user);
+        return new OkObjectResult(user);
+    }
+    [HttpPost("UploadsProfilePic")]
 
         public async Task<IActionResult> UploadsProfilePic(IFormFileCollection files)
         {
@@ -106,40 +65,26 @@ namespace my_profile.Controllers
             }
 
         }
-        //Update user details
-        [HttpPut("user/{id}")]
-        public IActionResult Put(int id, [FromBody] User newUser)
-        {
-            try
-            {
-                client.client.Cypher
-              .Match("(user:User)")  
-              .Where((User user) => user.UserId == id)
-               .Set("user = {newUser}")
-                    .WithParams(new
-                    {
-                        newUser
-                    })
-               .ExecuteWithoutResults();
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                // return error message if there was an exception
-                return BadRequest(new { message = ex.Message });
-            }
-        }
-        // DELETE api/values/5
-        // delete a user
-        [HttpDelete("user/{id}")]
-        public void Delete(int id)
-        {
-            client.client.Cypher
-           .Match("(user:User)")
-           .Where((User user) => user.UserId == id)
-           .Delete("user")
-
-           .ExecuteWithoutResults();
-        }
+    // PUT: api/Game/5
+    [HttpPut("{name}")]
+    public async Task<IActionResult> Put(string name, [FromBody]User user)
+    {
+        var userFromDb = await _userRepository.GetUser(name);
+        if (userFromDb == null)
+            return new NotFoundResult();
+        user.Id = userFromDb.Id;
+        await _userRepository.Update(user);
+        return new OkObjectResult(user);
+    }
+    // DELETE: api/ApiWithActions/5
+    [HttpDelete("{name}")]
+    public async Task<IActionResult> Delete(string name)
+    {
+        var userFromDb = await _userRepository.GetUser(name);
+        if (userFromDb == null)
+            return new NotFoundResult();
+        await _userRepository.Delete(name);
+        return new OkResult();
+    }
     }
 }
