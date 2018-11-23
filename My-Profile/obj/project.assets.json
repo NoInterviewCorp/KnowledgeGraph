@@ -11976,11 +11976,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\CGI\\Stackroute\\sampleauth\\login.final\\angu login\\New folder (4)\\My-Profile\\my-profile.csproj",
+      "projectUniqueName": "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd\\My-Profile\\my-profile.csproj",
       "projectName": "my-profile",
-      "projectPath": "C:\\Users\\CGI\\Stackroute\\sampleauth\\login.final\\angu login\\New folder (4)\\My-Profile\\my-profile.csproj",
+      "projectPath": "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd\\My-Profile\\my-profile.csproj",
       "packagesPath": "C:\\Users\\CGI\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\CGI\\Stackroute\\sampleauth\\login.final\\angu login\\New folder (4)\\My-Profile\\obj\\",
+      "outputPath": "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd\\My-Profile\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

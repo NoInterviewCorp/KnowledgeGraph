@@ -1,0 +1,9 @@
+c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile.Tests\bin\Debug\netstandard2.0\My-Profile.Tests.deps.json
+c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile.Tests\bin\Debug\netstandard2.0\My-Profile.Tests.dll
+c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile.Tests\bin\Debug\netstandard2.0\My-Profile.Tests.pdb
+c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile.Tests\obj\Debug\netstandard2.0\My-Profile.Tests.csprojAssemblyReference.cache
+c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile.Tests\obj\Debug\netstandard2.0\My-Profile.Tests.csproj.CoreCompileInputs.cache
+c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile.Tests\obj\Debug\netstandard2.0\My-Profile.Tests.AssemblyInfoInputs.cache
+c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile.Tests\obj\Debug\netstandard2.0\My-Profile.Tests.AssemblyInfo.cs
+c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile.Tests\obj\Debug\netstandard2.0\My-Profile.Tests.dll
+c:\Users\CGI\Stackroute\MyProfile_BackEnd\My-Profile.Tests\obj\Debug\netstandard2.0\My-Profile.Tests.pdb
