@@ -3,128 +3,143 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MyProfile;
+using my_profile;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Web.Http;
+using my_profile.Services;
 
 namespace my_profile.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
-
     public class ValuesController : ControllerBase
     {
-        IUserRepo context = null;
-        public ValuesController(IUserRepo _context){
-            this.context = _context;
-        }
-[HttpGet]
-        public ActionResult<IEnumerable<User>> Get()
-        {
-            
-           /* using( context ){
-            return     Ok(context.Students.ToList());
-            }*/
-            var userprofiles = context.GetAllNotes();
-            if(userprofiles.Count > 0){
-                return Ok(userprofiles);
-            }
-            else{
-                return Ok("No Entries Available. Database is Empty");
-            }
-            
-        }
- [HttpGet("{id}")]
-        public ActionResult<string> Get(string id)
-        {
-            //return "value";
-            var userById = context.GetNote(id);
-            if (userById != null)
-            {
-                return Ok(userById);
-            }
-            else
-            {
-                return NotFound($"User with {id} not found.");
-            }
-        }
- [HttpGet("{text}")]
-        public ActionResult<string> Get(string text , [FromQuery] string type)
-        {
-            //return "value";
-            var noteById1 = context.GetNote(text,type);
-            if (noteById1 != null)
-            {
-                return Ok(noteById1);
-            }
-            else
-            {
-                return NotFound($"Note with {text} not found.");
-            }
-        }
- [HttpPost("Uploads")]
+        // GET api/values
 
-        public async Task<IActionResult> Uploads(IFormFileCollection files)
+        GraphDbConnection client;
+        public ValuesController(GraphDbConnection _client)
+        {
+            this.client = _client;
+
+        }
+         [HttpGet]
+       public async Task<IActionResult> Get()
+
         {
 
-        long size = files.Sum(f => f.Length);
-     try{
-     foreach (var formFile in files)
-      {
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/image",formFile.FileName);
-                var stream = new FileStream(filePath, FileMode.Create);
-                await formFile.CopyToAsync(stream);
 
-                
-      }
-    return Ok(new { count = files.Count });
-       }
-    catch(Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-   
-    }
-[HttpPost]
-         public IActionResult Post([FromBody] User value)
+            var results1 =await client.client.Cypher
+             .Match("(user:User)")
+             .Return(user => user.As<User>())
+             .ResultsAsync;
+            return Ok(results1);
+        }
+        // GET api/values/5
+        ////Get user by id
+        [HttpGet("user/{userid}")]
+        public async Task<IActionResult> Get(int userid)
         {
-           if(ModelState.IsValid){
-                bool result = context.PostNote(value);
-                if (result)
-                {
-                    return Created($"/values/{value.UserId}",value);
-                }
-                else
-                {
-                    return BadRequest("Note already exists, please try again.");
-                }
-            }
-            return BadRequest("Invalid Format");
-    
-    // or
-    // context.Add<Student>(std);
-    
-    }
- [HttpPut("{id}")]
-        public IActionResult Put(string id, [FromBody] LearningPlan learningPlan)
+            var results =await client.client.Cypher
+           .Match("(user:User)")
+           .Where((User user) => user.UserId == userid)
+           .Return(user => user.As<User>())
+           .ResultsAsync;
+            return Ok(results);
+        }
+        //Get learningplan by id
+       
+       //Get resource by id
+      
+        // POST api/values
+        [HttpPost("UserNode")]
+        public IActionResult UserPost([FromBody] User newUser)
         {
-             try 
+            try
             {
                 // save 
-                context.PutNote(id, learningPlan);
-                return Ok();
-            } 
-            catch(Exception ex)
+                client.client.Cypher
+                .Merge("(user:User { UserId: {id} })")
+                .OnCreate()
+                .Set("user = {newUser}")
+                .WithParams(new
+                {
+                    id = newUser.UserId,
+                    newUser
+                })
+              .ExecuteWithoutResults();
+               return Ok();
+            }
+            catch (Exception ex)
             {
                 // return error message if there was an exception
                 return BadRequest(new { message = ex.Message });
             }
-          
+            //newUser =new  List<User>();
+
+
         }
+        //post learningplan
+        
+       // upload userprofilepic
+        [HttpPost("UploadsProfilePic")]
+
+        public async Task<IActionResult> UploadsProfilePic(IFormFileCollection files)
+        {
+
+            long size = files.Sum(f => f.Length);
+            try
+            {
+                foreach (var formFile in files)
+                {
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/image", formFile.FileName);
+                    var stream = new FileStream(filePath, FileMode.Create);
+                    await formFile.CopyToAsync(stream);
 
 
+                }
+                return Ok(new { count = files.Count });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
 
+        }
+        //Update user details
+        [HttpPut("user/{id}")]
+        public IActionResult Put(int id, [FromBody] User newUser)
+        {
+            try
+            {
+                client.client.Cypher
+              .Match("(user:User)")  
+              .Where((User user) => user.UserId == id)
+               .Set("user = {newUser}")
+                    .WithParams(new
+                    {
+                        newUser
+                    })
+               .ExecuteWithoutResults();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+        // DELETE api/values/5
+        // delete a user
+        [HttpDelete("user/{id}")]
+        public void Delete(int id)
+        {
+            client.client.Cypher
+           .Match("(user:User)")
+           .Where((User user) => user.UserId == id)
+           .Delete("user")
+
+           .ExecuteWithoutResults();
+        }
     }
 }

@@ -10,7 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MyProfile;
+using my_profile;
+using Swashbuckle.AspNetCore.Swagger;
+using my_profile.Services;
+
 namespace my_profile
 {
     public class Startup
@@ -27,8 +30,12 @@ namespace my_profile
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
              services.AddCors();
-             services.AddDbContext<UserContext>();
-            services.AddScoped<IUserRepo,UserData>();
+             services.AddSingleton<GraphDbConnection>();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Feedback_BackEnd", Version = "v1" });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,7 +49,15 @@ namespace my_profile
             {
                 app.UseHsts();
             }
+           app.UseSwagger();
 
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Feeback_BackEnd");
+                c.RoutePrefix = string.Empty;
+            });
             // app.UseHttpsRedirection();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().AllowCredentials());
             //app.UseMvc();

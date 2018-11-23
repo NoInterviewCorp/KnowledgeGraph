@@ -1,0 +1,18 @@
+version: "2"
+services:
+    profile:
+        build: .
+        ports:
+            - "5004:5000"
+        depends_on:
+            - neo4j
+    neo4j:
+        image: neo4j:latest
+        ports:
+            - "17475:7474"
+            - "17688:7687"
+        environment:
+            - NEO4J_AUTH=neo4j/Vfunny@123
+            - NEO4J_dbms_connector_http_listen__address=:7474
+            # - NEO4J_dbms_connector_https_listen__address=:6477
+            - NEO4J_dbms_connector_bolt_listen__address=:7687
