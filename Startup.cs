@@ -38,7 +38,7 @@ namespace KnowledgeGraph {
                 app.UseHsts ();
             }
 
-            app.UseHttpsRedirection ();
+            // app.UseHttpsRedirection ();
             app.UseMvc ();
         }
     }
