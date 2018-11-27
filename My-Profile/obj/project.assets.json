@@ -2709,6 +2709,21 @@
           "lib/netstandard1.5/MongoDB.Driver.Core.dll": {}
         }
       },
+      "MongoDB.Driver.GridFS/2.7.2": {
+        "type": "package",
+        "dependencies": {
+          "MongoDB.Bson": "2.7.2",
+          "MongoDB.Driver": "2.7.2",
+          "MongoDB.Driver.Core": "2.7.2",
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.5/MongoDB.Driver.GridFS.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.5/MongoDB.Driver.GridFS.dll": {}
+        }
+      },
       "Neo4j.Driver/1.7.0": {
         "type": "package",
         "dependencies": {
@@ -7422,6 +7437,21 @@
         "lib/netstandard1.5/MongoDB.Driver.Core.xml",
         "mongodb.driver.core.2.7.2.nupkg.sha512",
         "mongodb.driver.core.nuspec"
+      ]
+    },
+    "MongoDB.Driver.GridFS/2.7.2": {
+      "sha512": "AcbS+Lm9ZJ6+GapUAE+S3a9l0Q8VhluV6LSm1PUypYQfGBpchen+X4Z7IXpzHNi93rd98cqgVcR93+xzj+jEuA==",
+      "type": "package",
+      "path": "mongodb.driver.gridfs/2.7.2",
+      "files": [
+        ".signature.p7s",
+        "License.rtf",
+        "lib/net45/MongoDB.Driver.GridFS.dll",
+        "lib/net45/MongoDB.Driver.GridFS.xml",
+        "lib/netstandard1.5/MongoDB.Driver.GridFS.dll",
+        "lib/netstandard1.5/MongoDB.Driver.GridFS.xml",
+        "mongodb.driver.gridfs.2.7.2.nupkg.sha512",
+        "mongodb.driver.gridfs.nuspec"
       ]
     },
     "Neo4j.Driver/1.7.0": {
@@ -12783,11 +12813,13 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.1": [
       "Microsoft.AspNetCore.App >= 2.1.1",
+      "Microsoft.AspNetCore.Hosting >= 2.1.1",
       "Microsoft.AspNetCore.StaticFiles >= 2.1.1",
       "Microsoft.NETCore.App >= 2.1.0",
       "MongoDB.Bson >= 2.7.2",
       "MongoDB.Driver >= 2.7.2",
       "MongoDB.Driver.Core >= 2.7.2",
+      "MongoDB.Driver.GridFS >= 2.7.2",
       "Neo4j.Driver >= 1.7.0",
       "Neo4jClient >= 3.0.1.23",
       "Swashbuckle.AspNetCore >= 4.0.1",
@@ -12802,11 +12834,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile\\my-profile.csproj",
+      "projectUniqueName": "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile\\my-profile.csproj",
       "projectName": "my-profile",
-      "projectPath": "C:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile\\my-profile.csproj",
+      "projectPath": "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile\\my-profile.csproj",
       "packagesPath": "C:\\Users\\CGI\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile\\obj\\",
+      "outputPath": "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -12842,6 +12874,10 @@
             "version": "[2.1.1, )",
             "autoReferenced": true
           },
+          "Microsoft.AspNetCore.Hosting": {
+            "target": "Package",
+            "version": "[2.1.1, )"
+          },
           "Microsoft.AspNetCore.StaticFiles": {
             "target": "Package",
             "version": "[2.1.1, )"
@@ -12860,6 +12896,10 @@
             "version": "[2.7.2, )"
           },
           "MongoDB.Driver.Core": {
+            "target": "Package",
+            "version": "[2.7.2, )"
+          },
+          "MongoDB.Driver.GridFS": {
             "target": "Package",
             "version": "[2.7.2, )"
           },

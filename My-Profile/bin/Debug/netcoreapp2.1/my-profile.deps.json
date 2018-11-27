@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "bcfb3da3cbf5aa9bb702b80ba5d51b8ad1c2b3aa"
+    "signature": "38fa4a51e8b11968f32505f88025b4bb052a2db0"
   },
   "compilationOptions": {
     "defines": [
@@ -25,11 +25,13 @@
       "my-profile/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.App": "2.1.1",
+          "Microsoft.AspNetCore.Hosting": "2.1.1",
           "Microsoft.AspNetCore.StaticFiles": "2.1.1",
           "Microsoft.NETCore.App": "2.1.0",
           "MongoDB.Bson": "2.7.2",
           "MongoDB.Driver": "2.7.2",
           "MongoDB.Driver.Core": "2.7.2",
+          "MongoDB.Driver.GridFS": "2.7.2",
           "Neo4j.Driver": "1.7.0",
           "Neo4jClient": "3.0.1.23",
           "Swashbuckle.AspNetCore": "4.0.1",
@@ -321,6 +323,23 @@
         },
         "compile": {
           "lib/netstandard1.5/MongoDB.Driver.Core.dll": {}
+        }
+      },
+      "MongoDB.Driver.GridFS/2.7.2": {
+        "dependencies": {
+          "MongoDB.Bson": "2.7.2",
+          "MongoDB.Driver": "2.7.2",
+          "MongoDB.Driver.Core": "2.7.2",
+          "NETStandard.Library": "2.0.3"
+        },
+        "runtime": {
+          "lib/netstandard1.5/MongoDB.Driver.GridFS.dll": {
+            "assemblyVersion": "2.7.2.0",
+            "fileVersion": "2.7.2.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard1.5/MongoDB.Driver.GridFS.dll": {}
         }
       },
       "Neo4j.Driver/1.7.0": {
@@ -3747,6 +3766,13 @@
       "sha512": "sha512-TxMK++cPLQ78DKxhEhWxuseTJUuUaoQsyykedXeR9c9yjuniwIUpNCT0c4kJb60pxZK8S2pfH++0OTRcrpfhlA==",
       "path": "mongodb.driver.core/2.7.2",
       "hashPath": "mongodb.driver.core.2.7.2.nupkg.sha512"
+    },
+    "MongoDB.Driver.GridFS/2.7.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-AcbS+Lm9ZJ6+GapUAE+S3a9l0Q8VhluV6LSm1PUypYQfGBpchen+X4Z7IXpzHNi93rd98cqgVcR93+xzj+jEuA==",
+      "path": "mongodb.driver.gridfs/2.7.2",
+      "hashPath": "mongodb.driver.gridfs.2.7.2.nupkg.sha512"
     },
     "Neo4j.Driver/1.7.0": {
       "type": "package",

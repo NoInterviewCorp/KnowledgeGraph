@@ -1,0 +1,17 @@
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\bin\Debug\netcoreapp2.1\xunit.runner.visualstudio.dotnetcore.testadapter.dll
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\bin\Debug\netcoreapp2.1\xunit.runner.reporters.netcoreapp10.dll
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\bin\Debug\netcoreapp2.1\xunit.runner.utility.netcoreapp10.dll
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\bin\Debug\netcoreapp2.1\My-Profile.Tests.deps.json
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\bin\Debug\netcoreapp2.1\My-Profile.Tests.runtimeconfig.json
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\bin\Debug\netcoreapp2.1\My-Profile.Tests.runtimeconfig.dev.json
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\bin\Debug\netcoreapp2.1\My-Profile.Tests.dll
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\bin\Debug\netcoreapp2.1\My-Profile.Tests.pdb
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\bin\Debug\netcoreapp2.1\my-profile.dll
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\bin\Debug\netcoreapp2.1\my-profile.pdb
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\obj\Debug\netcoreapp2.1\My-Profile.Tests.csprojAssemblyReference.cache
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\obj\Debug\netcoreapp2.1\My-Profile.Tests.csproj.CoreCompileInputs.cache
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\obj\Debug\netcoreapp2.1\My-Profile.Tests.AssemblyInfoInputs.cache
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\obj\Debug\netcoreapp2.1\My-Profile.Tests.AssemblyInfo.cs
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\obj\Debug\netcoreapp2.1\My-Profile.Tests.csproj.CopyComplete
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\obj\Debug\netcoreapp2.1\My-Profile.Tests.dll
+C:\Users\CGI\Stackroute\MyProfile_BackEnd -Mongo\My-Profile.Tests\obj\Debug\netcoreapp2.1\My-Profile.Tests.pdb
