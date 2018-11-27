@@ -23,6 +23,14 @@ namespace KnowledgeGraph {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices (IServiceCollection services) {
+            services.Configure<Neo4jSettings>(
+                options =>
+                {
+                    options.ConnectionString = Configuration.GetSection("Neo4j:ConnectionString").Value;
+                    options.UserId = Configuration.GetSection("Neo4j:UserId").Value;
+                    options.Password = Configuration.GetSection("Neo4j:Password").Value;
+                }
+            );
             services.AddSingleton<IGraphFunctions, GraphFunctions> ();
             services.AddSingleton<QueueBuilder> ();
             services.AddSingleton<QueueHandler> ();
