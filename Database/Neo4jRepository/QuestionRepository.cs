@@ -1,23 +1,22 @@
-using SME.Models;
-using SME.Services;
+using KnowledgeGraph.Services;
 using Neo4jClient;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Dynamic;
 
-namespace SME.Persistence
+namespace KnowledgeGraph.Database
 {
     public class QuestionRepository //: IQuestionRepository
     {
-        private GraphClient graph;
+        private IGraphClient graph;
         public QuestionRepository(GraphDbConnection graph)
         {
-            this.graph = graph.Client;
+            this.graph = graph.graph;
         }
 
         // // Question
-        // public async Task<List<Question>> AddQuestionsAsync(List<Question> questions)
+        // public async Task<List<QuestionWrapper>> AddQuestionsAsync(List<QuestionWrapper> questions)
         // {
         //     //     var query = graph.Cypher;
         //     //     var questionParams = new ExpandoObject() as IDictionary<string, object>;
@@ -35,31 +34,31 @@ namespace SME.Persistence
         //     //             .OnCreate()
         //     //             .Set($"q={{question{i}}}")
         //     //             .WithParams(questionParams)
-        //     //             .Return(q => q.As<Question>());
+        //     //             .Return(q => q.As<QuestionWrapper>());
         //     //     }
         //     //     var result = await query;
-        //     //     var list = new List<Question>(result);
+        //     //     var list = new List<QuestionWrapper>(result);
         //     //     return (list.Count == 0) ? null : list;
         //     return null;
         // }
 
-        public async Task<List<Question>> GetQuestionsAsync()
+        public async Task<List<QuestionWrapper>> GetQuestionsAsync()
         {
-            return new List<Question>(
+            return new List<QuestionWrapper>(
                        await graph.Cypher
                    .Match("(q:Question)")
-                   .ReturnDistinct(q => q.As<Question>())
+                   .ReturnDistinct(q => q.As<QuestionWrapper>())
                    .ResultsAsync
             );
         }
-        public async Task<List<Question>> GetQuestionsByConceptOfATechAsync(string technology, string concept)
+        public async Task<List<QuestionWrapper>> GetQuestionsByConceptOfATechAsync(string technology, string concept)
         {
             var result = await graph.Cypher
                 .Match("(t:Technology)-[:EXPLAINS]->(c:Concept)-[:TESTS]->(q:Question)")
-                .Where((Technology t, Concept c) => t.Name == technology && c.Name == concept)
-                .Return(q => q.As<Question>())
+                .Where((TechnologyWrapper t, ConceptWrapper c) => t.Name == technology && c.Name == concept)
+                .Return(q => q.As<QuestionWrapper>())
                 .ResultsAsync;
-            var list = new List<Question>(result);
+            var list = new List<QuestionWrapper>(result);
             if (list.Count == 0)
             {
                 return null;
@@ -69,19 +68,19 @@ namespace SME.Persistence
                 return list;
             }
         }
-        // public async Task<Question> UpdateQuestionAsync(Question question)
+        // public async Task<QuestionWrapper> UpdateQuestionAsync(Question question)
         // {
         //     return null;
         // }
         public async Task<bool> DeleteQuestionByIdAsync(string QuestionId)
         {
-            var result = new List<Question>(await graph.Cypher
+            var result = new List<QuestionWrapper>(await graph.Cypher
                 .Match("(q:Question {QuestionId:{id}})")
                 .WithParams(new
                 {
                     id = QuestionId
                 })
-                .Return(q => q.As<Question>())
+                .Return(q => q.As<QuestionWrapper>())
                 .ResultsAsync);
             if (result.Count == 0)
             {
@@ -89,13 +88,13 @@ namespace SME.Persistence
             }
             await graph.Cypher
                 .OptionalMatch("(q:Question)-[relation]->()")
-                .Where((Question q) => q.QuestionId.ToString() == QuestionId)
+                .Where((QuestionWrapper q) => q.QuestionId.ToString() == QuestionId)
                 .Delete("q, relation")
                 .ExecuteWithoutResultsAsync();
             return true;
         }
 
-        // public async Task<List<Question>> GetQuestionsAsync(){
+        // public async Task<List<QuestionWrapper>> GetQuestionsAsync(){
         //     return null;
         // }
     }
