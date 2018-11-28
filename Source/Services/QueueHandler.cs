@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using KnowledgeGraph.Database.Models;
-using KnowledgeGraph.Database.Persistence;
-using Newtonsoft.Json;
+using KnowledgeGraph.Models;
+using KnowledgeGraph.Persistence;
+using KnowledgeGraph.RabbitMQModels;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -12,14 +11,15 @@ namespace KnowledgeGraph.Services {
     public class QueueHandler {
         public QueueBuilder queues;
         private LearningPlan learningPlan;
-        private QuizEngineQuery query;
+        private QuestionsBatchRequestModel batch_query;
+        private QuestionsRequestModel concept_query;
         private IGraphFunctions graphfunctions;
-        private List<int> IDs;
+        private List<int> Ids;
         public QueueHandler (QueueBuilder _queues, IGraphFunctions _graphfunctions) {
             queues = _queues;
             graphfunctions = _graphfunctions;
             this.ContributerQueueHandler ();
-            this.QuizEngineQueueHandler ();
+            this.QuestionBatchRequestHandler ();
         }
 
         public void ContributerQueueHandler () {
@@ -38,17 +38,35 @@ namespace KnowledgeGraph.Services {
             Console.WriteLine ("Consuming from Contributor's Knowledge Graph");
             channel.BasicConsume ("Contributer_KnowledgeGraph", false, consumer);
         }
-        public void QuizEngineQueueHandler () {
+        public void QuestionBatchRequestHandler () {
             var channel = queues.connection.CreateModel ();
             var consumer = new AsyncEventingBasicConsumer (channel);
             consumer.Received += async (model, ea) => {
                 Console.WriteLine ("Recieved Request for Questions");
                 var body = ea.Body;
-                query = (QuizEngineQuery) body.DeSerialize (typeof (QuizEngineQuery));
-                IDs.Clear ();
-                IDs.AddRange (graphfunctions.GetQuestionIds (query.tech, query.username));
+                batch_query = (QuestionsBatchRequestModel) body.DeSerialize (typeof (QuestionsBatchRequestModel));
+                this.Ids.Clear ();
+                this.Ids.AddRange (graphfunctions.GetQuestionBatchIds (batch_query.username, batch_query.tech, batch_query.concepts));
                 channel.BasicAck (ea.DeliveryTag, false);
-                channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, IDs.Serialize ());
+                channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, this.Ids.Serialize ());
+                var routingKey = ea.RoutingKey;
+                Console.WriteLine (" - Routing Key <{0}>", routingKey);
+                Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
+                await Task.Yield ();
+            };
+            channel.BasicConsume ("QuizEngine_KnowledgeGraph", false, consumer);
+        }
+        public void QuestionRequestHandler () {
+            var channel = queues.connection.CreateModel ();
+            var consumer = new AsyncEventingBasicConsumer (channel);
+            consumer.Received += async (model, ea) => {
+                Console.WriteLine ("Recieved Request for Questions");
+                var body = ea.Body;
+                concept_query = (QuestionsRequestModel) body.DeSerialize (typeof (QuestionsRequestModel));
+                this.Ids.Clear ();
+                this.Ids.AddRange (graphfunctions.GetQuestionIds (concept_query.tech, concept_query.username, concept_query.concept));
+                channel.BasicAck (ea.DeliveryTag, false);
+                channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.Ids.Serialize ());
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine (" - Routing Key <{0}>", routingKey);
                 Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);

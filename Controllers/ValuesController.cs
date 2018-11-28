@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using KnowledgeGraph.Database.Models;
+﻿using KnowledgeGraph.Models;
 using KnowledgeGraph.Services;
 using Microsoft.AspNetCore.Mvc;
 using RabbitMQ.Client;
 
-namespace KnowledgeGraph.Controllers {
+namespace KnowledgeGraph.Controllers
+{
     [Route ("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase {
