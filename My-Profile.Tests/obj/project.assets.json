@@ -50,6 +50,15 @@
           "lib/netstandard1.3/DnsClient.dll": {}
         }
       },
+      "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
+        "type": "package",
+        "compile": {
+          "lib/net451/Microsoft.AspNet.StaticFiles.dll": {}
+        },
+        "runtime": {
+          "lib/net451/Microsoft.AspNet.StaticFiles.dll": {}
+        }
+      },
       "Microsoft.AspNetCore.Antiforgery/2.1.1": {
         "type": "package",
         "dependencies": {
@@ -3833,6 +3842,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.1",
         "dependencies": {
+          "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-final",
           "Microsoft.AspNetCore.Hosting": "2.1.1",
           "Microsoft.AspNetCore.StaticFiles": "2.1.1",
           "Microsoft.NETCore.App": "2.1.0",
@@ -3891,6 +3901,20 @@
         "lib/net45/DnsClient.xml",
         "lib/netstandard1.3/DnsClient.dll",
         "lib/netstandard1.3/DnsClient.xml"
+      ]
+    },
+    "Microsoft.AspNet.StaticFiles/1.0.0-rc1-final": {
+      "sha512": "5ocYseBTITKassgZxQ3sNLHxop4zKar/ss/4atmbPSPM4C2OXsmKaOOmX17td2ZjJc8fCYKER1/vU1cabzq/Cw==",
+      "type": "package",
+      "path": "microsoft.aspnet.staticfiles/1.0.0-rc1-final",
+      "files": [
+        ".signature.p7s",
+        "lib/dotnet5.4/Microsoft.AspNet.StaticFiles.dll",
+        "lib/dotnet5.4/Microsoft.AspNet.StaticFiles.xml",
+        "lib/net451/Microsoft.AspNet.StaticFiles.dll",
+        "lib/net451/Microsoft.AspNet.StaticFiles.xml",
+        "microsoft.aspnet.staticfiles.1.0.0-rc1-final.nupkg.sha512",
+        "microsoft.aspnet.staticfiles.nuspec"
       ]
     },
     "Microsoft.AspNetCore.Antiforgery/2.1.1": {
@@ -10878,11 +10902,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile.Tests\\My-Profile.Tests.csproj",
+      "projectUniqueName": "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile.Tests\\My-Profile.Tests.csproj",
       "projectName": "My-Profile.Tests",
-      "projectPath": "C:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile.Tests\\My-Profile.Tests.csproj",
+      "projectPath": "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile.Tests\\My-Profile.Tests.csproj",
       "packagesPath": "C:\\Users\\CGI\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile.Tests\\obj\\",
+      "outputPath": "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -10901,8 +10925,8 @@
       "frameworks": {
         "netcoreapp2.1": {
           "projectReferences": {
-            "C:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile\\my-profile.csproj": {
-              "projectPath": "C:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile\\my-profile.csproj"
+            "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile\\my-profile.csproj": {
+              "projectPath": "c:\\Users\\CGI\\Stackroute\\MyProfile_BackEnd -Mongo\\My-Profile\\my-profile.csproj"
             }
           }
         }
@@ -10954,5 +10978,17 @@
         "warn": true
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Microsoft.AspNet.StaticFiles 1.0.0-rc1-final' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.1'. This package may not be fully compatible with your project.",
+      "libraryId": "Microsoft.AspNet.StaticFiles",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v2.1"
+      ]
+    }
+  ]
 }
