@@ -6,6 +6,7 @@ services:
             - "15000:5000"
         depends_on:
             - neo4j
+            # - rabbitmq
     neo4j:
         image: neo4j:latest
         ports:
@@ -16,3 +17,8 @@ services:
             - NEO4J_dbms_connector_http_listen__address=:7474
             # - NEO4J_dbms_connector_https_listen__address=:6477
             - NEO4J_dbms_connector_bolt_listen__address=:7687
+    # rabbitmq:
+    #     image: rabbitmq:latest
+    #     ports:
+    #         - "5672:5672"
+    #     environment:

@@ -99,8 +99,8 @@ namespace KnowledgeGraph.Database
             }
 
             var questionQuery = graph.Cypher;
-            var concept_Query = graph.Cypher;
-            var tech_Query = graph.Cypher;
+            var questionConceptQuery = graph.Cypher;
+            var questionTechQuery = graph.Cypher;
 
             for (int h = 0; h < questions.Count; h++)
             {
@@ -115,24 +115,27 @@ namespace KnowledgeGraph.Database
                 questionParamsObj.Add("questionId_" + h, question.QuestionId);
                 questionParamsObj.Add("question_" + h, question);
                 questionQuery = questionQuery
-                      .Merge($"(q_{h}:Question {{ QuestionId: {{questionId_{h}}}}})")
-                      .OnCreate()
-                      .Set($"q_{h}={{question_{h}}}")
-                      .With($"q_{h}")
-                      .Match("(r:Resource)")
-                      .Where((ResourceWrapper r) => r.ResourceId == resource.ResourceId)
-                      .Merge($"(q_{h})-[:FRAMED_FROM]->(r)")
-                      .WithParams(questionParamsObj);
+                    .Merge($"(q_{h}:Question {{ QuestionId: {{questionId_{h}}}}})")
+                    .OnCreate()
+                    .Set($"q_{h}={{question_{h}}}")
+                    .With($"q_{h}")
+                    .Match("(r:Resource)")
+                    .Where((ResourceWrapper r) => r.ResourceId == resource.ResourceId)
+                    .Merge($"(q_{h})-[:FRAMED_FROM]->(r)")
+                    .WithParams(questionParamsObj);
 
-                tech_Query = tech_Query
-                      .Merge($"(q_{h}:Question {{ QuestionId: {{questionId_{h}}}}})")
-                      .OnCreate()
-                      .Set($"q_{h}={{question_{h}}}")
-                      .With($"q_{h}")
-                      .Merge("(t:Technology)")
-                      .Where((TechnologyWrapper t) => t.Name == question.Technology.Name)
-                      .Merge($"(q_{h})-[:IS_SPECIFIC_TO]->(t)")
-                      .WithParams(questionParamsObj);
+                if (qTechnology != null)
+                {
+                    questionTechQuery = questionTechQuery
+                        .Merge($"(q_{h}:Question {{ QuestionId: {{questionId_{h}}}}})")
+                        .OnCreate()
+                        .Set($"q_{h}={{question_{h}}}")
+                        .With($"q_{h}")
+                        .Merge("(t:Technology {Name:\"" + qTechnology.Name + "\"})")
+                        // .Where((TechnologyWrapper t) => t.Name == qTechnology.Name)
+                        .Merge($"(q_{h})-[:IS_SPECIFIC_TO]->(t)")
+                        .WithParams(questionParamsObj);
+                }
 
                 for (int i = 0; i < qConcepts.Count; i++)
                 {
@@ -140,7 +143,7 @@ namespace KnowledgeGraph.Database
                     var concept = qConcepts[i];
                     (questionParamsObj["conceptParamsObj" + h + i] as IDictionary<string, Object>).Add("conceptName_" + h + i, concept.Name);
                     (questionParamsObj["conceptParamsObj" + h + i] as IDictionary<string, Object>).Add("concept" + h + i, concept);
-                    concept_Query = concept_Query
+                    questionConceptQuery = questionConceptQuery
                            .Merge($"(c{h}{i}:Concept {{ Name: {{conceptName_{h}{i}}} }})")
                            .OnCreate()
                            .Set($"c{h}{i}={{concept{h}{i}}}")
@@ -155,8 +158,8 @@ namespace KnowledgeGraph.Database
             await conceptQuery.ExecuteWithoutResultsAsync();
             await techCypherQuery.ExecuteWithoutResultsAsync();
             await questionQuery.ExecuteWithoutResultsAsync();
-            await concept_Query.ExecuteWithoutResultsAsync();
-            await tech_Query.ExecuteWithoutResultsAsync();
+            await questionConceptQuery.ExecuteWithoutResultsAsync();
+            await questionTechQuery.ExecuteWithoutResultsAsync();
 
             return resQuery;
         }
@@ -241,7 +244,8 @@ namespace KnowledgeGraph.Database
         {
             var result = new List<ResourceWrapper>(await graph.Cypher
                 .Match("(r:Resource {ResourceId:{resourceId}})")
-                .WithParams(new{
+                .WithParams(new
+                {
                     resourceId
                 })
                 .Return(r => r.As<ResourceWrapper>())

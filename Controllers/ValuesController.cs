@@ -17,10 +17,11 @@ namespace KnowledgeGraph.Controllers
         QueueBuilder queue;
         QueueHandler handler;
         GraphDbConnection graph;
-        public ValuesController(QueueHandler _handler, QueueBuilder _queue, GraphDbConnection graph)
+        // QueueHandler _handler, QueueBuilder _queue,
+        public ValuesController( GraphDbConnection graph)
         {
-            handler = _handler;
-            queue = _queue;
+            // handler = _handler;
+            // queue = _queue;
             this.graph = graph;
         }
         // GET api/values
@@ -41,8 +42,8 @@ namespace KnowledgeGraph.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] LearningPlan lp)
         {
-            var channel = queue.connection.CreateModel();
-            channel.BasicPublish("KnowldegeGraphExchange", "Models.LearningPlan", null, lp.Serialize());
+            // var channel = queue.connection.CreateModel();
+            // channel.BasicPublish("KnowldegeGraphExchange", "Models.LearningPlan", null, lp.Serialize());
             return Ok(lp);
         }
 
