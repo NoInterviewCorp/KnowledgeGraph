@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using KnowledgeGraph.Database;
 using KnowledgeGraph.Database.Models;
+using KnowledgeGraph.Database.Persistence;
 using KnowledgeGraph.Services;
 using Microsoft.AspNetCore.Mvc;
 using RabbitMQ.Client;
@@ -40,11 +41,13 @@ namespace KnowledgeGraph.Controllers
 
         // POST api/values
         [HttpPost]
-        public IActionResult Post([FromBody] LearningPlan lp)
+        public async Task<IActionResult> PostAsync([FromBody] LearningPlanWrapper lp)
         {
             // var channel = queue.connection.CreateModel();
             // channel.BasicPublish("KnowldegeGraphExchange", "Models.LearningPlan", null, lp.Serialize());
-            return Ok(lp);
+            var repo = new GraphFunctions(graph);
+            var result = await repo.CreateLearningPlanAndRelationshipsAsync(lp);
+            return Ok(result);
         }
 
         // PUT api/values/5

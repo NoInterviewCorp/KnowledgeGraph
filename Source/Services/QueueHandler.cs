@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using KnowledgeGraph.Database;
 using KnowledgeGraph.Database.Models;
 using KnowledgeGraph.Database.Persistence;
 using Newtonsoft.Json;
@@ -11,7 +12,7 @@ using RabbitMQ.Client.Events;
 namespace KnowledgeGraph.Services {
     public class QueueHandler {
         public QueueBuilder queues;
-        private LearningPlan learningPlan;
+        private LearningPlanWrapper learningPlan;
         private QuizEngineQuery query;
         private IGraphFunctions graphfunctions;
         private List<int> IDs;
@@ -29,8 +30,8 @@ namespace KnowledgeGraph.Services {
                 Console.WriteLine ("Consuming from the queue");
                 channel.BasicAck (ea.DeliveryTag, false);
                 var body = ea.Body;
-                learningPlan = (LearningPlan) body.DeSerialize (typeof (LearningPlan));
-                graphfunctions.CreateLearningPlanAndRelationships (learningPlan);
+                learningPlan = (LearningPlanWrapper) body.DeSerialize (typeof (LearningPlanWrapper));
+                await graphfunctions.CreateLearningPlanAndRelationshipsAsync (learningPlan);
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine (" - Routing Key <{0}>", routingKey);
                 await Task.Yield ();
