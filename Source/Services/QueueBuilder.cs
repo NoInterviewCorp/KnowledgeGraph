@@ -32,10 +32,10 @@ namespace KnowledgeGraph.Services {
             model.QueueDeclare ("QuizEngine_KnowledgeGraph_QuizUpdate", false, false, false, null);
             model.QueueDeclare ("KnowledgeGraph_Contributer_Ids", false, false, false, null);
             model.QueueDeclare ("QuizEngine_UserProfile_UserData", false, false, false, null);
-            model.QueueBind ("Contributer_KnowledgeGraph_LearningPlan", ExchangeNme, "AddLearningPlan");
-            model.QueueBind ("QuizEngine_KnowledgeGraph", ExchangeNme, "Models.Technology");
-            model.QueueBind ("KnowledgeGraph_IDs", ExchangeNme, "Models.QuestionId");
-            model.QueueBind ("Contributer_Questions", ExchangeNme, "Models.Queation");
+            // model.QueueBind ("Contributer_KnowledgeGraph_LearningPlan", ExchangeNme, "AddLearningPlan");
+            // model.QueueBind ("QuizEngine_KnowledgeGraph", ExchangeNme, "Models.Technology");
+            // model.QueueBind ("KnowledgeGraph_IDs", ExchangeNme, "Models.QuestionId");
+            // model.QueueBind ("Contributer_Questions", ExchangeNme, "Models.Queation");
         }
     }
 }

@@ -11,11 +11,11 @@ namespace KnowledgeGraph.Services {
     public class QueueHandler {
         public QueueBuilder queues;
         private LearningPlan learningPlan;
-        private QuestionIdsBatchRequestModel batch_query;
-        private QuestionIdsRequestModel concept_query;
+        private QuestionBatchRequest batch_query;
+        private QuestionRequest concept_query;
         private IGraphFunctions graphfunctions;
         private QuestionIdsResponseModel questionidlist;
-        private QuestionIdsBatchResponseModel questionidbatchlist;
+        private QuestionBatchResponse questionidbatchlist;
         public QueueHandler (QueueBuilder _queues, IGraphFunctions _graphfunctions) {
             queues = _queues;
             graphfunctions = _graphfunctions;
@@ -45,8 +45,8 @@ namespace KnowledgeGraph.Services {
             consumer.Received += async (model, ea) => {
                 Console.WriteLine ("Recieved Request for Questions");
                 var body = ea.Body;
-                batch_query = (QuestionIdsBatchRequestModel) body.DeSerialize (typeof (QuestionIdsBatchRequestModel));
-                this.questionidbatchlist = new QuestionIdsBatchResponseModel (batch_query.username);
+                batch_query = (QuestionBatchRequest) body.DeSerialize (typeof (QuestionBatchRequest));
+                this.questionidbatchlist = new QuestionBatchResponse (batch_query.username);
                 this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds (batch_query.username, batch_query.tech, batch_query.concepts));
                 channel.BasicAck (ea.DeliveryTag, false);
                 channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize ());
@@ -63,7 +63,7 @@ namespace KnowledgeGraph.Services {
             consumer.Received += async (model, ea) => {
                 Console.WriteLine ("Recieved Request for Questions");
                 var body = ea.Body;
-                concept_query = (QuestionIdsRequestModel) body.DeSerialize (typeof (QuestionIdsRequestModel));
+                concept_query = (QuestionRequest) body.DeSerialize (typeof (QuestionRequest));
                 this.questionidlist = new QuestionIdsResponseModel (batch_query.username);
                 this.questionidlist.questionids = (graphfunctions.GetQuestionIds (concept_query.username, concept_query.tech, concept_query.concept));
                 channel.BasicAck (ea.DeliveryTag, false);
