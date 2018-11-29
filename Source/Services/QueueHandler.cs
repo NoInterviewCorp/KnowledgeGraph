@@ -11,10 +11,11 @@ namespace KnowledgeGraph.Services {
     public class QueueHandler {
         public QueueBuilder queues;
         private LearningPlan learningPlan;
-        private QuestionsBatchRequestModel batch_query;
-        private QuestionsRequestModel concept_query;
+        private QuestionIdsBatchRequestModel batch_query;
+        private QuestionIdsRequestModel concept_query;
         private IGraphFunctions graphfunctions;
-        private Dictionary<string, List<string>> Ids = new Dictionary<string, List<string>>();
+        private QuestionIdsResponseModel questionidlist;
+        private QuestionIdsBatchResponseModel questionidbatchlist;
         public QueueHandler (QueueBuilder _queues, IGraphFunctions _graphfunctions) {
             queues = _queues;
             graphfunctions = _graphfunctions;
@@ -44,11 +45,11 @@ namespace KnowledgeGraph.Services {
             consumer.Received += async (model, ea) => {
                 Console.WriteLine ("Recieved Request for Questions");
                 var body = ea.Body;
-                batch_query = (QuestionsBatchRequestModel) body.DeSerialize (typeof (QuestionsBatchRequestModel));
-                this.Ids.Clear ();
-                this.Ids = (graphfunctions.GetQuestionBatchIds (batch_query.username, batch_query.tech, batch_query.concepts));
+                batch_query = (QuestionIdsBatchRequestModel) body.DeSerialize (typeof (QuestionIdsBatchRequestModel));
+                this.questionidbatchlist = new QuestionIdsBatchResponseModel (batch_query.username);
+                this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds (batch_query.username, batch_query.tech, batch_query.concepts));
                 channel.BasicAck (ea.DeliveryTag, false);
-                channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, this.Ids.Serialize ());
+                channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize ());
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine (" - Routing Key <{0}>", routingKey);
                 Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
@@ -62,11 +63,11 @@ namespace KnowledgeGraph.Services {
             consumer.Received += async (model, ea) => {
                 Console.WriteLine ("Recieved Request for Questions");
                 var body = ea.Body;
-                concept_query = (QuestionsRequestModel) body.DeSerialize (typeof (QuestionsRequestModel));
-                this.Ids.Clear ();
-                this.Ids =  (graphfunctions.GetQuestionIds (concept_query.tech, concept_query.username, concept_query.concept));
+                concept_query = (QuestionIdsRequestModel) body.DeSerialize (typeof (QuestionIdsRequestModel));
+                this.questionidlist = new QuestionIdsResponseModel (batch_query.username);
+                this.questionidlist.questionids = (graphfunctions.GetQuestionIds (concept_query.username, concept_query.tech, concept_query.concept));
                 channel.BasicAck (ea.DeliveryTag, false);
-                channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.Ids.Serialize ());
+                channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.questionidlist.Serialize ());
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine (" - Routing Key <{0}>", routingKey);
                 Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
