@@ -17,9 +17,10 @@ namespace KnowledgeGraph.Services {
         public const string ExchangeNme = "KnowldegeGraphExchange";
         public QueueBuilder () {
             _factory = new ConnectionFactory {
-                HostName = "localhost",
-                UserName = "guest",
-                Password = "guest",
+                HostName = "172.23.238.173",
+                // VirtualHost= "queue-service",
+                UserName = "achausername",
+                Password = "strongpassword",
                 DispatchConsumersAsync = true
             };
             connection = _factory.CreateConnection ();

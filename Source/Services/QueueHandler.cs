@@ -16,6 +16,7 @@ namespace KnowledgeGraph.Services {
         private QuizEngineQuery query;
         private IGraphFunctions graphfunctions;
         private List<int> IDs;
+
         public QueueHandler (QueueBuilder _queues, IGraphFunctions _graphfunctions) {
             queues = _queues;
             graphfunctions = _graphfunctions;
@@ -28,11 +29,13 @@ namespace KnowledgeGraph.Services {
             var consumer = new AsyncEventingBasicConsumer (channel);
             consumer.Received += async (model, ea) => {
                 Console.WriteLine ("Consuming from the queue");
-                channel.BasicAck (ea.DeliveryTag, false);
+                Console.WriteLine("-----------------------------------------------------------------------");
                 var body = ea.Body;
                 learningPlan = (LearningPlanWrapper) body.DeSerialize (typeof (LearningPlanWrapper));
                 await graphfunctions.CreateLearningPlanAndRelationshipsAsync (learningPlan);
                 var routingKey = ea.RoutingKey;
+                channel.BasicAck (ea.DeliveryTag, false);
+                Console.WriteLine("-----------------------------------------------------------------------");
                 Console.WriteLine (" - Routing Key <{0}>", routingKey);
                 await Task.Yield ();
             };

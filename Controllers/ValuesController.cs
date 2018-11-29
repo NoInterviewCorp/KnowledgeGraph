@@ -18,11 +18,11 @@ namespace KnowledgeGraph.Controllers
         QueueBuilder queue;
         QueueHandler handler;
         GraphDbConnection graph;
-        // QueueHandler _handler, QueueBuilder _queue,
-        public ValuesController( GraphDbConnection graph)
+        // ,
+        public ValuesController( GraphDbConnection graph,QueueHandler _handler, QueueBuilder _queue)
         {
-            // handler = _handler;
-            // queue = _queue;
+            handler = _handler;
+            queue = _queue;
             this.graph = graph;
         }
         // GET api/values

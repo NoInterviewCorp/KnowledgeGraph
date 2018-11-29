@@ -36,9 +36,11 @@ namespace KnowledgeGraph
                 }
             );
             services.AddSingleton<IGraphFunctions, GraphFunctions>();
-            // services.AddSingleton<QueueBuilder>();
-            // services.AddSingleton<QueueHandler>();
+            services.AddSingleton<QueueBuilder>();
+            services.AddSingleton<QueueHandler>();
             services.AddSingleton<GraphDbConnection>();
+            var serviceProvider = services.BuildServiceProvider();
+            QueueHandler singleton = serviceProvider.GetService<QueueHandler>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
