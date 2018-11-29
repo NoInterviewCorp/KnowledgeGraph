@@ -14,15 +14,15 @@ namespace KnowledgeGraph.Services {
         private QuestionsBatchRequestModel batch_query;
         private QuestionsRequestModel concept_query;
         private IGraphFunctions graphfunctions;
-        private List<int> Ids;
+        private Dictionary<string, List<string>> Ids = new Dictionary<string, List<string>>();
         public QueueHandler (QueueBuilder _queues, IGraphFunctions _graphfunctions) {
             queues = _queues;
             graphfunctions = _graphfunctions;
-            this.ContributerQueueHandler ();
+            this.ContributerLearningPlanQueueHandler ();
             this.QuestionBatchRequestHandler ();
         }
 
-        public void ContributerQueueHandler () {
+        public void ContributerLearningPlanQueueHandler () {
             var channel = queues.connection.CreateModel ();
             var consumer = new AsyncEventingBasicConsumer (channel);
             consumer.Received += async (model, ea) => {
@@ -46,7 +46,7 @@ namespace KnowledgeGraph.Services {
                 var body = ea.Body;
                 batch_query = (QuestionsBatchRequestModel) body.DeSerialize (typeof (QuestionsBatchRequestModel));
                 this.Ids.Clear ();
-                this.Ids.AddRange (graphfunctions.GetQuestionBatchIds (batch_query.username, batch_query.tech, batch_query.concepts));
+                this.Ids = (graphfunctions.GetQuestionBatchIds (batch_query.username, batch_query.tech, batch_query.concepts));
                 channel.BasicAck (ea.DeliveryTag, false);
                 channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, this.Ids.Serialize ());
                 var routingKey = ea.RoutingKey;
@@ -64,7 +64,7 @@ namespace KnowledgeGraph.Services {
                 var body = ea.Body;
                 concept_query = (QuestionsRequestModel) body.DeSerialize (typeof (QuestionsRequestModel));
                 this.Ids.Clear ();
-                this.Ids.AddRange (graphfunctions.GetQuestionIds (concept_query.tech, concept_query.username, concept_query.concept));
+                this.Ids =  (graphfunctions.GetQuestionIds (concept_query.tech, concept_query.username, concept_query.concept));
                 channel.BasicAck (ea.DeliveryTag, false);
                 channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.Ids.Serialize ());
                 var routingKey = ea.RoutingKey;

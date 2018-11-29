@@ -7,7 +7,7 @@ namespace KnowledgeGraph.Persistence {
         void CreateLearningPlanAndRelationships (LearningPlan lp);
         void CreateResourceAndRelationships (Resource resource);
         void CreateQuestionsAndRelationships (Resource resource);
-        List<int> GetQuestionBatchIds (string username, string technology, List<string> concepts);
-        List<int> GetQuestionIds (string username, string technology,string concept);
+        Dictionary<string, List<string>> GetQuestionBatchIds (string username, string technology, List<string> concepts);
+        Dictionary<string, List<string>> GetQuestionIds (string username, string technology, string concept);
     }
 }

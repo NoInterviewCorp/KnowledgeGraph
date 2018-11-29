@@ -12,7 +12,7 @@ namespace KnowledgeGraph.Services {
         public List<Question> questions;
         private ConnectionFactory _factory;
         public IConnection connection;
-        public IModel _model;
+        public IModel model;
         public const string ExchangeNme = "KnowldegeGraphExchange";
         public QueueBuilder ()
         {
@@ -23,19 +23,19 @@ namespace KnowledgeGraph.Services {
                 DispatchConsumersAsync = true
             };
             connection = _factory.CreateConnection ();
-            _model = connection.CreateModel ();
-            _model.ExchangeDeclare ("KnowldegeGraphExchange", "topic");
-            _model.QueueDeclare ("Contributer_KnowledgeGraph_LearningPlan", false, false, false, null);
-            _model.QueueDeclare ("Contributer_KnowledgeGraph_Resources", false, false, false, null);
-            _model.QueueDeclare ("Contributer_QuizEngine_Questions", false, false, false, null);
-            _model.QueueDeclare ("QuizEngine_KnowledgeGraph_Query", false, false, false, null);
-            _model.QueueDeclare ("QuizEngine_KnowledgeGraph_QuizUpdate", false, false, false, null);
-            _model.QueueDeclare ("KnowledgeGraph_Contributer_Ids", false, false, false, null);
-            _model.QueueDeclare ("QuizEngine_UserProfile_UserData", false, false, false, null);
-            _model.QueueBind ("Contributer_KnowledgeGraph_LearningPlan", ExchangeNme, "AddLearningPlan");
-            _model.QueueBind ("QuizEngine_KnowledgeGraph", ExchangeNme, "Models.Technology");
-            _model.QueueBind ("KnowledgeGraph_IDs", ExchangeNme, "Models.QuestionId");
-            _model.QueueBind ("Contributer_Questions", ExchangeNme, "Models.Queation");
+            model = connection.CreateModel ();
+            model.ExchangeDeclare ("KnowldegeGraphExchange", "topic");
+            model.QueueDeclare ("Contributer_KnowledgeGraph_LearningPlan", false, false, false, null);
+            model.QueueDeclare ("Contributer_KnowledgeGraph_Resources", false, false, false, null);
+            model.QueueDeclare ("Contributer_QuizEngine_Questions", false, false, false, null);
+            model.QueueDeclare ("QuizEngine_KnowledgeGraph_Query", false, false, false, null);
+            model.QueueDeclare ("QuizEngine_KnowledgeGraph_QuizUpdate", false, false, false, null);
+            model.QueueDeclare ("KnowledgeGraph_Contributer_Ids", false, false, false, null);
+            model.QueueDeclare ("QuizEngine_UserProfile_UserData", false, false, false, null);
+            model.QueueBind ("Contributer_KnowledgeGraph_LearningPlan", ExchangeNme, "AddLearningPlan");
+            model.QueueBind ("QuizEngine_KnowledgeGraph", ExchangeNme, "Models.Technology");
+            model.QueueBind ("KnowledgeGraph_IDs", ExchangeNme, "Models.QuestionId");
+            model.QueueBind ("Contributer_Questions", ExchangeNme, "Models.Queation");
         }
     }
 }

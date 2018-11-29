@@ -21,8 +21,9 @@ namespace KnowledgeGraph.Persistence {
             throw new System.NotImplementedException ();
         }
 
-        public List<int> GetQuestionBatchIds (string username, string technology, List<string> concepts) {
-            List<int> Ids = new List<int> ();
+        public Dictionary<string, List<string>> GetQuestionBatchIds (string username, string technology, List<string> concepts) {
+            List<string> Ids = new List<string> ();
+            Dictionary<string, List<string>> mappedids = new Dictionary<string, List<string>> ();
             var data = graphclient.graph.Cypher
                 .Match ("(u:User{username:{user}})-[:HAS_ACCUMULATED_KNOWLEDGE_ON ]-(tech:Technology{{tech}})-[:ON]-(c:Concept)")
                 .WithParams (new {
@@ -54,6 +55,7 @@ namespace KnowledgeGraph.Persistence {
                             .Results
                             .ToList ();
                         Ids.AddRange (tempids);
+                        mappedids.Add (tempdata.Name, Ids);
                         break;
                     default:
                         var tempid = graphclient.graph.Cypher
@@ -65,14 +67,15 @@ namespace KnowledgeGraph.Persistence {
                             .Results
                             .ToList ();
                         Ids.AddRange (tempid);
+                        mappedids.Add (tempdata.Name, Ids);
                         break;
                 }
             }
-            return Ids;
+            return mappedids;
         }
 
-        public List<int> GetQuestionIds (string username, string technology, string concept) {
-            List<int> Ids = new List<int> ();
+        public Dictionary<string, List<string>> GetQuestionIds (string username, string technology, string concept) {
+           Dictionary<string, List<string>> Ids = new Dictionary<string, List<string>> ();
             var tempid = graphclient.graph.Cypher
                 .Match ("(q:Question{bloom:1)-[:EVALUATES]-(c:Concept{name:{name}})")
                 .WithParams (new {
@@ -81,7 +84,7 @@ namespace KnowledgeGraph.Persistence {
                 .Return (q => q.As<Question> ().Id)
                 .Results
                 .ToList ();
-            Ids.AddRange(tempid);
+            Ids.Add(concept,tempid);
             return Ids;
         }
     }
