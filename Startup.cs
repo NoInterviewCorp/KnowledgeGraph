@@ -39,13 +39,13 @@ namespace KnowledgeGraph
             services.AddSingleton<QueueBuilder>();
             services.AddSingleton<QueueHandler>();
             services.AddSingleton<GraphDbConnection>();
-            var serviceProvider = services.BuildServiceProvider();
-            QueueHandler singleton = serviceProvider.GetService<QueueHandler>();
+            // var serviceProvider = services.BuildServiceProvider();
+            // QueueHandler singleton = serviceProvider.GetService<QueueHandler>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,QueueHandler queueHandler)
         {
             if (env.IsDevelopment())
             {

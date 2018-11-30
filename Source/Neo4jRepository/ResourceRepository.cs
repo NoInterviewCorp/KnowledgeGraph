@@ -93,7 +93,7 @@ namespace KnowledgeGraph.Database
                            .With($"t{h}{i}")
                            .Match("(con:Concept)")
                            .Where((ConceptWrapper con) => con.Name == concept.Name)
-                           .Merge($"(con)-[:BELONGS_TO]->(t{h}{i})")
+                           .Merge($"(con)<-[:COMPOSED_OF]-(t{h}{i})")
                            .WithParams((conceptParamsObj["techParamsObj" + h + i] as IDictionary<string, Object>));
                 }
             }
@@ -183,7 +183,7 @@ namespace KnowledgeGraph.Database
                 );
                 resource.Technologies = new List<TechnologyWrapper>(
                         await graph.Cypher
-                    .Match("(r:Resource)-[:EXPLAINS]->(:Concept)-[:BELONGS_TO]->(t:Technology)")
+                    .Match("(r:Resource)-[:EXPLAINS]->(:Concept)<-[:COMPOSED_OF]-(t:Technology)")
                     .Where((ResourceWrapper r) => r.ResourceId == resource.ResourceId)
                     .ReturnDistinct(t => t.As<TechnologyWrapper>())
                     .ResultsAsync
@@ -196,7 +196,7 @@ namespace KnowledgeGraph.Database
         {
             text = text.ToUpper();
             var query = graph.Cypher
-                    .Match("(r:Resource)-[:EXPLAINS]->(:Concept)-[:BELONGS_TO]->(t:Technology)")
+                    .Match("(r:Resource)-[:EXPLAINS]->(:Concept)<-[:COMPOSED_OF]-(t:Technology)")
                     .Where("t.Name CONTAINS {text}")
                     .WithParams(new
                     {
@@ -218,7 +218,7 @@ namespace KnowledgeGraph.Database
                 );
                 resource.Technologies = new List<TechnologyWrapper>(
                         await graph.Cypher
-                    .Match("(r:Resource)-[:EXPLAINS]->(:Concept)-[:BELONGS_TO]->(t:Technology)")
+                    .Match("(r:Resource)-[:EXPLAINS]->(:Concept)<-[:COMPOSED_OF]-(t:Technology)")
                     .Where((ResourceWrapper r) => r.ResourceId == resource.ResourceId)
                     .ReturnDistinct(t => t.As<TechnologyWrapper>())
                     .ResultsAsync
