@@ -68,7 +68,7 @@ namespace KnowledgeGraph.Services
                 await Task.Yield();
             };
             Console.WriteLine("Consuming from Contributor's Knowledge Graph");
-            channel.BasicConsume("Contributer_KnowledgeGraph_Resource", false, consumer);
+            channel.BasicConsume("Contributer_KnowledgeGraph_Resources", false, consumer);
         }
 
         public void QuizEngineQueueHandler()

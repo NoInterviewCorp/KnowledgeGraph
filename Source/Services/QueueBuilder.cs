@@ -21,7 +21,7 @@ namespace KnowledgeGraph.Services
         {
             _factory = new ConnectionFactory
             {
-                HostName = "localhost",
+                HostName = "rabbitmq",
                 // VirtualHost= "queue-service",
                 UserName = "achausername",
                 Password = "strongpassword",
