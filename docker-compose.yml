@@ -4,7 +4,7 @@ services:
         ports:
             - "5003:5003"
         network_mode: host
-        depends_on:
+        links:
             - neo4j
             # - rabbitmq
     neo4j:
