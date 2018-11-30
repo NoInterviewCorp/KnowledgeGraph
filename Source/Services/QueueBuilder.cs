@@ -29,16 +29,16 @@ namespace KnowledgeGraph.Services
             };
             connection = _factory.CreateConnection();
             Model = connection.CreateModel();
-        /*    Model.ExchangeDeclare("KnowldegeGraphExchange", "topic");
+            Model.ExchangeDeclare("KnowldegeGraphExchange", "topic");
             Model.QueueDeclare("Contributer_KnowledgeGraph_LearningPlan", false, false, false, null);
             Model.QueueDeclare("Contributer_KnowledgeGraph_Resources", false, false, false, null);
             Model.QueueDeclare("Contributer_QuizEngine_Questions", false, false, false, null);
             Model.QueueDeclare("KnowledgeGraph_Contributer_Ids", false, false, false, null);
             // remove routing keys
             Model.QueueBind("Contributer_KnowledgeGraph_LearningPlan", ExchangeNme, "Models.LearningPlan");
-            Model.QueueBind("Contributer_KnowledgeGraph_Resource", ExchangeNme, "Models.Resource");
+            Model.QueueBind("Contributer_KnowledgeGraph_Resources", ExchangeNme, "Models.Resource");
             Model.QueueBind("Contributer_QuizEngine_Questions", ExchangeNme, "Send.Question");
-            Model.QueueBind("KnowledgeGraph_Contributer_Ids", ExchangeNme, "Request.Question"); */
+            Model.QueueBind("KnowledgeGraph_Contributer_Ids", ExchangeNme, "Request.Question");
         }
         public void GetQuestions(byte[] message, string RoutingKey)
         {
