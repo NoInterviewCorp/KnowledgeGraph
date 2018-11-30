@@ -31,6 +31,8 @@ namespace KnowledgeGraph
                 options =>
                 {
                     options.ConnectionString = Configuration.GetSection("Neo4j:ConnectionString").Value;
+                    options.Container = Configuration.GetSection("Neo4j:Container").Value;
+                    options.IsDockerized = Configuration["DOTNET_RUNNING_IN_CONTAINER"] != null;
                     options.UserId = Configuration.GetSection("Neo4j:UserId").Value;
                     options.Password = Configuration.GetSection("Neo4j:Password").Value;
                 }
