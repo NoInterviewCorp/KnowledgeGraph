@@ -9,8 +9,14 @@ namespace KnowledgeGraph.Services {
         public GraphDbConnection (IOptions<Neo4jSettings> options) {
             var data = options.Value;
             // boltGraphClient = new BoltGraphClient(new Uri("localhost:7687"), "neo4j", "asdfgh12345");
-            graph = new GraphClient (new Uri (data.ConnectionString), data.UserId, data.Password);
-            graph.Connect();
+            try{graph = new GraphClient (new Uri (data.ConnectionString), data.UserId, data.Password);
+            graph.Connect();}
+	    catch(Exception e){
+	     	Console.WriteLine("-------------------------------------------------------------------------");
+		Console.WriteLine(e.Message);
+		Console.WriteLine(e.StackTrace);
+		Console.WriteLine("-------------------------------------------------------------------------");
+	    }
         }
 
         public void Dispose () {

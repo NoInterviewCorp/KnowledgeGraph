@@ -26,7 +26,7 @@ namespace KnowledgeGraph.Services
             graphfunctions = _graphfunctions;
             this.HandleLearningPlanFromQueue();
             this.HandleResourceFromQueue();
-            this.QuizEngineQueueHandler();
+          //  this.QuizEngineQueueHandler();
         }
 
         public void HandleLearningPlanFromQueue()
