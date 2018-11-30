@@ -3,6 +3,7 @@ services:
         build: .
         ports:
             - "5003:5003"
+        network_mode: host
         depends_on:
             - neo4j
             # - rabbitmq
@@ -11,12 +12,13 @@ services:
         ports:
             - "17474:7474"
             - "17687:7687"
+        network_mode: host
         environment:
             - NEO4J_AUTH=neo4j/qwertyuiop
             - NEO4J_dbms_connector_http_listen__address=:7474
             # - NEO4J_dbms_connector_https_listen__address=:6477
             - NEO4J_dbms_connector_bolt_listen__address=:7687
-version: "3"
+version: "2"
     # rabbitmq:
     #     image: rabbitmq:latest
     #     ports:

@@ -21,7 +21,7 @@ namespace KnowledgeGraph.Services
         {
             _factory = new ConnectionFactory
             {
-                HostName = "172.23.238.173",
+                HostName = "localhost",
                 // VirtualHost= "queue-service",
                 UserName = "achausername",
                 Password = "strongpassword",
