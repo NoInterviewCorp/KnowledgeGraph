@@ -7,7 +7,7 @@ COPY *.csproj ./
 COPY . ./
 RUN ["dotnet", "restore"]
 RUN ["dotnet", "build"]
-EXPOSE 5000 
+EXPOSE 5003 
 CMD ["dotnet","run"]
 # Build runtime image
 # FROM microsoft/dotnet:aspnetcore-runtime
