@@ -22,7 +22,6 @@ namespace KnowledgeGraph.Services
             _factory = new ConnectionFactory
             {
                 HostName = "rabbitmq",
-                // VirtualHost= "queue-service",
                 UserName = "achausername",
                 Password = "strongpassword",
                 DispatchConsumersAsync = true
@@ -39,28 +38,6 @@ namespace KnowledgeGraph.Services
             Model.QueueBind("Contributer_KnowledgeGraph_Resources", ExchangeNme, "Models.Resource");
             Model.QueueBind("Contributer_QuizEngine_Questions", ExchangeNme, "Send.Question");
             Model.QueueBind("KnowledgeGraph_Contributer_Ids", ExchangeNme, "Request.Question");
-        }
-        public void GetQuestions(byte[] message, string RoutingKey)
-        {
-            IBasicProperties props = Model.CreateBasicProperties();
-            props.Expiration = "10000";
-            Model.BasicPublish(ExchangeNme, RoutingKey, props, message);
-        }
-        public void FetchQuestions()
-        {
-            var channel = connection.CreateModel();
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.Received += async (model, ea) =>
-            {
-                var body = ea.Body;
-                var json = Encoding.Default.GetString(body);
-                questions.Clear();
-                questions.AddRange(JsonConvert.DeserializeObject<List<Question>>(json));
-                var routingKey = ea.RoutingKey;
-                Console.WriteLine(" - Routing Key <{0}>", routingKey);
-                channel.BasicAck(ea.DeliveryTag, false);
-                await Task.Yield();
-            };
         }
     }
 }
