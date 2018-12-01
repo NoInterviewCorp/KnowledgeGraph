@@ -18,6 +18,9 @@ services:
       - NEO4J_dbms_connector_bolt_listen__address=:7687
   rabbitmq:
     image: rabbitmq:3.7-management-alpine
+    ports: 
+      - "0.0.0.0:15672:15672"
+      - "0.0.0.0:5672:5672"
     environment:
       - RABBITMQ_DEFAULT_USER=achausername
       - RABBITMQ_DEFAULT_PASS=strongpassword
