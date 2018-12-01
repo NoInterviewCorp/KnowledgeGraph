@@ -7,6 +7,7 @@ namespace My_Profile
     {
         public static void Main(string[] args)
         {
+            
             CreateWebHostBuilder(args).Build().Run();
         }
 

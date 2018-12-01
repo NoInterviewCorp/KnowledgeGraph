@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using System.IO;
-using Microsoft.AspNetCore.Http;
-using System;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using MongoDB.Bson;
+using System.Threading.Tasks;
+using My_Profile.Services;
+using Microsoft.AspNetCore.Mvc;
+using RabbitMQ.Client;
 
 namespace My_Profile.Controllers
 {
@@ -13,121 +12,60 @@ namespace My_Profile.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
-        public ValuesController(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
+        // QueueBuilder queue;
+        // QueueHandler handler;
+        // GraphDbConnection graph;
+        // ,
+        // public ValuesController( GraphDbConnection graph,QueueHandler _handler, QueueBuilder _queue)
+        // {
+            // handler = _handler;
+            // queue = _queue;
+            // this.graph = graph;
+        // }
         // GET api/values
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
-            var user = await _userRepository.GetAllUsers();
-            if (user == null)
-            {
-                return NotFound("Null database");
-            }
-            else
-            {
-
-                return Ok(user);
-            }
-
+            return Ok();
         }
-        // GET: api/values/id
-        [HttpGet("{_id}")]
-        public async Task<IActionResult> Get(string _id)
+
+        // GET api/values/5
+        [HttpGet("{id}")]
+        public ActionResult<string> Get(int id)
         {
-            ObjectId id = new ObjectId(_id);
-            var user = await _userRepository.GetUser(id);
-            if (user == null)
-                return NotFound("user with this id not found");
-            return Ok(user);
+            return "value";
         }
-        // POST: api/values
+
+        // POST api/values
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]User user)
+      /*   public async Task<IActionResult> PostAsync([FromBody] LearningPlanWrapper lp)
         {
-            if (ModelState.IsValid)
-            {
-                bool result = await _userRepository.PostNote(user);
-                if (!result)
-                {
-                    await _userRepository.Create(user);
-                    return Ok(user);
-                }
-                else
-                {
-                    return BadRequest("Note already exists, please try again.");
-                }
-            }
-            return BadRequest("Invalid Format");
-
+            // var channel = queue.connection.CreateModel();
+            // channel.BasicPublish("KnowldegeGraphExchange", "Models.LearningPlan", null, lp.Serialize());
+            var repo = new GraphFunctions(graph);
+            var result = await repo.CreateLearningPlanAndRelationshipsAsync(lp);
+            return Ok(result);
         }
 
-
-
-        [HttpPost("UploadsProfilePic")]
-        public async Task<IActionResult> UploadsProfilePic(IFormFileCollection files)
+        // PUT api/values/5
+        [HttpPut()]
+        public async Task<IActionResult> Put([FromBody] ResourceWrapper value)
         {
 
-            long size = files.Sum(f => f.Length);
-            try
+            var repo = new ResourceRepository(graph);
+            var result = await repo.AddResourceAsync(value);
+            if (result == null)
             {
-                foreach (var formFile in files)
-                {
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "./wwwroot/image", formFile.FileName);
-                    var stream = new FileStream(filePath, FileMode.Create);
-                    await formFile.CopyToAsync(stream);
-
-
-                }
-                return Ok(new { count = files.Count });
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-
-        }
-        // PUT: api/values/5
-        [HttpPut("{_id}")]
-        public async Task<IActionResult> Put(string _id, [FromBody]User user)
-        {
-            ObjectId id = new ObjectId(_id);
-            if (ModelState.IsValid)
-            {
-                bool result = await _userRepository.FindNote(id);
-                if (result)
-                {
-                    await _userRepository.Update(user);
-                    return Ok(user);
-                }
-                else
-                {
-                    return BadRequest("Note already exists, please try again.");
-                }
-            }
-            return BadRequest("Invalid Format");
-        }
-        // DELETE: api/values/5
-        [HttpDelete("{_id}")]
-        public async Task<IActionResult> Delete(string _id)
-        {
-            ObjectId id = new ObjectId(_id);
-
-            bool result = await _userRepository.FindNote(id);
-            if (result)
-            {
-                await _userRepository.Delete(id);
-                return Ok($"note with id : {id} deleted succesfully");
+                return BadRequest();
             }
             else
             {
-                return NotFound($"Note with {id} not found.");
+                return Ok(result);
             }
-
         }
+*/
+        // DELETE api/values/5
+        [HttpDelete("{id}")]
+        public void Delete(int id) { }
     }
 }

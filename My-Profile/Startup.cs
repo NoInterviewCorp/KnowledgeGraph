@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using My_Profile.Services;
 using Swashbuckle.AspNetCore.Swagger;
+using My_Profile.Persistence;
+
 namespace My_Profile
 {
     public class Startup
@@ -20,14 +23,19 @@ namespace My_Profile
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddCors();
-            services.AddTransient<IUserContext, UserContext>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.Configure<Settings>(
-            options =>
-           {
-            options.ConnectionString = Configuration.GetSection("MongoDb:ConnectionString").Value;
-            options.Database = Configuration.GetSection("MongoDb:Database").Value;
-           });
+            // services.AddSingleton<RabbitMQConnection>();
+            services.AddSingleton<QueueBuilder>();
+            services.AddSingleton<QueueHandler>();
+            services.AddSingleton<IGraphFunctions, GraphFunctions>();
+             services.AddSingleton<GraphDbConnection>();
+            // services.AddTransient<IUserContext, UserContext>();
+            // services.AddTransient<IUserRepository, UserRepository>();
+            // services.Configure<Settings>(
+            // options =>
+        //    {
+            // options.ConnectionString = Configuration.GetSection("MongoDb:ConnectionString").Value;
+            // options.Database = Configuration.GetSection("MongoDb:Database").Value;
+        //    });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My_Profile", Version = "v1" });
@@ -36,7 +44,7 @@ namespace My_Profile
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, QueueHandler queueHandler)
         {
             if (env.IsDevelopment())
             {
