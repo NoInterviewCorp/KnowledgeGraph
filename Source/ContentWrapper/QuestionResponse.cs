@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace KnowledgeGraph.RabbitMQModels
 {
-    public class QuestionIdsResponseModel
+    public class QuestionIdsResponse
     {
         public string username { get; set; } 
         public Dictionary<string,List<string>> questionids;
-        public QuestionIdsResponseModel(string _username)
+        public QuestionIdsResponse(string _username)
         {
             username = _username;
             questionids.Clear();

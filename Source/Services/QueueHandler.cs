@@ -12,9 +12,11 @@ namespace KnowledgeGraph.Services {
         public QueueBuilder queues;
         private LearningPlan learningPlan;
         private QuestionBatchRequest batch_query;
-        private QuestionRequest concept_query;
+        private QuestionRequest question_query;
+        private ConceptRequest concept_query;
+        private ConceptResponse concept_list;
         private IGraphFunctions graphfunctions;
-        private QuestionIdsResponseModel questionidlist;
+        private QuestionIdsResponse questionidlist;
         private QuestionBatchResponse questionidbatchlist;
         public QueueHandler (QueueBuilder _queues, IGraphFunctions _graphfunctions) {
             queues = _queues;
@@ -63,11 +65,29 @@ namespace KnowledgeGraph.Services {
             consumer.Received += async (model, ea) => {
                 Console.WriteLine ("Recieved Request for Questions");
                 var body = ea.Body;
-                concept_query = (QuestionRequest) body.DeSerialize (typeof (QuestionRequest));
-                this.questionidlist = new QuestionIdsResponseModel (batch_query.username);
-                this.questionidlist.questionids = (graphfunctions.GetQuestionIds (concept_query.username, concept_query.tech, concept_query.concept));
+                question_query = (QuestionRequest) body.DeSerialize (typeof (QuestionRequest));
+                this.questionidlist = new QuestionIdsResponse (batch_query.username);
+                this.questionidlist.questionids = (graphfunctions.GetQuestionIds (question_query.username, question_query.tech, question_query.concept));
                 channel.BasicAck (ea.DeliveryTag, false);
                 channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.questionidlist.Serialize ());
+                var routingKey = ea.RoutingKey;
+                Console.WriteLine (" - Routing Key <{0}>", routingKey);
+                Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
+                await Task.Yield ();
+            };
+            channel.BasicConsume ("QuizEngine_KnowledgeGraph", false, consumer);
+        }
+        public void ConceptRequestHandler () {
+            var channel = queues.connection.CreateModel ();
+            var consumer = new AsyncEventingBasicConsumer (channel);
+            consumer.Received += async (model, ea) => {
+                Console.WriteLine ("Recieved Request for Concepts");
+                var body = ea.Body;
+                concept_query = (ConceptRequest) body.DeSerialize (typeof (ConceptRequest));
+                this.concept_list = new ConceptResponse(concept_query.username);
+                this.concept_list.concepts.AddRange (graphfunctions.GetConceptFromTechnology(concept_query.tech));
+                channel.BasicAck (ea.DeliveryTag, false);
+                channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.concept_list.Serialize ());
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine (" - Routing Key <{0}>", routingKey);
                 Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);

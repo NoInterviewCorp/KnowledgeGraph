@@ -6,8 +6,7 @@ namespace KnowledgeGraph.Services {
         public IGraphClient graph{ get; }
         public IBoltGraphClient boltGraphClient { get; set; }
         public GraphDbConnection () {
-            boltGraphClient = new BoltGraphClient(new Uri("localhost:7687"), "neo4j", "asdfgh12345");
-            graph = new GraphClient (new Uri ("http://localhost:7474/db/data"), "neo4j", "asdfgh12345");
+            graph = new GraphClient (new Uri ("http://localhost:7474/db/data"), "neo4j", "qwertyuiop");
             graph.Connect();
         }
 
