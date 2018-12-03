@@ -79,10 +79,9 @@ namespace My_Profile.Persistence
                     id = resourceFeedBack.ResourceId,
                     // rating=
                 })
-                .Return<float>("Re.AvgRating)")
-                // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
+                .Return<float>("(Re.AvgRating)")
                 .ResultsAsync);
-                 Console.WriteLine("heeh");
+                 Console.WriteLine("rated resource");
            // return Ok(new List<float>(Re_queryAvg)[0]);
         }
         public async Task SubscribeLearningPlanAndRelationshipsAsync(LearningPlanFeedBack learningPlanFeedback)
@@ -132,7 +131,7 @@ namespace My_Profile.Persistence
                 .Merge("(user)-[g:Subscribe_LP]->(lp)")
                 .Delete("g")
                 .ExecuteWithoutResultsAsync();
-            var totalsubscriber = await graph.Cypher
+            var totalsubscriber = new List<int>(await graph.Cypher
                .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
                 // .Match((GiveStarPayload sub)=>sub.Subscribe==1)
                 .With("lp,  count(g.Subscribe) as total_subscriber ")
@@ -144,7 +143,8 @@ namespace My_Profile.Persistence
                 })
                .Return<int>("lp.Subscriber")
                 // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
-                .ResultsAsync;
+                .ResultsAsync);
+                Console.WriteLine("unsubscribed");
             //return Ok(new List<int>(totalsubscriber)[0]);
         }
         public async Task ReportQuestionAndRelationshipsAsync(QuestionFeedBack questionFeedBack)
@@ -166,7 +166,7 @@ namespace My_Profile.Persistence
                     QuestionReport
                 })
                 .ExecuteWithoutResultsAsync();
-            var totalReport = await graph.Cypher
+            var totalReport = new List<int>(await graph.Cypher
                .Match("(:User)-[g:Report_Question]->(qe:Question {QuestionId:{id}})")
                 // .Match((GiveStarPayload sub)=>sub.Subscribe==1)
                 .With("qe,  count(g.ambigous) as total_ambiguity ")
@@ -178,7 +178,8 @@ namespace My_Profile.Persistence
                 })
                .Return<int>("qe.Total_Ambiguity")
                 // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
-                .ResultsAsync;
+                .ResultsAsync);
+                Console.WriteLine("ques is ambigius");
            // return Ok(new List<int>(totalReport)[0]);
         }
         

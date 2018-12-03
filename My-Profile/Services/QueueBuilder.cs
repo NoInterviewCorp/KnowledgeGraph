@@ -33,8 +33,8 @@ namespace My_Profile.Services
                 // HostName = "172.23.238.173",
                 HostName = "localhost",
                 // Port = 8080,
-                // UserName = "achausername",
-                // Password = "strongpassword",
+               //  UserName = "achausername",
+               //  Password = "strongpassword",
                 DispatchConsumersAsync = true
             };
 

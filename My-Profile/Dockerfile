@@ -5,12 +5,9 @@ WORKDIR /app
 # COPY *.csproj ./
 # Copy everything else and build
 # COPY . ./
+RUN chmod +x ./wait-for-it.sh
+RUN chmod +x ./entrypoint.sh
 RUN ["dotnet", "restore"]
 RUN ["dotnet", "build"] 
-EXPOSE 5000
-# Build runtime image
-# FROM microsoft/dotnet:aspnetcore-runtime
-# WORKDIR /app
-# COPY --from=build-env /app/out .
-# ENTRYPOINT ["dotnet", "module_sme.dll"]
-CMD ["dotnet","run"]
+EXPOSE 5005
+CMD /bin/bash ./entrypoint.sh

@@ -134,7 +134,7 @@ namespace My_Profile.Services
             };
 
             Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            channel.BasicConsume("Profile_KnowledgeGraph_ResourceFeedBack", false, consumer);
 
         }
         public void ListenForLeaningPlanSubscriber()
@@ -252,7 +252,7 @@ namespace My_Profile.Services
             };
 
             Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            channel.BasicConsume("Profile_KnowledgeGraph_QuestionFeedBack", false, consumer);
         }
 
     }

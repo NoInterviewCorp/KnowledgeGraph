@@ -1,0 +1,19 @@
+version: "3.5"
+services:
+  knowledge-graph:
+    build: .
+    depends_on:
+      - neo4j
+    networks:
+      - potentiometer-network
+  neo4j:
+    image: neo4j:latest
+    environment:
+      - NEO4J_AUTH=neo4j/Vfunny@123
+      - NEO4J_dbms_connector_http_listen__address=:11008
+      - NEO4J_dbms_connector_bolt_listen__address=:11007
+    networks:
+      - potentiometer-network
+networks:
+    potentiometer-network:
+        name: potentiometer-network
