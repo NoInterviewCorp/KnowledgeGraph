@@ -1,26 +1,19 @@
-version: "2"
+version: "3.5"
 services:
   knowledge-graph:
     build: .
-    ports:
-      - "5003:5003"
     depends_on:
       - neo4j
-      - rabbitmq
+    networks:
+      - potentiometer-network
   neo4j:
     image: neo4j:latest
-    ports:
-      - "17474:7474"
-      - "17687:7687"
     environment:
       - NEO4J_AUTH=neo4j/qwertyuiop
       - NEO4J_dbms_connector_http_listen__address=:7474
       - NEO4J_dbms_connector_bolt_listen__address=:7687
-  rabbitmq:
-    image: rabbitmq:3.7-management-alpine
-    ports: 
-      - "0.0.0.0:15672:15672"
-      - "0.0.0.0:5672:5672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=achausername
-      - RABBITMQ_DEFAULT_PASS=strongpassword
+    networks:
+      - potentiometer-network
+networks:
+    potentiometer-network:
+        name: potentiometer-network
