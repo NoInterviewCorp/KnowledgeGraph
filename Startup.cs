@@ -1,4 +1,5 @@
-﻿using KnowledgeGraph.Database.Persistence;
+﻿using System;
+using KnowledgeGraph.Database.Persistence;
 using KnowledgeGraph.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,14 +29,15 @@ namespace KnowledgeGraph
                     options.IsDockerized = Configuration["DOTNET_RUNNING_IN_CONTAINER"] != null;
                     options.UserId = Configuration.GetSection("Neo4j:UserId").Value;
                     options.Password = Configuration.GetSection("Neo4j:Password").Value;
+                    Console.WriteLine("-------------------------------------------------------");
+                    Console.WriteLine(options.ConnectionString);
+                    Console.WriteLine("-------------------------------------------------------");
                 }
             );
             services.AddSingleton<IGraphFunctions, GraphFunctions>();
             services.AddSingleton<QueueBuilder>();
             services.AddSingleton<QueueHandler>();
             services.AddSingleton<GraphDbConnection>();
-            // var serviceProvider = services.BuildServiceProvider();
-            // QueueHandler singleton = serviceProvider.GetService<QueueHandler>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -50,8 +52,6 @@ namespace KnowledgeGraph
             {
                 app.UseHsts();
             }
-
-            // app.UseHttpsRedirection ();
             app.UseMvc();
         }
     }
