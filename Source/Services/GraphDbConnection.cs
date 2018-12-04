@@ -1,35 +1,16 @@
 using System;
-using Microsoft.Extensions.Options;
 using Neo4jClient;
 
-namespace KnowledgeGraph.Services
-{
-    public class GraphDbConnection : IDisposable
-    {
-        public IGraphClient graph { get; }
-        public GraphDbConnection(IOptions<Neo4jSettings> options)
-        {
-            var data = options.Value;
-            try
-            {
-                graph = new GraphClient(
-                        new Uri(data.ConnectionString),
-                        data.UserId,
-                        data.Password
-                    );
-                graph.Connect();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("-------------------------------------------------------------------------");
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
-                Console.WriteLine("-------------------------------------------------------------------------");
-            }
+namespace KnowledgeGraph.Services {
+    public class GraphDbConnection : IDisposable {
+        public IGraphClient graph{ get; }
+        public IBoltGraphClient boltGraphClient { get; set; }
+        public GraphDbConnection () {
+            graph = new GraphClient (new Uri ("http://localhost:7474/db/data"), "neo4j", "qwertyuiop");
+            graph.Connect();
         }
 
-        public void Dispose()
-        {
+        public void Dispose () {
             graph.Dispose();
         }
     }

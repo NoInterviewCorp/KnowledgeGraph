@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using KnowledgeGraph.Database;
-using KnowledgeGraph.Database.Models;
-using KnowledgeGraph.Database.Persistence;
-using KnowledgeGraph.Services;
 using Microsoft.AspNetCore.Mvc;
-using RabbitMQ.Client;
 
 namespace KnowledgeGraph.Controllers
 {

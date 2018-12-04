@@ -1,4 +1,4 @@
-namespace KnowledgeGraph.Database.Models
+namespace KnowledgeGraph.Models
 {
     public class Option
     {

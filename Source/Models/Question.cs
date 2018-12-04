@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 
-namespace KnowledgeGraph.Database.Models
+namespace KnowledgeGraph.Models
 {
     public class Question
     {
-        public int Id {get;set;}
+        public string Id {get;set;}
         public string ProblemStatement{get;set;}
         public List<Option> Options;
     }

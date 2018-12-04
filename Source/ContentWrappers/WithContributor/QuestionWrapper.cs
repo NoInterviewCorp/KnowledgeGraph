@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using KnowledgeGraph.Models;
 
 namespace KnowledgeGraph.Database
 {

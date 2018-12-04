@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace KnowledgeGraph.Database.Models
+namespace KnowledgeGraph.Models
 {
     public class Resource
     {

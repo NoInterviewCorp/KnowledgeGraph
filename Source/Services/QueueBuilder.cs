@@ -1,12 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using KnowledgeGraph.Database.Models;
-using Newtonsoft.Json;
+using KnowledgeGraph.Models;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using RabbitMQ.Client.Framing;
 
 namespace KnowledgeGraph.Services
 {
