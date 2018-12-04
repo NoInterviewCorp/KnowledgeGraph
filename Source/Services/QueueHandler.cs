@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using KnowledeGraph.ContentWrapper;
 using KnowledgeGraph.Database;
 using KnowledgeGraph.Database.Persistence;
 using KnowledgeGraph.Models;
@@ -32,7 +33,7 @@ namespace KnowledgeGraph.Services
             this.HandleLearningPlanFromQueue ();
             this.HandleResourceFromQueue ();
             this.ListenForUser();
-            this.ListenForLeaningPlanFeedBack();
+            this.ListenForLeaningPlanRating();
             this.ListenForResourceFeedBack();
             this.ListenForLeaningPlanSubscriber();
             this.ListenForLeaningPlanUnSubscriber();
@@ -176,7 +177,7 @@ namespace KnowledgeGraph.Services
             Console.WriteLine("Consuming from Profile's Knowledge Graph");
             channel.BasicConsume("Profile_KnowledgeGraph_User", false, consumer);
         }
-        public void ListenForLeaningPlanFeedBack()
+        public void ListenForLeaningPlanRating()
         {
             var channel = queues.connection.CreateModel();
             var consumer = new AsyncEventingBasicConsumer(channel);
@@ -188,8 +189,8 @@ namespace KnowledgeGraph.Services
                 {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var learningPlanFeedBack = (LearningPlanFeedBack)body.DeSerialize(typeof(LearningPlanFeedBack));
-                    await graphfunctions.RatingLearningPlanAndRelationshipsAsync(learningPlanFeedBack);
+                    var learningPlanRatingWrapper = (LearningPlanRatingWrapper)body.DeSerialize(typeof(LearningPlanRatingWrapper));
+                    await graphfunctions.RatingLearningPlanAndRelationshipsAsync(learningPlanRatingWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
                     Console.WriteLine("User Name is {0} ");
@@ -227,8 +228,8 @@ namespace KnowledgeGraph.Services
                 {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var resourceFeedBack = (ResourceFeedBack)body.DeSerialize(typeof(ResourceFeedBack));
-                    await graphfunctions.RatingResourceAndRelationshipsAsync(resourceFeedBack);
+                    var resourceRatingWrapper = (ResourceRatingWrapper)body.DeSerialize(typeof(ResourceRatingWrapper));
+                    await graphfunctions.RatingResourceAndRelationshipsAsync(resourceRatingWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
                     Console.WriteLine("User Name is {0} ");
@@ -267,7 +268,7 @@ namespace KnowledgeGraph.Services
                 {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var learningPlanFeedBack = (LearningPlanFeedBack)body.DeSerialize(typeof(LearningPlanFeedBack));
+                    var learningPlanFeedBack = (LearningPlanSubscriptionWrapper)body.DeSerialize(typeof(LearningPlanSubscriptionWrapper));
                     await graphfunctions.SubscribeLearningPlanAndRelationshipsAsync(learningPlanFeedBack);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
@@ -306,7 +307,7 @@ namespace KnowledgeGraph.Services
                 {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var learningPlanFeedBack = (LearningPlanFeedBack)body.DeSerialize(typeof(LearningPlanFeedBack));
+                    var learningPlanFeedBack = (LearningPlanSubscriptionWrapper)body.DeSerialize(typeof(LearningPlanSubscriptionWrapper));
                     await graphfunctions.UnSubscribeLearningPlanAndRelationshipsAsync(learningPlanFeedBack);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
@@ -345,8 +346,8 @@ namespace KnowledgeGraph.Services
                 {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var questionFeedBack = (QuestionFeedBack)body.DeSerialize(typeof(QuestionFeedBack));
-                    await graphfunctions.ReportQuestionAndRelationshipsAsync(questionFeedBack);
+                    var questionAmbiguityWrapper = (QuestionAmbiguityWrapper)body.DeSerialize(typeof(QuestionAmbiguityWrapper));
+                    await graphfunctions.ReportQuestionAndRelationshipsAsync(questionAmbiguityWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
                     Console.WriteLine("User Name is {0} ");
