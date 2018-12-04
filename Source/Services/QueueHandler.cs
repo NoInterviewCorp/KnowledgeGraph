@@ -5,7 +5,6 @@ using KnowledgeGraph.Database;
 using KnowledgeGraph.Database.Persistence;
 using KnowledgeGraph.Models;
 using KnowledgeGraph.RabbitMQModels;
-// using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -13,12 +12,10 @@ namespace KnowledgeGraph.Services
 {
     public class QueueHandler {
         public QueueBuilder queues;
-        // private LearningPlanWrapper learningPlan;
-        // private ResourceWrapper resource;
         private QuizEngineQuery query;
         private IGraphFunctions graphfunctions;
         private List<int> IDs;
-        private LearningPlan learningPlan;
+        private LearningPlan lgiearningPlan;
         private QuestionBatchRequest batch_query;
         private QuestionRequest question_query;
         private ConceptRequest concept_query;

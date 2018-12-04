@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using KnowledgeGraph.Database;
 using Microsoft.AspNetCore.Mvc;
+using KnowledgeGraph.Models;
 
 namespace KnowledgeGraph.Controllers
 {

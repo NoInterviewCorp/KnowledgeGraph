@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Dynamic;
 using KnowledgeGraph.Services;
+using KnowledgeGraph.Models;
 
 namespace KnowledgeGraph.Database
 {
