@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using KnowledeGraph.ContentWrapper;
 using KnowledgeGraph.Database;
 using KnowledgeGraph.Database.Persistence;
 using KnowledgeGraph.Models;
@@ -8,8 +9,7 @@ using KnowledgeGraph.RabbitMQModels;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace KnowledgeGraph.Services
-{
+namespace KnowledgeGraph.Services {
     public class QueueHandler {
         public QueueBuilder queues;
         private QuizEngineQuery query;
@@ -29,7 +29,7 @@ namespace KnowledgeGraph.Services
             this.HandleLearningPlanFromQueue ();
             this.HandleResourceFromQueue ();
             this.ListenForUser();
-            this.ListenForLeaningPlanFeedBack();
+            this.ListenForLeaningPlanRating();
             this.ListenForResourceFeedBack();
             this.ListenForLeaningPlanSubscriber();
             this.ListenForLeaningPlanUnSubscriber();
@@ -148,32 +148,29 @@ namespace KnowledgeGraph.Services
             };
             channel.BasicConsume ("QuizEngine_KnowledgeGraph_Concepts", false, consumer);
         }
-    public void ListenForUser()
-        {
-            var channel = queues.connection.CreateModel();
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.Received += async (model, ea) =>
-            {
-                Console.WriteLine("Consuming from the queue");
-                Console.WriteLine("-----------------------------------------------------------------------");
+        public void ListenForUser () {
+            var channel = queues.connection.CreateModel ();
+            var consumer = new AsyncEventingBasicConsumer (channel);
+            consumer.Received += async (model, ea) => {
+                Console.WriteLine ("Consuming from the queue");
+                Console.WriteLine ("-----------------------------------------------------------------------");
 
                 var body = ea.Body;
-                  var user = (User)body.DeSerialize(typeof(User));
-               // var message = Encoding.UTF8.GetString(body);
-               // var user = JsonConvert.DeserializeObject<User>(message);
-                Console.WriteLine("User Name is {0} " + user.FullName);
+                var user = (User) body.DeSerialize (typeof (User));
+                // var message = Encoding.UTF8.GetString(body);
+                // var user = JsonConvert.DeserializeObject<User>(message);
+                Console.WriteLine ("User Name is {0} " + user.FullName);
                 var routingKey = ea.RoutingKey;
-                channel.BasicAck(ea.DeliveryTag, false);
-                Console.WriteLine("-----------------------------------------------------------------------");
-                Console.WriteLine(" - Routing Key <{0}>", routingKey);
-                await Task.Yield();
-
+                channel.BasicAck (ea.DeliveryTag, false);
+                Console.WriteLine ("-----------------------------------------------------------------------");
+                Console.WriteLine (" - Routing Key <{0}>", routingKey);
+                await Task.Yield ();
 
             };
-            Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_User", false, consumer);
+            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume ("Profile_KnowledgeGraph_User", false, consumer);
         }
-        public void ListenForLeaningPlanFeedBack()
+        public void ListenForLeaningPlanRating()
         {
             var channel = queues.connection.CreateModel();
             var consumer = new AsyncEventingBasicConsumer(channel);
@@ -185,189 +182,167 @@ namespace KnowledgeGraph.Services
                 {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var learningPlanFeedBack = (LearningPlanFeedBack)body.DeSerialize(typeof(LearningPlanFeedBack));
-                    await graphfunctions.RatingLearningPlanAndRelationshipsAsync(learningPlanFeedBack);
+                    var learningPlanRatingWrapper = (LearningPlanRatingWrapper)body.DeSerialize(typeof(LearningPlanRatingWrapper));
+                    await graphfunctions.RatingLearningPlanAndRelationshipsAsync(learningPlanRatingWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
-                    Console.WriteLine("User Name is {0} ");
+                    Console.WriteLine ("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
-                    channel.BasicAck(ea.DeliveryTag, false);
-                    Console.WriteLine("-----------------------------------------------------------------------");
-                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
-                    await Task.Yield();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
+                    channel.BasicAck (ea.DeliveryTag, false);
+                    Console.WriteLine ("-----------------------------------------------------------------------");
+                    Console.WriteLine (" - Routing Key <{0}>", routingKey);
+                    await Task.Yield ();
+                } catch (Exception e) {
+                    Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
+                    Console.WriteLine (e.Message);
+                    Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
+                    Console.WriteLine (e.StackTrace);
+                    Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
+                    Console.WriteLine (e.InnerException);
                     // return null;
                 }
 
             };
 
-            Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
         }
-        public void ListenForResourceFeedBack()
-        {
-            var channel = queues.connection.CreateModel();
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.Received += async (model, ea) =>
-            {
-                Console.WriteLine("Consuming from the queue");
-                Console.WriteLine("-----------------------------------------------------------------------");
-                try
-                {
+        public void ListenForResourceFeedBack () {
+            var channel = queues.connection.CreateModel ();
+            var consumer = new AsyncEventingBasicConsumer (channel);
+            consumer.Received += async (model, ea) => {
+                Console.WriteLine ("Consuming from the queue");
+                Console.WriteLine ("-----------------------------------------------------------------------");
+                try {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var resourceFeedBack = (ResourceFeedBack)body.DeSerialize(typeof(ResourceFeedBack));
-                    await graphfunctions.RatingResourceAndRelationshipsAsync(resourceFeedBack);
+                    var resourceRatingWrapper = (ResourceRatingWrapper)body.DeSerialize(typeof(ResourceRatingWrapper));
+                    await graphfunctions.RatingResourceAndRelationshipsAsync(resourceRatingWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
-                    Console.WriteLine("User Name is {0} ");
+                    Console.WriteLine ("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
-                    channel.BasicAck(ea.DeliveryTag, false);
-                    Console.WriteLine("-----------------------------------------------------------------------");
-                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
-                    await Task.Yield();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
+                    channel.BasicAck (ea.DeliveryTag, false);
+                    Console.WriteLine ("-----------------------------------------------------------------------");
+                    Console.WriteLine (" - Routing Key <{0}>", routingKey);
+                    await Task.Yield ();
+                } catch (Exception e) {
+                    Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
+                    Console.WriteLine (e.Message);
+                    Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
+                    Console.WriteLine (e.StackTrace);
+                    Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
+                    Console.WriteLine (e.InnerException);
                     // return null;
                 }
 
             };
 
-            Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_ResourceFeedBack", false, consumer);
+            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume ("Profile_KnowledgeGraph_ResourceFeedBack", false, consumer);
 
         }
-        public void ListenForLeaningPlanSubscriber()
-        {
-            var channel = queues.connection.CreateModel();
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.Received += async (model, ea) =>
-            {
-                Console.WriteLine("Consuming from the queue");
-                Console.WriteLine("-----------------------------------------------------------------------");
-                try
-                {
+        public void ListenForLeaningPlanSubscriber () {
+            var channel = queues.connection.CreateModel ();
+            var consumer = new AsyncEventingBasicConsumer (channel);
+            consumer.Received += async (model, ea) => {
+                Console.WriteLine ("Consuming from the queue");
+                Console.WriteLine ("-----------------------------------------------------------------------");
+                try {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var learningPlanFeedBack = (LearningPlanFeedBack)body.DeSerialize(typeof(LearningPlanFeedBack));
+                    var learningPlanFeedBack = (LearningPlanSubscriptionWrapper)body.DeSerialize(typeof(LearningPlanSubscriptionWrapper));
                     await graphfunctions.SubscribeLearningPlanAndRelationshipsAsync(learningPlanFeedBack);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
-                    Console.WriteLine("User Name is {0} ");
+                    Console.WriteLine ("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
-                    channel.BasicAck(ea.DeliveryTag, false);
-                    Console.WriteLine("-----------------------------------------------------------------------");
-                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
-                    await Task.Yield();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
+                    channel.BasicAck (ea.DeliveryTag, false);
+                    Console.WriteLine ("-----------------------------------------------------------------------");
+                    Console.WriteLine (" - Routing Key <{0}>", routingKey);
+                    await Task.Yield ();
+                } catch (Exception e) {
+                    Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
+                    Console.WriteLine (e.Message);
+                    Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
+                    Console.WriteLine (e.StackTrace);
+                    Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
+                    Console.WriteLine (e.InnerException);
                     // return null;
                 }
 
             };
 
-            Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
         }
-         public void ListenForLeaningPlanUnSubscriber()
-        {
-            var channel = queues.connection.CreateModel();
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.Received += async (model, ea) =>
-            {
-                Console.WriteLine("Consuming from the queue");
-                Console.WriteLine("-----------------------------------------------------------------------");
-                try
-                {
+        public void ListenForLeaningPlanUnSubscriber () {
+            var channel = queues.connection.CreateModel ();
+            var consumer = new AsyncEventingBasicConsumer (channel);
+            consumer.Received += async (model, ea) => {
+                Console.WriteLine ("Consuming from the queue");
+                Console.WriteLine ("-----------------------------------------------------------------------");
+                try {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var learningPlanFeedBack = (LearningPlanFeedBack)body.DeSerialize(typeof(LearningPlanFeedBack));
+                    var learningPlanFeedBack = (LearningPlanSubscriptionWrapper)body.DeSerialize(typeof(LearningPlanSubscriptionWrapper));
                     await graphfunctions.UnSubscribeLearningPlanAndRelationshipsAsync(learningPlanFeedBack);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
-                    Console.WriteLine("User Name is {0} ");
+                    Console.WriteLine ("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
-                    channel.BasicAck(ea.DeliveryTag, false);
-                    Console.WriteLine("-----------------------------------------------------------------------");
-                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
-                    await Task.Yield();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
+                    channel.BasicAck (ea.DeliveryTag, false);
+                    Console.WriteLine ("-----------------------------------------------------------------------");
+                    Console.WriteLine (" - Routing Key <{0}>", routingKey);
+                    await Task.Yield ();
+                } catch (Exception e) {
+                    Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
+                    Console.WriteLine (e.Message);
+                    Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
+                    Console.WriteLine (e.StackTrace);
+                    Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
+                    Console.WriteLine (e.InnerException);
                     // return null;
                 }
 
             };
 
-            Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
         }
-        public void ListenForQuestionFeedBack()
-        {
-             var channel = queues.connection.CreateModel();
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.Received += async (model, ea) =>
-            {
-                Console.WriteLine("Consuming from the queue");
-                Console.WriteLine("-----------------------------------------------------------------------");
-                try
-                {
+        public void ListenForQuestionFeedBack () {
+            var channel = queues.connection.CreateModel ();
+            var consumer = new AsyncEventingBasicConsumer (channel);
+            consumer.Received += async (model, ea) => {
+                Console.WriteLine ("Consuming from the queue");
+                Console.WriteLine ("-----------------------------------------------------------------------");
+                try {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var questionFeedBack = (QuestionFeedBack)body.DeSerialize(typeof(QuestionFeedBack));
-                    await graphfunctions.ReportQuestionAndRelationshipsAsync(questionFeedBack);
+                    var questionAmbiguityWrapper = (QuestionAmbiguityWrapper)body.DeSerialize(typeof(QuestionAmbiguityWrapper));
+                    await graphfunctions.ReportQuestionAndRelationshipsAsync(questionAmbiguityWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
-                    Console.WriteLine("User Name is {0} ");
+                    Console.WriteLine ("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
-                    channel.BasicAck(ea.DeliveryTag, false);
-                    Console.WriteLine("-----------------------------------------------------------------------");
-                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
-                    await Task.Yield();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
+                    channel.BasicAck (ea.DeliveryTag, false);
+                    Console.WriteLine ("-----------------------------------------------------------------------");
+                    Console.WriteLine (" - Routing Key <{0}>", routingKey);
+                    await Task.Yield ();
+                } catch (Exception e) {
+                    Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
+                    Console.WriteLine (e.Message);
+                    Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
+                    Console.WriteLine (e.StackTrace);
+                    Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
+                    Console.WriteLine (e.InnerException);
                     // return null;
                 }
 
             };
 
-            Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_QuestionFeedBack", false, consumer);
+            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume ("Profile_KnowledgeGraph_QuestionFeedBack", false, consumer);
         }
-}
+    }
 }

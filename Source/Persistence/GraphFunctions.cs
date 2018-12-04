@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using KnowledgeGraph.Models;
+using KnowledeGraph.ContentWrapper;
 
 namespace KnowledgeGraph.Database.Persistence
 {
@@ -482,14 +483,14 @@ namespace KnowledgeGraph.Database.Persistence
             }
             return mappedids;
         }
-        public async Task RatingLearningPlanAndRelationshipsAsync(LearningPlanFeedBack learningPlanFeedback)
+        public async Task RatingLearningPlanAndRelationshipsAsync(LearningPlanRatingWrapper learningPlanRatingWrapper)
         {
            
-                GiveStarPayload giveStar = new GiveStarPayload { Rating = learningPlanFeedback.Star };
+                GiveStarPayload giveStar = new GiveStarPayload { Rating = learningPlanRatingWrapper.Star };
                 await graph.Cypher
                     .Match("(user:User)", "(lp:LearningPlan)")
-                    .Where((User user) => user.UserId == learningPlanFeedback.UserId)
-                    .AndWhere((LearningPlanWrapper lp) => lp.LearningPlanId == learningPlanFeedback.LearningPlanId)
+                    .Where((User user) => user.UserId == learningPlanRatingWrapper.UserId)
+                    .AndWhere((LearningPlanWrapper lp) => lp.LearningPlanId == learningPlanRatingWrapper.LearningPlanId)
                     .Merge("(user)-[g:RATING_LP]->(lp)")
                     .OnCreate()
                     .Set("g={giveStar}")
@@ -497,7 +498,7 @@ namespace KnowledgeGraph.Database.Persistence
                     .Set("g={giveStar}")
                     .WithParams(new
                     {
-                        userRating = learningPlanFeedback.Star,
+                        userRating = learningPlanRatingWrapper.Star,
                         giveStar
                     })
                     .ExecuteWithoutResultsAsync();
@@ -507,7 +508,7 @@ namespace KnowledgeGraph.Database.Persistence
                     .Set("lp.AvgRating = avg_rating")
                     .WithParams(new
                     {
-                        id = learningPlanFeedback.LearningPlanId,
+                        id = learningPlanRatingWrapper.LearningPlanId,
                         // rating=
                     })
                     .Return<float>("lp.AvgRating")
@@ -520,13 +521,13 @@ namespace KnowledgeGraph.Database.Persistence
             // return Ok(new List<float>(LPqueryAvg));
             // throw new NotImplementedException();
         }
-        public async Task RatingResourceAndRelationshipsAsync(ResourceFeedBack resourceFeedBack)
+        public async Task RatingResourceAndRelationshipsAsync(ResourceRatingWrapper resourceRatingWrapper)
         {
-        GiveStarPayload giveStar = new GiveStarPayload { Rating = resourceFeedBack.Star };
+        GiveStarPayload giveStar = new GiveStarPayload { Rating = resourceRatingWrapper.Star };
             await graph.Cypher
                 .Match("(user:User)", "(Re:Resource)")
-                .Where((User user) => user.UserId == resourceFeedBack.UserId)
-                .AndWhere((ResourceWrapper Re) => Re.ResourceId == resourceFeedBack.ResourceId)
+                .Where((User user) => user.UserId == resourceRatingWrapper.UserId)
+                .AndWhere((ResourceWrapper Re) => Re.ResourceId == resourceRatingWrapper.ResourceId)
                 .Merge("(user)-[g:RATING_Resource]->(Re)")
                 .OnCreate()
                 .Set("g={giveStar}")
@@ -534,7 +535,7 @@ namespace KnowledgeGraph.Database.Persistence
                 .Set("g={giveStar}")
                 .WithParams(new
                 {
-                    userRating = resourceFeedBack.Star,
+                    userRating = resourceRatingWrapper.Star,
                     giveStar
                 })
                 .ExecuteWithoutResultsAsync();
@@ -544,7 +545,7 @@ namespace KnowledgeGraph.Database.Persistence
                 .Set("Re.AvgRating = avg_rating")
                 .WithParams(new
                 {
-                    id = resourceFeedBack.ResourceId,
+                    id = resourceRatingWrapper.ResourceId,
                     // rating=
                 })
                 .Return<float>("(Re.AvgRating)")
@@ -552,24 +553,24 @@ namespace KnowledgeGraph.Database.Persistence
                  Console.WriteLine("rated resource");
            // return Ok(new List<float>(Re_queryAvg)[0]);
         }
-        public async Task SubscribeLearningPlanAndRelationshipsAsync(LearningPlanFeedBack learningPlanFeedback)
+        public async Task SubscribeLearningPlanAndRelationshipsAsync(LearningPlanSubscriptionWrapper learningPlanSubscriptionWrapper)
         {
-            GiveStarPayload LearningPlanSubscriber = new GiveStarPayload { Subscribe = learningPlanFeedback.Subscribe };
+           // GiveStarPayload LearningPlanSubscriber = new GiveStarPayload { Subscribe = learningPlanFeedback.Subscribe };
             await graph.Cypher
                 .Match("(user:User)", "(lp:LearningPlan)")
-                .Where((User user) => user.UserId == learningPlanFeedback.UserId)
-                .AndWhere((LearningPlanWrapper lp) => lp.LearningPlanId == learningPlanFeedback.LearningPlanId)
+                .Where((User user) => user.UserId == learningPlanSubscriptionWrapper.UserId)
+                .AndWhere((LearningPlanWrapper lp) => lp.LearningPlanId == learningPlanSubscriptionWrapper.LearningPlanId)
 
                 .Merge("(user)-[g:Subscribe_LP]->(lp)")
                 .OnCreate()
                 .Set("g={LearningPlanSubscriber}")
                 .OnMatch()
                 .Set("g={LearningPlanSubscriber}")
-                .WithParams(new
-                {
-                    usersubscribe = learningPlanFeedback.Subscribe,
-                    LearningPlanSubscriber
-                })
+               // .WithParams(new
+               // {
+                   // usersubscribe = learningPlanFeedback.Subscribe,
+                   // LearningPlanSubscriber
+              //  })
                 .ExecuteWithoutResultsAsync();
             var totalsubscriber = new List<int>(await graph.Cypher
                .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
@@ -578,7 +579,7 @@ namespace KnowledgeGraph.Database.Persistence
                 .Set("lp.Subscriber = total_subscriber")
                 .WithParams(new
                 {
-                    id = learningPlanFeedback.LearningPlanId,
+                    id = learningPlanSubscriptionWrapper.LearningPlanId,
                     // rating=
                 })
                .Return<int>("lp.Subscriber")
@@ -588,13 +589,13 @@ namespace KnowledgeGraph.Database.Persistence
                 Console.WriteLine("haha");
          //   return Ok(new List<int>(totalsubscriber)[0]);
         }
-         public async Task UnSubscribeLearningPlanAndRelationshipsAsync(LearningPlanFeedBack learningPlanFeedback)
+         public async Task UnSubscribeLearningPlanAndRelationshipsAsync(LearningPlanSubscriptionWrapper learningPlanSubscriptionWrapper)
         {
-            GiveStarPayload LearningPlanSubscriber = new GiveStarPayload { Subscribe = learningPlanFeedback.Subscribe };
+            //GiveStarPayload LearningPlanSubscriber = new GiveStarPayload { Subscribe = learningPlanFeedback.Subscribe };
             await graph.Cypher
                 .Match("(user:User)", "(lp:LearningPlan)")
-                .Where((User user) => user.UserId == learningPlanFeedback.UserId)
-                .AndWhere((LearningPlanWrapper lp) => lp.LearningPlanId == learningPlanFeedback.LearningPlanId)
+                .Where((User user) => user.UserId == learningPlanSubscriptionWrapper.UserId)
+                .AndWhere((LearningPlanWrapper lp) => lp.LearningPlanId == learningPlanSubscriptionWrapper.LearningPlanId)
 
                 .Merge("(user)-[g:Subscribe_LP]->(lp)")
                 .Delete("g")
@@ -606,7 +607,7 @@ namespace KnowledgeGraph.Database.Persistence
                 .Set("lp.Subscriber = total_subscriber")
                 .WithParams(new
                 {
-                    id = learningPlanFeedback.LearningPlanId,
+                    id = learningPlanSubscriptionWrapper.LearningPlanId,
                     // rating=
                 })
                .Return<int>("lp.Subscriber")
@@ -615,24 +616,24 @@ namespace KnowledgeGraph.Database.Persistence
                 Console.WriteLine("unsubscribed");
             //return Ok(new List<int>(totalsubscriber)[0]);
         }
-        public async Task ReportQuestionAndRelationshipsAsync(QuestionFeedBack questionFeedBack)
+        public async Task ReportQuestionAndRelationshipsAsync(QuestionAmbiguityWrapper questionAmbiguityWrapper)
         {
-         GiveStarPayload QuestionReport = new GiveStarPayload { Ambigous = questionFeedBack.Ambiguity };
+        // GiveStarPayload QuestionReport = new GiveStarPayload { Ambigous = questionFeedBack.Ambiguity };
             await graph.Cypher
                 .Match("(user:User)", "(qe:Question)")
-                .Where((User user) => user.UserId == questionFeedBack.UserId)
-                .AndWhere((QuestionWrapper qe) => qe.QuestionId == questionFeedBack.QuestionId)
+                .Where((User user) => user.UserId == questionAmbiguityWrapper.UserId)
+                .AndWhere((QuestionWrapper qe) => qe.QuestionId == questionAmbiguityWrapper.QuestionId)
 
                 .Merge("(user)-[g:Report_Question]->(qe)")
                 .OnCreate()
                 .Set("g={QuestionReport}")
                 .OnMatch()
                 .Set("g={QuestionReport}")
-                .WithParams(new
-                {
-                    userreport = questionFeedBack.Ambiguity,
-                    QuestionReport
-                })
+                //.WithParams(new
+               // {
+               //     userreport = questionFeedBack.Ambiguity,
+               //     QuestionReport
+               // })
                 .ExecuteWithoutResultsAsync();
             var totalReport = new List<int>(await graph.Cypher
                .Match("(:User)-[g:Report_Question]->(qe:Question {QuestionId:{id}})")
@@ -641,7 +642,7 @@ namespace KnowledgeGraph.Database.Persistence
                 .Set("qe.Total_Ambiguity = total_ambiguity")
                 .WithParams(new
                 {
-                    id = questionFeedBack.QuestionId,
+                    id = questionAmbiguityWrapper.QuestionId,
                     // rating=
                 })
                .Return<int>("qe.Total_Ambiguity")
