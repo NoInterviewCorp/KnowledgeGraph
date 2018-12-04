@@ -123,7 +123,8 @@ namespace KnowledgeGraph.Persistence {
                     Ids.AddRange (shuffeledquestionsids);
                     mappedids.Add (concept, Ids);
                 }
-            } else {
+            } 
+            else {
                 foreach (var concept in concepts) {
                     var conceptattemptedearlier = graphclient.graph.Cypher
                         .Match ($"path = (u:User{{ UserName:{username} }})-[eval:TESTED_HIMSELF_ON]-(c:Concept{{ Name:{concept} }})")
@@ -151,7 +152,8 @@ namespace KnowledgeGraph.Persistence {
                         Ids.Clear ();
                         Ids.AddRange (shuffeledquestionsids);
                         mappedids.Add (concept, Ids);
-                    } else {
+                    }
+                    else {
                         var relations = graphclient.graph.Cypher
                             .Match ($"path = (u:User{{ UserName:{username} }})-[R]-(c:Concept{{ Name:{concept} }})")
                             .Where ("not type(R)=\"TESTED_HIMSELF_ON\"")
@@ -159,6 +161,7 @@ namespace KnowledgeGraph.Persistence {
                             .ReturnDistinct<string> ("type(R)")
                             .Results
                             .ToList ().Take (3);
+                        List<string> TempIds = new List<string> ();
                         foreach (var relation in relations) {
                             switch (relation) {
                                 case "KNOWLEDGE":
@@ -168,8 +171,8 @@ namespace KnowledgeGraph.Persistence {
                                         .Results
                                         .ToList ();
                                     var shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
-                                    Ids.Clear ();
-                                    Ids.AddRange (shuffeledquestionsids);
+                                    // Ids.Clear ();
+                                    TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
                                     break;
                                 case "COMPREHENSION":
@@ -179,8 +182,8 @@ namespace KnowledgeGraph.Persistence {
                                         .Results
                                         .ToList ();
                                     shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
-                                    Ids.Clear ();
-                                    Ids.AddRange (shuffeledquestionsids);
+                                    // Ids.Clear ();
+                                    TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
                                     break;
                                 case "APPLICATION":
@@ -190,8 +193,8 @@ namespace KnowledgeGraph.Persistence {
                                         .Results
                                         .ToList ();
                                     shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
-                                    Ids.Clear ();
-                                    Ids.AddRange (shuffeledquestionsids);
+                                    // Ids.Clear ();
+                                    TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
                                     break;
                                 case "ANALYSIS":
@@ -201,8 +204,8 @@ namespace KnowledgeGraph.Persistence {
                                         .Results
                                         .ToList ();
                                     shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
-                                    Ids.Clear ();
-                                    Ids.AddRange (shuffeledquestionsids);
+                                    // Ids.Clear ();
+                                    TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
                                     break;
                                 case "SYTHENSIS":
@@ -212,8 +215,8 @@ namespace KnowledgeGraph.Persistence {
                                         .Results
                                         .ToList ();
                                     shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
-                                    Ids.Clear ();
-                                    Ids.AddRange (shuffeledquestionsids);
+                                    // Ids.Clear ();
+                                    TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
                                     break;
                                 case "EVALUATION":
@@ -223,12 +226,15 @@ namespace KnowledgeGraph.Persistence {
                                         .Results
                                         .ToList ();
                                     shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
-                                    Ids.Clear ();
-                                    Ids.AddRange (shuffeledquestionsids);
+                                    // Ids.Clear ();
+                                    TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
                                     break;
                             }
                         }
+                        Ids.Clear ();
+                        Ids.AddRange (TempIds.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10));
+                        mappedids.Add (concept, Ids);
                     }
                 }
             }
