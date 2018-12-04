@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using KnowledeGraph.ContentWrapper;
 using KnowledgeGraph.Models;
-
 namespace KnowledgeGraph.Database.Persistence
 {
     public interface IGraphFunctions
