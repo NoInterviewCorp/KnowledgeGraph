@@ -9,17 +9,6 @@ namespace KnowledgeGraph.Persistence {
         public GraphFunctions (GraphDbConnection _graphclient) {
             graphclient = _graphclient;
         }
-        public void CreateLearningPlanAndRelationships (LearningPlan lp) {
-            throw new System.NotImplementedException ();
-        }
-
-        public void CreateQuestionsAndRelationships (Resource resource) {
-            throw new System.NotImplementedException ();
-        }
-
-        public void CreateResourceAndRelationships (Resource resource) {
-            throw new System.NotImplementedException ();
-        }
 
         // public Dictionary<string, List<string>> GetQuestionBatchIds (string username, string technology, List<string> concepts) {
         //     List<string> Ids = new List<string> ();
@@ -63,9 +52,9 @@ namespace KnowledgeGraph.Persistence {
         //                     .WithParams (new {
         //                         name = tempdata.Name
         //                     })
-        //                     .Return (q => q.As<Question> ().Id)
-        //                     .Results
-        //                     .ToList ();
+        //                    .Return (q => q.As<Question> ().Id)
+        //                    .Results
+        //                    .ToList ();
         //                 Ids.AddRange (tempid);
         //                 mappedids.Add (tempdata.Name, Ids);
         //                 break;
@@ -99,6 +88,8 @@ namespace KnowledgeGraph.Persistence {
         }
 
         public Dictionary<string, List<string>> GetQuestionBatchIds (string username, string technology, List<string> concepts) {
+            List<string> Ids = new List<string> ();
+            Dictionary<string, List<string>> mappedids = new Dictionary<string, List<string>> ();
             var quizgivencounter = graphclient.graph.Cypher
                 .Match ($"path = (u:User{{ UserName:{username}}})-[:EVALUATED_HIMSELF_ON]-(t:Technology{{ Name:{technology} }})")
                 .Return<int> ("count(path)")
@@ -112,8 +103,8 @@ namespace KnowledgeGraph.Persistence {
                     .ExecuteWithoutResults ();
                 foreach (var concept in concepts) {
                     graphclient.graph.Cypher
-                        .Match ($"(u:User{{ UserName:{username}}})")
-                        .Match ($"(c:COncept{{ Name:{concept} }})")
+                        .Match ($"(u:User{{ UserName:{username} }})")
+                        .Match ($"(c:Concept{{ Name:{concept} }})")
                         .Create ("(u)-[:TESTED_HIMSELF_ON]-(c)")
                         .Create ("(u)-[:BLOOM_TEXANOMY_1{Intensity:0}]-(c)")
                         .Create ("(u)-[:BLOOM_TEXANOMY_2{Intensity:0}]-(c)")
@@ -121,11 +112,60 @@ namespace KnowledgeGraph.Persistence {
                         .Create ("(u)-[:BLOOM_TEXANOMY_4{Intensity:0}]-(c)")
                         .Create ("(u)-[:BLOOM_TEXANOMY_5{Intensity:0}]-(c)")
                         .Create ("(u)-[:BLOOM_TEXANOMY_6{Intensity:0}]-(c)")
-                        .ExecuteWithoutResults();
+                        .ExecuteWithoutResults ();
+                    var tempids = graphclient.graph.Cypher
+                        .Match ($"(q:Question)-[:EVALUATES]-(c:Concept{{ name:{concept} }})")
+                        .Return (q => q.As<Question> ().Id)
+                        .Results
+                        .ToList ();
+                    var shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                    Ids.Clear ();
+                    Ids.AddRange (shuffeledquestionsids);
+                    mappedids.Add (concept, Ids);
                 }
-                
+            } else {
+                foreach (var concept in concepts) {
+                    var conceptattemptedearlier = graphclient.graph.Cypher
+                        .Match ($"path = (u:User{{ UserName:{username} }})-[eval:TESTED_HIMSELF_ON]-(c:Concept{{ Name:{concept} }})")
+                        .Return<int> ("count(path)")
+                        .Results
+                        .ToList ();
+                    if (conceptattemptedearlier[0] < 1) {
+                        graphclient.graph.Cypher
+                            .Match ($"(u:User{{ UserName:{username} }})")
+                            .Match ($"(c:Concept{{ Name:{concept} }})")
+                            .Create ("(u)-[:TESTED_HIMSELF_ON]-(c)")
+                            .Create ("(u)-[:BLOOM_TEXANOMY_1{Intensity:0}]-(c)")
+                            .Create ("(u)-[:BLOOM_TEXANOMY_2{Intensity:0}]-(c)")
+                            .Create ("(u)-[:BLOOM_TEXANOMY_3{Intensity:0}]-(c)")
+                            .Create ("(u)-[:BLOOM_TEXANOMY_4{Intensity:0}]-(c)")
+                            .Create ("(u)-[:BLOOM_TEXANOMY_5{Intensity:0}]-(c)")
+                            .Create ("(u)-[:BLOOM_TEXANOMY_6{Intensity:0}]-(c)")
+                            .ExecuteWithoutResults ();
+                        var tempids = graphclient.graph.Cypher
+                            .Match ($"(q:Question)-[:EVALUATES]-(c:Concept{{ name:{concept} }})")
+                            .Return (q => q.As<Question> ().Id)
+                            .Results
+                            .ToList ();
+                        var shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                        Ids.Clear ();
+                        Ids.AddRange (shuffeledquestionsids);
+                        mappedids.Add (concept, Ids);
+                    } else {
+                        var relations = graphclient.graph.Cypher
+                            .Match ($"path = (u:User{{ UserName:{username} }})-[R]-(c:Concept{{ Name:{concept} }})")
+                            .OrderBy("count(path)")
+                            .ReturnDistinct<string>("type(R)")
+                            .Results
+                            .ToList().Take(3);
+                        foreach (var relation in relations)
+                        {
+                            
+                        }
+                    }
+                }
             }
-            throw new NotImplementedException ();
+            return mappedids;
         }
     }
 }

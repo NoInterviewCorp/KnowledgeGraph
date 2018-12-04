@@ -21,25 +21,9 @@ namespace KnowledgeGraph.Services {
         public QueueHandler (QueueBuilder _queues, IGraphFunctions _graphfunctions) {
             queues = _queues;
             graphfunctions = _graphfunctions;
-            this.ContributerLearningPlanQueueHandler ();
+            this.QuestionBatchRequestHandler();
+            this.QuestionRequestHandler();
             this.QuestionBatchRequestHandler ();
-        }
-
-        public void ContributerLearningPlanQueueHandler () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Consuming from the queue");
-                channel.BasicAck (ea.DeliveryTag, false);
-                var body = ea.Body;
-                learningPlan = (LearningPlan) body.DeSerialize (typeof (LearningPlan));
-                graphfunctions.CreateLearningPlanAndRelationships (learningPlan);
-                var routingKey = ea.RoutingKey;
-                Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                await Task.Yield ();
-            };
-            Console.WriteLine ("Consuming from Contributor's Knowledge Graph");
-            channel.BasicConsume ("Contributer_KnowledgeGraph", false, consumer);
         }
         public void QuestionBatchRequestHandler () {
             var channel = queues.connection.CreateModel ();

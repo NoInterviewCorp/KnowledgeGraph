@@ -19,3 +19,4 @@ services:
 networks:
     potentiometer-network:
         name: potentiometer-network
+        external: true
