@@ -24,7 +24,7 @@ namespace KnowledgeGraph.Services
         private ConceptRequest concept_query;
         private ConceptResponse concept_list;
         private QuestionIdsResponse questionidlist;
-        private QuestionBatchResponse questionidbatchlist;
+        private GraphBatchResponse questionidbatchlist;
 
         public QueueHandler (QueueBuilder _queues, IGraphFunctions _graphfunctions) {
             queues = _queues;
@@ -94,7 +94,7 @@ namespace KnowledgeGraph.Services
                 Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
                 await Task.Yield ();
             };
-            channel.BasicConsume ("QuizEngine_KnowledgeGraph", false, consumer);
+            channel.BasicConsume ("QuizEngine_KnowledgeGraph_QuestionBatch", false, consumer);
         }
 
         public void QuestionBatchRequestHandler () {
@@ -104,8 +104,8 @@ namespace KnowledgeGraph.Services
                 Console.WriteLine ("Recieved Request for Questions");
                 var body = ea.Body;
                 batch_query = (QuestionBatchRequest) body.DeSerialize (typeof (QuestionBatchRequest));
-                this.questionidbatchlist = new QuestionBatchResponse (batch_query.username);
-                this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds (batch_query.username, batch_query.tech, batch_query.concepts));
+                this.questionidbatchlist = new GraphBatchResponse (batch_query.Username);
+                this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds (batch_query.Username, batch_query.Tech, batch_query.Concepts));
                 channel.BasicAck (ea.DeliveryTag, false);
                 channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize ());
                 var routingKey = ea.RoutingKey;
@@ -122,8 +122,8 @@ namespace KnowledgeGraph.Services
                 Console.WriteLine ("Recieved Request for Questions");
                 var body = ea.Body;
                 question_query = (QuestionRequest) body.DeSerialize (typeof (QuestionRequest));
-                this.questionidlist = new QuestionIdsResponse (batch_query.username);
-                this.questionidlist.questionids = (graphfunctions.GetQuestionIds (question_query.username, question_query.tech, question_query.concept));
+                this.questionidlist = new QuestionIdsResponse (batch_query.Username);
+                this.questionidlist.IdRequestDictionary = (graphfunctions.GetQuestionIds (question_query.Username, question_query.Tech, question_query.Concept));
                 channel.BasicAck (ea.DeliveryTag, false);
                 channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.questionidlist.Serialize ());
                 var routingKey = ea.RoutingKey;
@@ -140,8 +140,8 @@ namespace KnowledgeGraph.Services
                 Console.WriteLine ("Recieved Request for Concepts");
                 var body = ea.Body;
                 concept_query = (ConceptRequest) body.DeSerialize (typeof (ConceptRequest));
-                this.concept_list = new ConceptResponse (concept_query.username);
-                this.concept_list.concepts.AddRange (graphfunctions.GetConceptFromTechnology (concept_query.tech));
+                this.concept_list = new ConceptResponse (concept_query.Username);
+                this.concept_list.concepts.AddRange (graphfunctions.GetConceptFromTechnology (concept_query.Tech));
                 channel.BasicAck (ea.DeliveryTag, false);
                 channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.concept_list.Serialize ());
                 var routingKey = ea.RoutingKey;
@@ -149,7 +149,7 @@ namespace KnowledgeGraph.Services
                 Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
                 await Task.Yield ();
             };
-            channel.BasicConsume ("QuizEngine_KnowledgeGraph", false, consumer);
+            channel.BasicConsume ("QuizEngine_KnowledgeGraph_Concepts", false, consumer);
         }
     public void ListenForUser()
         {

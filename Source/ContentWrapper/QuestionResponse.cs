@@ -4,12 +4,12 @@ namespace KnowledgeGraph.RabbitMQModels
 {
     public class QuestionIdsResponse
     {
-        public string username { get; set; } 
-        public Dictionary<string,List<string>> questionids;
+        public string Username { get; set; } 
+        public Dictionary<string,List<string>> IdRequestDictionary;
         public QuestionIdsResponse(string _username)
         {
-            username = _username;
-            questionids.Clear();
+            Username = _username;
+            IdRequestDictionary = new Dictionary<string, List<string>>();
         }
     }
 }

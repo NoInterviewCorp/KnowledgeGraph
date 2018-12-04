@@ -23,23 +23,28 @@ namespace KnowledgeGraph.Services
             connection = _factory.CreateConnection();
             Model = connection.CreateModel();
             Model.ExchangeDeclare("KnowldegeGraphExchange", "topic");
+
+            Model.QueueDeclare("KnowledgeGraph_Contributer_Ids", false, false, false, null);
             Model.QueueDeclare("Contributer_KnowledgeGraph_LearningPlan", false, false, false, null);
             Model.QueueDeclare("Contributer_KnowledgeGraph_Resources", false, false, false, null);
             Model.QueueDeclare("Contributer_QuizEngine_Questions", false, false, false, null);
-            Model.QueueDeclare("KnowledgeGraph_Contributer_Ids", false, false, false, null);
-             Model.QueueDeclare("Profile_KnowledgeGraph_User", false, false, false, null);
+            Model.QueueDeclare("Profile_KnowledgeGraph_User", false, false, false, null);
             Model.QueueDeclare("Profile_KnowledgeGraph_LearningPlanFeedBack", false, false, false, null);
             Model.QueueDeclare("Profile_KnowledgeGraph_ResourceFeedBack", false, false, false, null);
             Model.QueueDeclare("Profile_KnowledgeGraph_QuestionFeedBack", false, false, false, null);
-            // remove routing keys
+            Model.QueueDeclare("QuizEngine_KnowledgeGraph_Concepts", false, false, false, null);
+            Model.QueueDeclare("QuizEngine_KnowledgeGraph_QuestionBatch", false, false, false, null);
+
+            Model.QueueBind("KnowledgeGraph_Contributer_Ids", ExchangeNme, "Request.Question");
             Model.QueueBind("Contributer_KnowledgeGraph_LearningPlan", ExchangeNme, "Models.LearningPlan");
             Model.QueueBind("Contributer_KnowledgeGraph_Resources", ExchangeNme, "Models.Resource");
             Model.QueueBind("Contributer_QuizEngine_Questions", ExchangeNme, "Send.Question");
-            Model.QueueBind("KnowledgeGraph_Contributer_Ids", ExchangeNme, "Request.Question");
             Model.QueueBind("Profile_KnowledgeGraph_User", "KnowldegeGraphExchange", "Users");
             Model.QueueBind("Profile_KnowledgeGraph_LearningPlanFeedBack", ExchangeNme, "Send.LearningPlanFeedBack");
             Model.QueueBind("Profile_KnowledgeGraph_ResourceFeedBack", ExchangeNme, "Send.ResourceFeedBack");
             Model.QueueBind("Profile_KnowledgeGraph_QuestionFeedBack", ExchangeNme, "Send.QuestionFeedBack");
+            Model.QueueBind("QuizEngine_KnowledgeGraph_QuestionBatch", ExchangeNme, "Question.Batch");
+            Model.QueueBind("QuizEngine_KnowledgeGraph_Concepts", ExchangeNme, "Request.Concepts");
         }
     }
 }
