@@ -31,8 +31,8 @@ namespace KnowledgeGraph.Services
             Model.QueueDeclare("Profile_KnowledgeGraph_User", false, false, false, null);
             Model.QueueDeclare("Profile_KnowledgeGraph_LearningPlanRatingWrapper", false, false, false, null);
             Model.QueueDeclare("Profile_KnowledgeGraph_LearningPlanSubscriptionWrapper", false, false, false, null);
-           // Model.QueueDeclare("Profile_KnowledgeGraph_ResourceRatingWrapper", false, false, false, null);
-           // Model.QueueDeclare("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", false, false, false, null);
+            Model.QueueDeclare("Profile_KnowledgeGraph_ResourceRatingWrapper", false, false, false, null);
+            Model.QueueDeclare("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", false, false, false, null);
             Model.QueueDeclare("QuizEngine_KnowledgeGraph_Concepts", false, false, false, null);
             Model.QueueDeclare("QuizEngine_KnowledgeGraph_QuestionBatch", false, false, false, null);
 
@@ -43,8 +43,8 @@ namespace KnowledgeGraph.Services
             Model.QueueBind("Profile_KnowledgeGraph_User", "KnowldegeGraphExchange", "Users");
             Model.QueueBind("Profile_KnowledgeGraph_LearningPlanRatingWrapper", ExchangeNme, "Send.LearningPlanRating");
             Model.QueueBind("Profile_KnowledgeGraph_LearningPlanSubscriptionWrapper", ExchangeNme, "Send.LearningPlanSubscription");
-          //  Model.QueueBind("Profile_KnowledgeGraph_ResourceRatingWrapper", ExchangeNme, "Send.ResourceFeedBack");
-          //  Model.QueueBind("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", ExchangeNme, "Send.QuestionFeedBack");
+           Model.QueueBind("Profile_KnowledgeGraph_ResourceRatingWrapper", ExchangeNme, "Send.ResourceFeedBack");
+            Model.QueueBind("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", ExchangeNme, "Send.QuestionFeedBack");
             Model.QueueBind("QuizEngine_KnowledgeGraph_QuestionBatch", ExchangeNme, "Question.Batch");
             Model.QueueBind("QuizEngine_KnowledgeGraph_Concepts", ExchangeNme, "Request.Concepts");
         }
