@@ -135,12 +135,12 @@ namespace KnowledgeGraph.Persistence {
                             .Match ($"(u:User{{ UserName:{username} }})")
                             .Match ($"(c:Concept{{ Name:{concept} }})")
                             .Create ("(u)-[:TESTED_HIMSELF_ON]-(c)")
-                            .Create ("(u)-[:BLOOM_TEXANOMY_1{Intensity:0}]-(c)")
-                            .Create ("(u)-[:BLOOM_TEXANOMY_2{Intensity:0}]-(c)")
-                            .Create ("(u)-[:BLOOM_TEXANOMY_3{Intensity:0}]-(c)")
-                            .Create ("(u)-[:BLOOM_TEXANOMY_4{Intensity:0}]-(c)")
-                            .Create ("(u)-[:BLOOM_TEXANOMY_5{Intensity:0}]-(c)")
-                            .Create ("(u)-[:BLOOM_TEXANOMY_6{Intensity:0}]-(c)")
+                            .Create ("(u)-[:KNOWLEDGE{Intensity:0}]-(c)")
+                            .Create ("(u)-[:COMPREHENSION{Intensity:0}]-(c)")
+                            .Create ("(u)-[:APPLICATION{Intensity:0}]-(c)")
+                            .Create ("(u)-[:ANALYSIS{Intensity:0}]-(c)")
+                            .Create ("(u)-[:SYTHENSIS{Intensity:0}]-(c)")
+                            .Create ("(u)-[:EVALUATION{Intensity:0}]-(c)")
                             .ExecuteWithoutResults ();
                         var tempids = graphclient.graph.Cypher
                             .Match ($"(q:Question)-[:EVALUATES]-(c:Concept{{ name:{concept} }})")
@@ -154,13 +154,80 @@ namespace KnowledgeGraph.Persistence {
                     } else {
                         var relations = graphclient.graph.Cypher
                             .Match ($"path = (u:User{{ UserName:{username} }})-[R]-(c:Concept{{ Name:{concept} }})")
-                            .OrderBy("count(path)")
-                            .ReturnDistinct<string>("type(R)")
+                            .Where ("not type(R)=\"TESTED_HIMSELF_ON\"")
+                            .OrderBy ("R.Intensity")
+                            .ReturnDistinct<string> ("type(R)")
                             .Results
-                            .ToList().Take(3);
-                        foreach (var relation in relations)
-                        {
-                            
+                            .ToList ().Take (3);
+                        foreach (var relation in relations) {
+                            switch (relation) {
+                                case "KNOWLEDGE":
+                                    var tempids = graphclient.graph.Cypher
+                                        .Match ($"(q:Question{{Bloom:1}})-[:EVALUATES]-(c:Concept{{ name:{concept} }})")
+                                        .Return (q => q.As<Question> ().Id)
+                                        .Results
+                                        .ToList ();
+                                    var shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    Ids.Clear ();
+                                    Ids.AddRange (shuffeledquestionsids);
+                                    // mappedids.Add (concept, Ids);
+                                    break;
+                                case "COMPREHENSION":
+                                    tempids = graphclient.graph.Cypher
+                                        .Match ($"(q:Question{{Bloom:1}})-[:EVALUATES]-(c:Concept{{ name:{concept} }})")
+                                        .Return (q => q.As<Question> ().Id)
+                                        .Results
+                                        .ToList ();
+                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    Ids.Clear ();
+                                    Ids.AddRange (shuffeledquestionsids);
+                                    // mappedids.Add (concept, Ids);
+                                    break;
+                                case "APPLICATION":
+                                    tempids = graphclient.graph.Cypher
+                                        .Match ($"(q:Question{{Bloom:1}})-[:EVALUATES]-(c:Concept{{ name:{concept} }})")
+                                        .Return (q => q.As<Question> ().Id)
+                                        .Results
+                                        .ToList ();
+                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    Ids.Clear ();
+                                    Ids.AddRange (shuffeledquestionsids);
+                                    // mappedids.Add (concept, Ids);
+                                    break;
+                                case "ANALYSIS":
+                                    tempids = graphclient.graph.Cypher
+                                        .Match ($"(q:Question{{Bloom:1}})-[:EVALUATES]-(c:Concept{{ name:{concept} }})")
+                                        .Return (q => q.As<Question> ().Id)
+                                        .Results
+                                        .ToList ();
+                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    Ids.Clear ();
+                                    Ids.AddRange (shuffeledquestionsids);
+                                    // mappedids.Add (concept, Ids);
+                                    break;
+                                case "SYTHENSIS":
+                                    tempids = graphclient.graph.Cypher
+                                        .Match ($"(q:Question{{Bloom:1}})-[:EVALUATES]-(c:Concept{{ name:{concept} }})")
+                                        .Return (q => q.As<Question> ().Id)
+                                        .Results
+                                        .ToList ();
+                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    Ids.Clear ();
+                                    Ids.AddRange (shuffeledquestionsids);
+                                    // mappedids.Add (concept, Ids);
+                                    break;
+                                case "EVALUATION":
+                                    tempids = graphclient.graph.Cypher
+                                        .Match ($"(q:Question{{Bloom:1}})-[:EVALUATES]-(c:Concept{{ name:{concept} }})")
+                                        .Return (q => q.As<Question> ().Id)
+                                        .Results
+                                        .ToList ();
+                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    Ids.Clear ();
+                                    Ids.AddRange (shuffeledquestionsids);
+                                    // mappedids.Add (concept, Ids);
+                                    break;
+                            }
                         }
                     }
                 }
