@@ -336,9 +336,24 @@ namespace KnowledgeGraph.Services {
                 }
 
             };
-
             Console.WriteLine ("Consuming from Profile's Knowledge Graph");
             channel.BasicConsume ("Profile_KnowledgeGraph_QuestionFeedBack", false, consumer);
+        }
+        public void UpdateResultHandler () {
+            var channel = queues.connection.CreateModel ();
+            var consumer = new AsyncEventingBasicConsumer (channel);
+            consumer.Received += async (model, ea) => {
+                Console.WriteLine ("Recieved Request for Concepts");
+                var body = ea.Body;
+                var result_query = (ResultWrapper) body.DeSerialize (typeof (ResultWrapper));
+                graphfunctions.IncreaseIntensityOnConcept(result_query.Username,result_query.Concept,result_query.Bloom);
+                channel.BasicAck (ea.DeliveryTag, false);
+                var routingKey = ea.RoutingKey;
+                Console.WriteLine (" - Routing Key <{0}>", routingKey);
+                Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
+                await Task.Yield ();
+            };
+            channel.BasicConsume ("QuizEngine_KnowledgeGraph_Result", false, consumer);
         }
     }
 }
