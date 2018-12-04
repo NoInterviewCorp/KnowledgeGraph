@@ -8,7 +8,7 @@ using RabbitMQ.Client;
 
 namespace My_Profile.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {

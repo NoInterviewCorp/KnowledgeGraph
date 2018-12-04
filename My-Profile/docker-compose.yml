@@ -3,10 +3,10 @@ services:
   knowledge-graph:
     build: .
     depends_on:
-      - neo4j
+      - neo4jp
     networks:
       - potentiometer-network
-  neo4j:
+  neo4jp:
     image: neo4j:latest
     environment:
       - NEO4J_AUTH=neo4j/Vfunny@123
