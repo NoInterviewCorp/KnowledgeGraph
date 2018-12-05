@@ -5,7 +5,7 @@ namespace KnowledgeGraph.RabbitMQModels
     public class QuestionIdsResponse
     {
         public string Username { get; set; } 
-        public Dictionary<string,List<string>> IdRequestDictionary;
+        public List<string> IdRequestList;
         public QuestionIdsResponse()
         {
             
@@ -13,7 +13,7 @@ namespace KnowledgeGraph.RabbitMQModels
         public QuestionIdsResponse(string _username)
         {
             Username = _username;
-            IdRequestDictionary = new Dictionary<string, List<string>>();
+            IdRequestList = new List<string>();
         }
     }
 }

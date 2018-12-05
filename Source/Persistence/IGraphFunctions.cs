@@ -9,7 +9,7 @@ namespace KnowledgeGraph.Database.Persistence {
         // void CreateQuestionsAndRelationships(ResourceWrapper resource);
         List<int> GetQuestionIds (string technology, string username);
         List<string> GetConceptFromTechnology (string tech);
-        Dictionary<string, List<string>> GetQuestionBatchIds (string username, string technology, List<string> concepts);
+        List<string> GetQuestionBatchIds (string username, string technology, List<string> concepts);
         Dictionary<string, List<string>> GetQuestionIds (string username, string technology, string concept);
         Task RatingLearningPlanAndRelationshipsAsync (LearningPlanRatingWrapper lpr);
         Task RatingResourceAndRelationshipsAsync (ResourceRatingWrapper Re);
