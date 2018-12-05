@@ -241,7 +241,7 @@ namespace KnowledgeGraph.Services {
             };
 
             Console.WriteLine ("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            // channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
         }
         public void ListenForResourceFeedBack () {
             var channel = queues.connection.CreateModel ();
@@ -310,7 +310,7 @@ namespace KnowledgeGraph.Services {
             };
 
             Console.WriteLine ("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            // channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
         }
         public void ListenForLeaningPlanUnSubscriber () {
             var channel = queues.connection.CreateModel ();
@@ -344,7 +344,7 @@ namespace KnowledgeGraph.Services {
             };
 
             Console.WriteLine ("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            // channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
         }
         public void ListenForQuestionFeedBack () {
             var channel = queues.connection.CreateModel ();
