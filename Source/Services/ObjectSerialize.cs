@@ -21,7 +21,10 @@ namespace KnowledgeGraph.Services
         {
             try
             {
+                Console.WriteLine(type);
+                Console.WriteLine(arrBytes);
                 var json = Encoding.Default.GetString(arrBytes);
+                Console.WriteLine(json);
                 return JsonConvert.DeserializeObject(json, type);
             }
             catch(Exception e)
