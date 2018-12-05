@@ -324,7 +324,7 @@ namespace KnowledgeGraph.Database.Persistence {
                 graph.Cypher
                     .Match ($"path = (u:User{{ UserName:'{username}'}})")
                     .Match ($"(t:Technology{{ Name:'{technology}' }})")
-                    .Create ("(u)-[:EVALUATED_HIMSELF_ON]-(t)")
+                    .Create ("(u)-[:EVALUATED_HIMSELF_ON]->(t)")
                     .ExecuteWithoutResults ();
                 foreach (var concept in concepts) {
                     graph.Cypher
