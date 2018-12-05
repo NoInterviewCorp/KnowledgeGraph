@@ -10,7 +10,7 @@ namespace KnowledgeGraph.Services
         private ConnectionFactory _factory;
         public IConnection connection;
         public IModel Model;
-        public const string ExchangeName = "KnowledegeGraphExchange";
+        public const string ExchangeName = "KnowledgeGraphExchange";
         public QueueBuilder()
         {
             _factory = new ConnectionFactory
