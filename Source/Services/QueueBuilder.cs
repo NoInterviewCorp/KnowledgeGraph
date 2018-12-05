@@ -35,17 +35,17 @@ namespace KnowledgeGraph.Services {
             Model.QueueDeclare ("Profile_KnowledgeGraph_ResourceFeedBack", false, false, false, null);
             Model.QueueDeclare ("Profile_KnowledgeGraph_QuestionFeedBack", false, false, false, null);
 
-            Model.QueueBind("KnowledgeGraph_Contributer_Ids", ExchangeNme, "Request.Question");
-            Model.QueueBind("Contributer_KnowledgeGraph_LearningPlan", ExchangeNme, "Models.LearningPlan");
-            Model.QueueBind("Contributer_KnowledgeGraph_Resources", ExchangeNme, "Models.Resource");
-            Model.QueueBind("Contributer_QuizEngine_Questions", ExchangeNme, "Send.Question");
+            Model.QueueBind("KnowledgeGraph_Contributer_Ids", ExchangeName, "Request.Question");
+            Model.QueueBind("Contributer_KnowledgeGraph_LearningPlan", ExchangeName, "Models.LearningPlan");
+            Model.QueueBind("Contributer_KnowledgeGraph_Resources", ExchangeName, "Models.Resource");
+            Model.QueueBind("Contributer_QuizEngine_Questions", ExchangeName, "Send.Question");
             Model.QueueBind("Profile_KnowledgeGraph_User", "KnowldegeGraphExchange", "Users");
-            Model.QueueBind("Profile_KnowledgeGraph_LearningPlanRatingWrapper", ExchangeNme, "Send.LearningPlanRating");
-            Model.QueueBind("Profile_KnowledgeGraph_LearningPlanSubscriptionWrapper", ExchangeNme, "Send.LearningPlanSubscription");
-            Model.QueueBind("Profile_KnowledgeGraph_ResourceRatingWrapper", ExchangeNme, "Send.ResourceFeedBack");
-            Model.QueueBind("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", ExchangeNme, "Send.QuestionFeedBack");
-            Model.QueueBind("QuizEngine_KnowledgeGraph_QuestionBatch", ExchangeNme, "Question.Batch");
-            Model.QueueBind("QuizEngine_KnowledgeGraph_Concepts", ExchangeNme, "Request.Concepts");
+            Model.QueueBind("Profile_KnowledgeGraph_LearningPlanRatingWrapper", ExchangeName, "Send.LearningPlanRating");
+            Model.QueueBind("Profile_KnowledgeGraph_LearningPlanSubscriptionWrapper", ExchangeName, "Send.LearningPlanSubscription");
+            Model.QueueBind("Profile_KnowledgeGraph_ResourceRatingWrapper", ExchangeName, "Send.ResourceFeedBack");
+            Model.QueueBind("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", ExchangeName, "Send.QuestionFeedBack");
+            Model.QueueBind("QuizEngine_KnowledgeGraph_QuestionBatch", ExchangeName, "Question.Batch");
+            Model.QueueBind("QuizEngine_KnowledgeGraph_Concepts", ExchangeName, "Request.Concepts");
         }
     }
 }
