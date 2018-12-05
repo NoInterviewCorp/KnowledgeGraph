@@ -463,6 +463,20 @@ namespace KnowledgeGraph.Database.Persistence {
             }
             return mappedids;
         }
+
+        public async Task UserAndRelationshipsAsync(UserWrapper userWrapper)
+        {
+           await graph.Cypher
+                .Merge("(user:UserWrapper { UserId: {id} })")
+                .OnCreate()
+                .Set("user = {userWrapper}")
+                .WithParams(new
+                {
+                    id = userWrapper.UserId,
+                   userWrapper
+                })
+              .ExecuteWithoutResultsAsync();
+        }
         public async Task RatingLearningPlanAndRelationshipsAsync(LearningPlanRatingWrapper learningPlanRatingWrapper)
         {
            

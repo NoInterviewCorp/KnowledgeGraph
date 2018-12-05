@@ -203,10 +203,11 @@ namespace KnowledgeGraph.Services {
                 Console.WriteLine ("-----------------------------------------------------------------------");
                 channel.BasicAck (ea.DeliveryTag, false);
                 var body = ea.Body;
-                var user = (User) body.DeSerialize (typeof (User));
+                var userWrapper = (UserWrapper) body.DeSerialize (typeof (UserWrapper));
+                await graphfunctions.UserAndRelationshipsAsync(userWrapper);
                 // var message = Encoding.UTF8.GetString(body);
                 // var user = JsonConvert.DeserializeObject<User>(message);
-                Console.WriteLine ("User Name is {0} " + user.FullName);
+                Console.WriteLine ("User Name is {0} ");
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine ("-----------------------------------------------------------------------");
                 Console.WriteLine (" - Routing Key <{0}>", routingKey);

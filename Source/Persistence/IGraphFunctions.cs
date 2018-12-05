@@ -16,6 +16,7 @@ namespace KnowledgeGraph.Database.Persistence {
         Task SubscribeLearningPlanAndRelationshipsAsync (LearningPlanSubscriptionWrapper lp);
         Task UnSubscribeLearningPlanAndRelationshipsAsync (LearningPlanSubscriptionWrapper lp);
         Task ReportQuestionAndRelationshipsAsync (QuestionAmbiguityWrapper qe);
+        Task UserAndRelationshipsAsync(UserWrapper userWrapper);
         void IncreaseIntensityOnConcept (string username, string concept, int bloom);
     }
 }
