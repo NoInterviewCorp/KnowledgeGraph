@@ -1,4 +1,4 @@
-namespace KnowledgeGraph.Source.ContentWrappers.WithQuizEngine {
+namespace KnowledgeGraph.RabbitMQModels {
     public class ResultWrapper {
         public string Username;
         public string Concept;
