@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 namespace KnowledgeGraph.RabbitMQModels
 {
@@ -9,7 +10,7 @@ namespace KnowledgeGraph.RabbitMQModels
             Username = _username;
             Tech = _tech;
             Concepts = new List<string>();
-            Concepts.Clear ();
+            Console.WriteLine(_concepts.Count);
             Concepts.AddRange (_concepts);
         }
     }

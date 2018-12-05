@@ -19,8 +19,16 @@ namespace KnowledgeGraph.Services
 
         public static object DeSerialize(this byte[] arrBytes, Type type)
         {
-            var json = Encoding.Default.GetString(arrBytes);
-            return JsonConvert.DeserializeObject(json, type);
+            try
+            {
+                var json = Encoding.Default.GetString(arrBytes);
+                return JsonConvert.DeserializeObject(json, type);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw e;
+            }
         }
 
         public static string DeSerializeText(this byte[] arrBytes)
