@@ -6,6 +6,10 @@ namespace KnowledgeGraph.RabbitMQModels
     {
         public string Username { get; set; } 
         public Dictionary<string,List<string>> IdRequestDictionary;
+        public QuestionIdsResponse()
+        {
+            
+        }
         public QuestionIdsResponse(string _username)
         {
             Username = _username;

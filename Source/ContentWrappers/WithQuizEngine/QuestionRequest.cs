@@ -3,6 +3,10 @@
         public string Username { get; set; }
         public string Tech { get; set; }
         public string Concept;
+        public QuestionRequest()
+        {
+            
+        }
         public QuestionRequest (string _username, string _tech, string _concept) {
             Username = _username;
             Tech = _tech;
