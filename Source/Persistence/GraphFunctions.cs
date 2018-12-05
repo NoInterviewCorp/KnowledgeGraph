@@ -340,7 +340,7 @@ namespace KnowledgeGraph.Database.Persistence {
                         .Return (q => q.As<Question> ().Id)
                         .Results
                         .ToList ();
-                    var shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                    var shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (2);
                     Ids.Clear ();
                     Ids.AddRange (shuffeledquestionsids);
                     mappedids.Add (concept, Ids);
@@ -369,7 +369,7 @@ namespace KnowledgeGraph.Database.Persistence {
                             .Return (q => q.As<Question> ().Id)
                             .Results
                             .ToList ();
-                        var shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                        var shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (2);
                         Ids.Clear ();
                         Ids.AddRange (shuffeledquestionsids);
                         mappedids.Add (concept, Ids);
@@ -390,7 +390,7 @@ namespace KnowledgeGraph.Database.Persistence {
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
-                                    var shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    var shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (2);
                                     // Ids.Clear ();
                                     TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
@@ -401,7 +401,7 @@ namespace KnowledgeGraph.Database.Persistence {
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
-                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (2);
                                     // Ids.Clear ();
                                     TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
@@ -412,7 +412,7 @@ namespace KnowledgeGraph.Database.Persistence {
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
-                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (2);
                                     // Ids.Clear ();
                                     TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
@@ -423,7 +423,7 @@ namespace KnowledgeGraph.Database.Persistence {
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
-                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (2);
                                     // Ids.Clear ();
                                     TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
@@ -434,7 +434,7 @@ namespace KnowledgeGraph.Database.Persistence {
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
-                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (2);
                                     // Ids.Clear ();
                                     TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
@@ -445,7 +445,7 @@ namespace KnowledgeGraph.Database.Persistence {
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
-                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10);
+                                    shuffeledquestionsids = tempids.OrderBy (a => Guid.NewGuid ()).ToList ().Take (2);
                                     // Ids.Clear ();
                                     TempIds.AddRange (shuffeledquestionsids);
                                     // mappedids.Add (concept, Ids);
@@ -453,7 +453,7 @@ namespace KnowledgeGraph.Database.Persistence {
                             }
                         }
                         Ids.Clear ();
-                        Ids.AddRange (TempIds.OrderBy (a => Guid.NewGuid ()).ToList ().Take (10));
+                        Ids.AddRange (TempIds.OrderBy (a => Guid.NewGuid ()).ToList ().Take (2));
                         mappedids.Add (concept, Ids);
                     }
                 }
