@@ -330,13 +330,13 @@ namespace KnowledgeGraph.Database.Persistence {
                     graph.Cypher
                         .Match ($"(u:User{{ UserName: '{username}' }})")
                         .Match ($"(c:Concept{{ Name: '{concept}' }})")
-                        .Create ("(u)-[:TESTED_HIMSELF_ON]-(c)")
-                        .Create ("(u)-[:KNOWLEDGE{Intensity:0}]-(c)")
-                        .Create ("(u)-[:COMPREHENSION{Intensity:0}]-(c)")
-                        .Create ("(u)-[:APPLICATION{Intensity:0}]-(c)")
-                        .Create ("(u)-[:ANALYSIS{Intensity:0}]-(c)")
-                        .Create ("(u)-[:SYTHENSIS{Intensity:0}]-(c)")
-                        .Create ("(u)-[:EVALUATION{Intensity:0}]-(c)")
+                        .Create ("(u)-[:TESTED_HIMSELF_ON]->(c)")
+                        .Create ("(u)-[:KNOWLEDGE{Intensity:0}]->(c)")
+                        .Create ("(u)-[:COMPREHENSION{Intensity:0}]->(c)")
+                        .Create ("(u)-[:APPLICATION{Intensity:0}]->(c)")
+                        .Create ("(u)-[:ANALYSIS{Intensity:0}]->(c)")
+                        .Create ("(u)-[:SYTHENSIS{Intensity:0}]->(c)")
+                        .Create ("(u)-[:EVALUATION{Intensity:0}]->(c)")
                         .ExecuteWithoutResults ();
                     var tempids = graph.Cypher
                         .Match ($"(q:Question)-[:EVALUATES]-(c:Concept{{ name: '{concept}' }})")
@@ -359,16 +359,16 @@ namespace KnowledgeGraph.Database.Persistence {
                         graph.Cypher
                             .Match ($"(u:User{{ UserName: '{username}' }})")
                             .Match ($"(c:Concept{{ Name: '{concept}' }})")
-                            .Create ("(u)-[:TESTED_HIMSELF_ON]-(c)")
-                            .Create ("(u)-[:KNOWLEDGE{Intensity:0}]-(c)")
-                            .Create ("(u)-[:COMPREHENSION{Intensity:0}]-(c)")
-                            .Create ("(u)-[:APPLICATION{Intensity:0}]-(c)")
-                            .Create ("(u)-[:ANALYSIS{Intensity:0}]-(c)")
-                            .Create ("(u)-[:SYTHENSIS{Intensity:0}]-(c)")
-                            .Create ("(u)-[:EVALUATION{Intensity:0}]-(c)")
+                            .Create ("(u)-[:TESTED_HIMSELF_ON]->(c)")
+                            .Create ("(u)-[:KNOWLEDGE{Intensity:0}]->(c)")
+                            .Create ("(u)-[:COMPREHENSION{Intensity:0}]->(c)")
+                            .Create ("(u)-[:APPLICATION{Intensity:0}]->(c)")
+                            .Create ("(u)-[:ANALYSIS{Intensity:0}]->(c)")
+                            .Create ("(u)-[:SYTHENSIS{Intensity:0}]->(c)")
+                            .Create ("(u)-[:EVALUATION{Intensity:0}]->(c)")
                             .ExecuteWithoutResults ();
                         var tempids = graph.Cypher
-                            .Match ($"(q:Question)-[:EVALUATES]-(c:Concept{{ name: '{concept}' }})")
+                            .Match ($"(q:Question)-[:EVALUATES]->(c:Concept{{ name: '{concept}' }})")
                             .Return (q => q.As<Question> ().Id)
                             .Results
                             .ToList ();
