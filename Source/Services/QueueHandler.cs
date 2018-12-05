@@ -107,6 +107,7 @@ namespace KnowledgeGraph.Services {
         }
 
         public void QuestionBatchRequestHandler () {
+            Console.WriteLine("In Question Batch Request Handler");
             var channel = queues.connection.CreateModel ();
             var consumer = new AsyncEventingBasicConsumer (channel);
             consumer.Received += async (model, ea) => {
