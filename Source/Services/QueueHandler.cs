@@ -35,6 +35,7 @@ namespace KnowledgeGraph.Services {
             this.ListenForLeaningPlanUnSubscriber ();
             this.ListenForQuestionFeedBack ();
             this.QuestionBatchRequestHandler ();
+            Console.WriteLine("------");
             //  this.QuizEngineQueueHandler();
         }
 
