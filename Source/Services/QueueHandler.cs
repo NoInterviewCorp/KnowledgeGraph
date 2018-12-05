@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using KnowledeGraph.ContentWrapper;
@@ -120,6 +121,11 @@ namespace KnowledgeGraph.Services {
                     this.questionidbatchlist = new GraphBatchResponse (batch_query.Username);
                     this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds (batch_query.Username, batch_query.Tech, batch_query.Concepts));
                     Console.WriteLine(this.questionidbatchlist.questionids.Values);
+                    var values = this.questionidbatchlist.questionids.Values.SelectMany(v => v);
+                    foreach(var v in values)
+                    {
+                        Console.WriteLine(v);
+                    }
                     channel.BasicPublish ("KnowledgeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize ());
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine (" - Routing Key <{0}>", routingKey);
