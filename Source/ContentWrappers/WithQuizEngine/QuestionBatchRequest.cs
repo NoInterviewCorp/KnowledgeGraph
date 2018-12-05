@@ -8,6 +8,7 @@ namespace KnowledgeGraph.RabbitMQModels
         public QuestionBatchRequest (string _username, string _tech, List<string> _concepts) {
             Username = _username;
             Tech = _tech;
+            Concepts = new List<string>();
             Concepts.Clear ();
             Concepts.AddRange (_concepts);
         }
