@@ -89,7 +89,7 @@ namespace KnowledgeGraph.Services {
                     query = (QuizEngineQuery) body.DeSerialize (typeof (QuizEngineQuery));
                     IDs.Clear ();
                     IDs.AddRange (graphfunctions.GetQuestionIds (query.tech, query.username));
-                    channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, IDs.Serialize ());
+                    channel.BasicPublish ("KnowledgeGraphExchange", "Models.QuestionId", null, IDs.Serialize ());
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine (" - Routing Key <{0}>", routingKey);
                     Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
@@ -119,7 +119,7 @@ namespace KnowledgeGraph.Services {
                     batch_query = (QuestionBatchRequest) body.DeSerialize (typeof (QuestionBatchRequest));
                     this.questionidbatchlist = new GraphBatchResponse (batch_query.Username);
                     this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds (batch_query.Username, batch_query.Tech, batch_query.Concepts));
-                    channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize ());
+                    channel.BasicPublish ("KnowledgeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize ());
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine (" - Routing Key <{0}>", routingKey);
                     Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
@@ -146,7 +146,7 @@ namespace KnowledgeGraph.Services {
                     question_query = (QuestionRequest) body.DeSerialize (typeof (QuestionRequest));
                     this.questionidlist = new QuestionIdsResponse (batch_query.Username);
                     this.questionidlist.IdRequestDictionary = (graphfunctions.GetQuestionIds (question_query.Username, question_query.Tech, question_query.Concept));
-                    channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.questionidlist.Serialize ());
+                    channel.BasicPublish ("KnowledgeGraphExchange", "Routing Key", null, this.questionidlist.Serialize ());
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine (" - Routing Key <{0}>", routingKey);
                     Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
@@ -173,7 +173,7 @@ namespace KnowledgeGraph.Services {
                     concept_query = (ConceptRequest) body.DeSerialize (typeof (ConceptRequest));
                     this.concept_list = new ConceptResponse (concept_query.Username);
                     this.concept_list.concepts.AddRange (graphfunctions.GetConceptFromTechnology (concept_query.Tech));
-                    channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.concept_list.Serialize ());
+                    channel.BasicPublish ("KnowledgeGraphExchange", "Routing Key", null, this.concept_list.Serialize ());
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine (" - Routing Key <{0}>", routingKey);
                     Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
