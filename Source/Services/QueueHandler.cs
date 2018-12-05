@@ -324,7 +324,7 @@ namespace KnowledgeGraph.Services {
                     var learningPlanFeedBack = (LearningPlanSubscriptionWrapper) body.DeSerialize (typeof (LearningPlanSubscriptionWrapper));
                     await graphfunctions.UnSubscribeLearningPlanAndRelationshipsAsync (learningPlanFeedBack);
                     // var message = Encoding.UTF8.GetString(body);
-                    //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
+                    //  var LP =    JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
                     Console.WriteLine ("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine ("-----------------------------------------------------------------------");
