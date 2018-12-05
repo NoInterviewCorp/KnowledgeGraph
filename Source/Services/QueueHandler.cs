@@ -34,7 +34,7 @@ namespace KnowledgeGraph.Services {
             this.ListenForLeaningPlanSubscriber ();
             this.ListenForLeaningPlanUnSubscriber ();
             this.ListenForQuestionFeedBack ();
-            this.QuestionBatchRequestHandler();
+            this.QuestionBatchRequestHandler ();
             //  this.QuizEngineQueueHandler();
         }
 
@@ -79,6 +79,7 @@ namespace KnowledgeGraph.Services {
         public void QuizEngineQueueHandler () {
             var channel = queues.connection.CreateModel ();
             var consumer = new AsyncEventingBasicConsumer (channel);
+            Console.WriteLine ("Question request queue started");
             consumer.Received += async (model, ea) => {
                 Console.WriteLine ("Recieved Request for Questions");
                 try {
@@ -101,6 +102,7 @@ namespace KnowledgeGraph.Services {
                     Console.WriteLine (e.InnerException);
                 }
             };
+            Console.WriteLine ("Consuming from the queue");
             channel.BasicConsume ("QuizEngine_KnowledgeGraph_QuestionBatch", false, consumer);
         }
 
