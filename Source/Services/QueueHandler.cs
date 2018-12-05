@@ -9,7 +9,6 @@ using KnowledgeGraph.Models;
 using KnowledgeGraph.RabbitMQModels;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-
 namespace KnowledgeGraph.Services {
     public class QueueHandler {
         public QueueBuilder queues;
