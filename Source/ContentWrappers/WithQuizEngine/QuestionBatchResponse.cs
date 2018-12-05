@@ -3,8 +3,14 @@ using KnowledgeGraph.Models;
 namespace KnowledgeGraph.RabbitMQModels {
     public class GraphBatchResponse {
         public string username { get; set; }
-        public Dictionary<string, List<string>> questionids;
-        public GraphBatchResponse (string _username) {
+        public List<string> questionids = new List<string>();
+
+        public GraphBatchResponse()
+        {    
+        }
+
+        public GraphBatchResponse (string _username) 
+        {
             username = _username;
             questionids.Clear ();
         }

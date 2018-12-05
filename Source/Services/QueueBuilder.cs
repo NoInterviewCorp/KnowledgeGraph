@@ -2,39 +2,38 @@ using System.Collections.Generic;
 using KnowledgeGraph.Models;
 using RabbitMQ.Client;
 
-namespace KnowledgeGraph.Services
-{
-    public class QueueBuilder
-    {
+namespace KnowledgeGraph.Services {
+    public class QueueBuilder {
         public List<Question> questions;
         private ConnectionFactory _factory;
         public IConnection connection;
         public IModel Model;
-        public const string ExchangeNme = "KnowldegeGraphExchange";
-        public QueueBuilder()
-        {
-            _factory = new ConnectionFactory
-            {
+        public const string ExchangeName = "KnowledgeGraphExchange";
+        public QueueBuilder () {
+            _factory = new ConnectionFactory {
                 HostName = "rabbitmq",
                 UserName = "achausername",
                 Password = "strongpassword",
                 DispatchConsumersAsync = true
             };
-            connection = _factory.CreateConnection();
-            Model = connection.CreateModel();
-            Model.ExchangeDeclare("KnowldegeGraphExchange", "topic");
+            connection = _factory.CreateConnection ();
+            Model = connection.CreateModel ();
+            Model.ExchangeDeclare (ExchangeName, "topic");
 
-            Model.QueueDeclare("KnowledgeGraph_Contributer_Ids", false, false, false, null);
-            Model.QueueDeclare("Contributer_KnowledgeGraph_LearningPlan", false, false, false, null);
-            Model.QueueDeclare("Contributer_KnowledgeGraph_Resources", false, false, false, null);
-            Model.QueueDeclare("Contributer_QuizEngine_Questions", false, false, false, null);
-            Model.QueueDeclare("Profile_KnowledgeGraph_User", false, false, false, null);
-            Model.QueueDeclare("Profile_KnowledgeGraph_LearningPlanRatingWrapper", false, false, false, null);
-            Model.QueueDeclare("Profile_KnowledgeGraph_LearningPlanSubscriptionWrapper", false, false, false, null);
-            Model.QueueDeclare("Profile_KnowledgeGraph_ResourceRatingWrapper", false, false, false, null);
-            Model.QueueDeclare("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", false, false, false, null);
-            Model.QueueDeclare("QuizEngine_KnowledgeGraph_Concepts", false, false, false, null);
-            Model.QueueDeclare("QuizEngine_KnowledgeGraph_QuestionBatch", false, false, false, null);
+            Model.QueueDeclare ("KnowledgeGraph_Contributer_Ids", false, false, false, null);
+            Model.QueueDeclare ("Contributer_KnowledgeGraph_LearningPlan", false, false, false, null);
+            Model.QueueDeclare ("Contributer_KnowledgeGraph_Resources", false, false, false, null);
+            Model.QueueDeclare ("Contributer_QuizEngine_Questions", false, false, false, null);
+            Model.QueueDeclare ("Profile_KnowledgeGraph_User", false, false, false, null);
+            Model.QueueDeclare ("Profile_KnowledgeGraph_LearningPlanRatingWrapper", false, false, false, null);
+            Model.QueueDeclare ("Profile_KnowledgeGraph_LearningPlanSubscriptionWrapper", false, false, false, null);
+            Model.QueueDeclare ("Profile_KnowledgeGraph_ResourceRatingWrapper", false, false, false, null);
+            Model.QueueDeclare ("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", false, false, false, null);
+            Model.QueueDeclare ("QuizEngine_KnowledgeGraph_Concepts", false, false, false, null);
+            Model.QueueDeclare ("QuizEngine_KnowledgeGraph_QuestionBatch", false, false, false, null);
+            Model.QueueDeclare ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, false, false, null);
+            Model.QueueDeclare ("Profile_KnowledgeGraph_ResourceFeedBack", false, false, false, null);
+            Model.QueueDeclare ("Profile_KnowledgeGraph_QuestionFeedBack", false, false, false, null);
 
             Model.QueueBind("KnowledgeGraph_Contributer_Ids", ExchangeNme, "Request.Question");
             Model.QueueBind("Contributer_KnowledgeGraph_LearningPlan", ExchangeNme, "Models.LearningPlan");
