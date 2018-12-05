@@ -119,7 +119,7 @@ namespace KnowledgeGraph.Services {
                     var batch_query = (QuestionBatchRequest) body.DeSerialize (typeof (QuestionBatchRequest));
                     this.questionidbatchlist = new GraphBatchResponse (batch_query.Username);
                     this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds (batch_query.Username, batch_query.Tech, batch_query.Concepts));
-                    Console.WriteLine(this.questionidbatchlist.questionids);
+                    Console.WriteLine(this.questionidbatchlist.questionids.Values);
                     channel.BasicPublish ("KnowledgeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize ());
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine (" - Routing Key <{0}>", routingKey);
