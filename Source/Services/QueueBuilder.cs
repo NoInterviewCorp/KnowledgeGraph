@@ -33,6 +33,7 @@ namespace KnowledgeGraph.Services {
             Model.QueueDeclare ("QuizEngine_KnowledgeGraph_QuestionBatch", false, false, false, null);
             Model.QueueDeclare ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, false, false, null);
             Model.QueueDeclare ("Profile_KnowledgeGraph_ResourceFeedBack", false, false, false, null);
+            Model.QueueDeclare ("Profile_KnowledgeGraph_QuestionFeedBack", false, false, false, null);
 
             Model.QueueBind ("KnowledgeGraph_Contributer_Ids", ExchangeName, "Request.Question");
             Model.QueueBind ("Contributer_KnowledgeGraph_LearningPlan", ExchangeName, "Models.LearningPlan");
