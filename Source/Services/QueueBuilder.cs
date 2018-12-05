@@ -43,7 +43,7 @@ namespace KnowledgeGraph.Services
             Model.QueueBind("Profile_KnowledgeGraph_User", "KnowldegeGraphExchange", "Users");
             Model.QueueBind("Profile_KnowledgeGraph_LearningPlanRatingWrapper", ExchangeNme, "Send.LearningPlanRating");
             Model.QueueBind("Profile_KnowledgeGraph_LearningPlanSubscriptionWrapper", ExchangeNme, "Send.LearningPlanSubscription");
-           Model.QueueBind("Profile_KnowledgeGraph_ResourceRatingWrapper", ExchangeNme, "Send.ResourceFeedBack");
+            Model.QueueBind("Profile_KnowledgeGraph_ResourceRatingWrapper", ExchangeNme, "Send.ResourceFeedBack");
             Model.QueueBind("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", ExchangeNme, "Send.QuestionFeedBack");
             Model.QueueBind("QuizEngine_KnowledgeGraph_QuestionBatch", ExchangeNme, "Question.Batch");
             Model.QueueBind("QuizEngine_KnowledgeGraph_Concepts", ExchangeNme, "Request.Concepts");

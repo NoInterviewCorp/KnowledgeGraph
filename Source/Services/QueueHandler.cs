@@ -28,12 +28,12 @@ namespace KnowledgeGraph.Services {
             graphfunctions = _graphfunctions;
             this.HandleLearningPlanFromQueue ();
             this.HandleResourceFromQueue ();
-            this.ListenForUser();
-            this.ListenForLeaningPlanRating();
-            this.ListenForResourceFeedBack();
-            this.ListenForLeaningPlanSubscriber();
-            this.ListenForLeaningPlanUnSubscriber();
-            this.ListenForQuestionFeedBack();
+            this.ListenForUser ();
+            this.ListenForLeaningPlanRating ();
+            this.ListenForResourceFeedBack ();
+            this.ListenForLeaningPlanSubscriber ();
+            this.ListenForLeaningPlanUnSubscriber ();
+            this.ListenForQuestionFeedBack ();
             //  this.QuizEngineQueueHandler();
         }
 
@@ -128,7 +128,7 @@ namespace KnowledgeGraph.Services {
                     Console.WriteLine (e.InnerException);
                 }
             };
-            channel.BasicConsume ("QuizEngine_KnowledgeGraph", false, consumer);
+            channel.BasicConsume ("QuizEngine_KnowledgeGraph_QuestionBatch", false, consumer);
         }
         public void QuestionRequestHandler () {
             var channel = queues.connection.CreateModel ();
@@ -205,20 +205,17 @@ namespace KnowledgeGraph.Services {
             Console.WriteLine ("Consuming from Profile's Knowledge Graph");
             channel.BasicConsume ("Profile_KnowledgeGraph_User", false, consumer);
         }
-        public void ListenForLeaningPlanRating()
-        {
-            var channel = queues.connection.CreateModel();
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            consumer.Received += async (model, ea) =>
-            {
-                Console.WriteLine("Consuming from the queue");
-                Console.WriteLine("-----------------------------------------------------------------------");
-                try
-                {
+        public void ListenForLeaningPlanRating () {
+            var channel = queues.connection.CreateModel ();
+            var consumer = new AsyncEventingBasicConsumer (channel);
+            consumer.Received += async (model, ea) => {
+                Console.WriteLine ("Consuming from the queue");
+                Console.WriteLine ("-----------------------------------------------------------------------");
+                try {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var learningPlanRatingWrapper = (LearningPlanRatingWrapper)body.DeSerialize(typeof(LearningPlanRatingWrapper));
-                    await graphfunctions.RatingLearningPlanAndRelationshipsAsync(learningPlanRatingWrapper);
+                    var learningPlanRatingWrapper = (LearningPlanRatingWrapper) body.DeSerialize (typeof (LearningPlanRatingWrapper));
+                    await graphfunctions.RatingLearningPlanAndRelationshipsAsync (learningPlanRatingWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
                     Console.WriteLine ("User Name is {0} ");
@@ -251,8 +248,8 @@ namespace KnowledgeGraph.Services {
                     channel.BasicAck (ea.DeliveryTag, false);
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var resourceRatingWrapper = (ResourceRatingWrapper)body.DeSerialize(typeof(ResourceRatingWrapper));
-                    await graphfunctions.RatingResourceAndRelationshipsAsync(resourceRatingWrapper);
+                    var resourceRatingWrapper = (ResourceRatingWrapper) body.DeSerialize (typeof (ResourceRatingWrapper));
+                    await graphfunctions.RatingResourceAndRelationshipsAsync (resourceRatingWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
                     Console.WriteLine ("User Name is {0} ");
@@ -286,8 +283,8 @@ namespace KnowledgeGraph.Services {
                     channel.BasicAck (ea.DeliveryTag, false);
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var learningPlanFeedBack = (LearningPlanSubscriptionWrapper)body.DeSerialize(typeof(LearningPlanSubscriptionWrapper));
-                    await graphfunctions.SubscribeLearningPlanAndRelationshipsAsync(learningPlanFeedBack);
+                    var learningPlanFeedBack = (LearningPlanSubscriptionWrapper) body.DeSerialize (typeof (LearningPlanSubscriptionWrapper));
+                    await graphfunctions.SubscribeLearningPlanAndRelationshipsAsync (learningPlanFeedBack);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
                     Console.WriteLine ("User Name is {0} ");
@@ -320,8 +317,8 @@ namespace KnowledgeGraph.Services {
                     channel.BasicAck (ea.DeliveryTag, false);
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var learningPlanFeedBack = (LearningPlanSubscriptionWrapper)body.DeSerialize(typeof(LearningPlanSubscriptionWrapper));
-                    await graphfunctions.UnSubscribeLearningPlanAndRelationshipsAsync(learningPlanFeedBack);
+                    var learningPlanFeedBack = (LearningPlanSubscriptionWrapper) body.DeSerialize (typeof (LearningPlanSubscriptionWrapper));
+                    await graphfunctions.UnSubscribeLearningPlanAndRelationshipsAsync (learningPlanFeedBack);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
                     Console.WriteLine ("User Name is {0} ");
@@ -354,8 +351,8 @@ namespace KnowledgeGraph.Services {
                     channel.BasicAck (ea.DeliveryTag, false);
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
-                    var questionAmbiguityWrapper = (QuestionAmbiguityWrapper)body.DeSerialize(typeof(QuestionAmbiguityWrapper));
-                    await graphfunctions.ReportQuestionAndRelationshipsAsync(questionAmbiguityWrapper);
+                    var questionAmbiguityWrapper = (QuestionAmbiguityWrapper) body.DeSerialize (typeof (QuestionAmbiguityWrapper));
+                    await graphfunctions.ReportQuestionAndRelationshipsAsync (questionAmbiguityWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
                     Console.WriteLine ("User Name is {0} ");
