@@ -23,18 +23,21 @@ namespace KnowledgeGraph.Database.Persistence {
                 learningPlan.Resources = null;
                 learningPlan.Technology = null;
                 var queryResult = await graph.Cypher
-                    .Merge ("(lp:LearningPlan {LearningPlanId:\"" + learningPlan.LearningPlanId + "\"})")
-                    .OnCreate ()
-                    .Set ("lp = {learningPlan}")
-                    .With ("lp")
-                    .Match ("(u:User{UserId:\"" + authorId + "\"})")
-                    .Merge ("(u)-[:DESIGNS]->(lp)")
-                    .With ("lp")
-                    .Merge ("(t:Technology {Name:\"" + technology.Name + "\"})")
-                    .OnCreate ()
-                    .Set ("t={technology}")
-                    .Merge ("(lp)-[:TEACHES]->(t)")
-                    .WithParams (new {
+	            .Merge("(lp:LearningPlan {LearningPlanId:\"" + learningPlan.LearningPlanId + "\"})")
+                    .OnCreate()
+                    .Set("lp = {learningPlan}")
+                    .With("lp")
+                    .Merge("(u:User{UserId:\"" + authorId + "\"})")
+                    .OnCreate()
+		    .Set("u={UserId:\""+authorId+"\"}")
+                    .Merge("(u)-[:DESIGNS]->(lp)")
+                    .With("lp")
+                    .Merge("(t:Technology {Name:\"" + technology.Name + "\"})")
+                    .OnCreate()
+                    .Set("t={technology}")
+                    .Merge("(lp)-[:TEACHES]->(t)")
+                    .WithParams(new
+                    {
                         technology,
                         learningPlan
                     })
