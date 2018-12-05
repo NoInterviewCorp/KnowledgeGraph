@@ -9,8 +9,10 @@ using KnowledgeGraph.RabbitMQModels;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace KnowledgeGraph.Services {
-    public class QueueHandler {
+namespace KnowledgeGraph.Services
+{
+    public class QueueHandler
+    {
         public QueueBuilder queues;
         private QuizEngineQuery query;
         private IGraphFunctions graphfunctions;
@@ -23,11 +25,12 @@ namespace KnowledgeGraph.Services {
         private QuestionIdsResponse questionidlist;
         private GraphBatchResponse questionidbatchlist;
 
-        public QueueHandler (QueueBuilder _queues, IGraphFunctions _graphfunctions) {
+        public QueueHandler(QueueBuilder _queues, IGraphFunctions _graphfunctions)
+        {
             queues = _queues;
             graphfunctions = _graphfunctions;
-            this.HandleLearningPlanFromQueue ();
-            this.HandleResourceFromQueue ();
+            this.HandleLearningPlanFromQueue();
+            this.HandleResourceFromQueue();
             this.ListenForUser();
             this.ListenForLeaningPlanRating();
             this.ListenForResourceFeedBack();
@@ -37,138 +40,163 @@ namespace KnowledgeGraph.Services {
             //  this.QuizEngineQueueHandler();
         }
 
-        public void HandleLearningPlanFromQueue () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("-----------------------------------------------------------------------");
-                Console.WriteLine ("Consuming from the queue");
-                var body = ea.Body;
-                var learningPlan = (LearningPlanWrapper) body.DeSerialize (typeof (LearningPlanWrapper));
-                await graphfunctions.CreateLearningPlanAndRelationshipsAsync (learningPlan);
-                var routingKey = ea.RoutingKey;
-                channel.BasicAck (ea.DeliveryTag, false);
-                Console.WriteLine ("-----------------------------------------------------------------------");
-                Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                await Task.Yield ();
+        public void HandleLearningPlanFromQueue()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                try
+                {
+                    Console.WriteLine("-----------------------------------------------------------------------");
+                    Console.WriteLine("Consuming from the queue");
+                    var body = ea.Body;
+                    var learningPlan = (LearningPlanWrapper)body.DeSerialize(typeof(LearningPlanWrapper));
+                    await graphfunctions.CreateLearningPlanAndRelationshipsAsync(learningPlan);
+                    var routingKey = ea.RoutingKey;
+                    channel.BasicAck(ea.DeliveryTag, false);
+                    Console.WriteLine("-----------------------------------------------------------------------");
+                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                    await Task.Yield();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("-----------------------------------------------------------------------");
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine(e.InnerException);
+                    Console.WriteLine("-----------------------------------------------------------------------");
+                }
             };
-            Console.WriteLine ("Consuming from Contributor's Knowledge Graph");
-            channel.BasicConsume ("Contributer_KnowledgeGraph_LearningPlan", false, consumer);
+            Console.WriteLine("Consuming from Contributor's Knowledge Graph");
+            channel.BasicConsume("Contributer_KnowledgeGraph_LearningPlan", false, consumer);
         }
 
-        public void HandleResourceFromQueue () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Consuming from the queue");
-                Console.WriteLine ("-----------------------------------------------------------------------");
+        public void HandleResourceFromQueue()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Consuming from the queue");
+                Console.WriteLine("-----------------------------------------------------------------------");
                 var body = ea.Body;
-                var resource = (ResourceWrapper) body.DeSerialize (typeof (ResourceWrapper));
-                await graphfunctions.CreateResourceAndRelationships (resource);
+                var resource = (ResourceWrapper)body.DeSerialize(typeof(ResourceWrapper));
+                await graphfunctions.CreateResourceAndRelationships(resource);
                 var routingKey = ea.RoutingKey;
-                channel.BasicAck (ea.DeliveryTag, false);
-                Console.WriteLine ("-----------------------------------------------------------------------");
-                Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                await Task.Yield ();
+                channel.BasicAck(ea.DeliveryTag, false);
+                Console.WriteLine("-----------------------------------------------------------------------");
+                Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                await Task.Yield();
             };
-            Console.WriteLine ("Consuming from Contributor's Knowledge Graph");
-            channel.BasicConsume ("Contributer_KnowledgeGraph_Resources", false, consumer);
+            Console.WriteLine("Consuming from Contributor's Knowledge Graph");
+            channel.BasicConsume("Contributer_KnowledgeGraph_Resources", false, consumer);
         }
 
-        public void QuizEngineQueueHandler () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Recieved Request for Questions");
+        public void QuizEngineQueueHandler()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Recieved Request for Questions");
                 var body = ea.Body;
-                query = (QuizEngineQuery) body.DeSerialize (typeof (QuizEngineQuery));
-                IDs.Clear ();
-                IDs.AddRange (graphfunctions.GetQuestionIds (query.tech, query.username));
-                channel.BasicAck (ea.DeliveryTag, false);
-                channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, IDs.Serialize ());
+                query = (QuizEngineQuery)body.DeSerialize(typeof(QuizEngineQuery));
+                IDs.Clear();
+                IDs.AddRange(graphfunctions.GetQuestionIds(query.tech, query.username));
+                channel.BasicAck(ea.DeliveryTag, false);
+                channel.BasicPublish("KnowldegeGraphExchange", "Models.QuestionId", null, IDs.Serialize());
                 var routingKey = ea.RoutingKey;
-                Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
-                await Task.Yield ();
+                Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                Console.WriteLine("- Delivery Tag <{0}>", ea.DeliveryTag);
+                await Task.Yield();
             };
-            channel.BasicConsume ("QuizEngine_KnowledgeGraph_QuestionBatch", false, consumer);
+            channel.BasicConsume("QuizEngine_KnowledgeGraph_QuestionBatch", false, consumer);
         }
 
-        public void QuestionBatchRequestHandler () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Recieved Request for Questions");
+        public void QuestionBatchRequestHandler()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Recieved Request for Questions");
                 var body = ea.Body;
-                batch_query = (QuestionBatchRequest) body.DeSerialize (typeof (QuestionBatchRequest));
-                this.questionidbatchlist = new GraphBatchResponse (batch_query.Username);
-                this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds (batch_query.Username, batch_query.Tech, batch_query.Concepts));
-                channel.BasicAck (ea.DeliveryTag, false);
-                channel.BasicPublish ("KnowldegeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize ());
+                batch_query = (QuestionBatchRequest)body.DeSerialize(typeof(QuestionBatchRequest));
+                this.questionidbatchlist = new GraphBatchResponse(batch_query.Username);
+                this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds(batch_query.Username, batch_query.Tech, batch_query.Concepts));
+                channel.BasicAck(ea.DeliveryTag, false);
+                channel.BasicPublish("KnowldegeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize());
                 var routingKey = ea.RoutingKey;
-                Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
-                await Task.Yield ();
+                Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                Console.WriteLine("- Delivery Tag <{0}>", ea.DeliveryTag);
+                await Task.Yield();
             };
-            channel.BasicConsume ("QuizEngine_KnowledgeGraph", false, consumer);
+            channel.BasicConsume("QuizEngine_KnowledgeGraph", false, consumer);
         }
-        public void QuestionRequestHandler () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Recieved Request for Questions");
+        public void QuestionRequestHandler()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Recieved Request for Questions");
                 var body = ea.Body;
-                question_query = (QuestionRequest) body.DeSerialize (typeof (QuestionRequest));
-                this.questionidlist = new QuestionIdsResponse (batch_query.Username);
-                this.questionidlist.IdRequestDictionary = (graphfunctions.GetQuestionIds (question_query.Username, question_query.Tech, question_query.Concept));
-                channel.BasicAck (ea.DeliveryTag, false);
-                channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.questionidlist.Serialize ());
+                question_query = (QuestionRequest)body.DeSerialize(typeof(QuestionRequest));
+                this.questionidlist = new QuestionIdsResponse(batch_query.Username);
+                this.questionidlist.IdRequestDictionary = (graphfunctions.GetQuestionIds(question_query.Username, question_query.Tech, question_query.Concept));
+                channel.BasicAck(ea.DeliveryTag, false);
+                channel.BasicPublish("KnowldegeGraphExchange", "Routing Key", null, this.questionidlist.Serialize());
                 var routingKey = ea.RoutingKey;
-                Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
-                await Task.Yield ();
+                Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                Console.WriteLine("- Delivery Tag <{0}>", ea.DeliveryTag);
+                await Task.Yield();
             };
-            channel.BasicConsume ("QuizEngine_KnowledgeGraph", false, consumer);
+            channel.BasicConsume("QuizEngine_KnowledgeGraph", false, consumer);
         }
-        public void ConceptRequestHandler () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Recieved Request for Concepts");
+        public void ConceptRequestHandler()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Recieved Request for Concepts");
                 var body = ea.Body;
-                concept_query = (ConceptRequest) body.DeSerialize (typeof (ConceptRequest));
-                this.concept_list = new ConceptResponse (concept_query.Username);
-                this.concept_list.concepts.AddRange (graphfunctions.GetConceptFromTechnology (concept_query.Tech));
-                channel.BasicAck (ea.DeliveryTag, false);
-                channel.BasicPublish ("KnowldegeGraphExchange", "Routing Key", null, this.concept_list.Serialize ());
+                concept_query = (ConceptRequest)body.DeSerialize(typeof(ConceptRequest));
+                this.concept_list = new ConceptResponse(concept_query.Username);
+                this.concept_list.concepts.AddRange(graphfunctions.GetConceptFromTechnology(concept_query.Tech));
+                channel.BasicAck(ea.DeliveryTag, false);
+                channel.BasicPublish("KnowldegeGraphExchange", "Routing Key", null, this.concept_list.Serialize());
                 var routingKey = ea.RoutingKey;
-                Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
-                await Task.Yield ();
+                Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                Console.WriteLine("- Delivery Tag <{0}>", ea.DeliveryTag);
+                await Task.Yield();
             };
-            channel.BasicConsume ("QuizEngine_KnowledgeGraph_Concepts", false, consumer);
+            channel.BasicConsume("QuizEngine_KnowledgeGraph_Concepts", false, consumer);
         }
-        public void ListenForUser () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Consuming from the queue");
-                Console.WriteLine ("-----------------------------------------------------------------------");
+        public void ListenForUser()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Consuming from the queue");
+                Console.WriteLine("-----------------------------------------------------------------------");
 
                 var body = ea.Body;
-                var user = (User) body.DeSerialize (typeof (User));
+                var user = (User)body.DeSerialize(typeof(User));
                 // var message = Encoding.UTF8.GetString(body);
                 // var user = JsonConvert.DeserializeObject<User>(message);
-                Console.WriteLine ("User Name is {0} " + user.FullName);
+                Console.WriteLine("User Name is {0} " + user.FullName);
                 var routingKey = ea.RoutingKey;
-                channel.BasicAck (ea.DeliveryTag, false);
-                Console.WriteLine ("-----------------------------------------------------------------------");
-                Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                await Task.Yield ();
+                channel.BasicAck(ea.DeliveryTag, false);
+                Console.WriteLine("-----------------------------------------------------------------------");
+                Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                await Task.Yield();
 
             };
-            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume ("Profile_KnowledgeGraph_User", false, consumer);
+            Console.WriteLine("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume("Profile_KnowledgeGraph_User", false, consumer);
         }
         public void ListenForLeaningPlanRating()
         {
@@ -186,163 +214,185 @@ namespace KnowledgeGraph.Services {
                     await graphfunctions.RatingLearningPlanAndRelationshipsAsync(learningPlanRatingWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
-                    Console.WriteLine ("User Name is {0} ");
+                    Console.WriteLine("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
-                    channel.BasicAck (ea.DeliveryTag, false);
-                    Console.WriteLine ("-----------------------------------------------------------------------");
-                    Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                    await Task.Yield ();
-                } catch (Exception e) {
-                    Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine (e.Message);
-                    Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine (e.StackTrace);
-                    Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine (e.InnerException);
+                    channel.BasicAck(ea.DeliveryTag, false);
+                    Console.WriteLine("-----------------------------------------------------------------------");
+                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                    await Task.Yield();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
+                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
+                    Console.WriteLine(e.InnerException);
                     // return null;
                 }
 
             };
 
-            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            Console.WriteLine("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
         }
-        public void ListenForResourceFeedBack () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Consuming from the queue");
-                Console.WriteLine ("-----------------------------------------------------------------------");
-                try {
+        public void ListenForResourceFeedBack()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Consuming from the queue");
+                Console.WriteLine("-----------------------------------------------------------------------");
+                try
+                {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
                     var resourceRatingWrapper = (ResourceRatingWrapper)body.DeSerialize(typeof(ResourceRatingWrapper));
                     await graphfunctions.RatingResourceAndRelationshipsAsync(resourceRatingWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
-                    Console.WriteLine ("User Name is {0} ");
+                    Console.WriteLine("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
-                    channel.BasicAck (ea.DeliveryTag, false);
-                    Console.WriteLine ("-----------------------------------------------------------------------");
-                    Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                    await Task.Yield ();
-                } catch (Exception e) {
-                    Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine (e.Message);
-                    Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine (e.StackTrace);
-                    Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine (e.InnerException);
+                    channel.BasicAck(ea.DeliveryTag, false);
+                    Console.WriteLine("-----------------------------------------------------------------------");
+                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                    await Task.Yield();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
+                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
+                    Console.WriteLine(e.InnerException);
                     // return null;
                 }
 
             };
 
-            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume ("Profile_KnowledgeGraph_ResourceFeedBack", false, consumer);
+            Console.WriteLine("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume("Profile_KnowledgeGraph_ResourceFeedBack", false, consumer);
 
         }
-        public void ListenForLeaningPlanSubscriber () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Consuming from the queue");
-                Console.WriteLine ("-----------------------------------------------------------------------");
-                try {
+        public void ListenForLeaningPlanSubscriber()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Consuming from the queue");
+                Console.WriteLine("-----------------------------------------------------------------------");
+                try
+                {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
                     var learningPlanFeedBack = (LearningPlanSubscriptionWrapper)body.DeSerialize(typeof(LearningPlanSubscriptionWrapper));
                     await graphfunctions.SubscribeLearningPlanAndRelationshipsAsync(learningPlanFeedBack);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
-                    Console.WriteLine ("User Name is {0} ");
+                    Console.WriteLine("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
-                    channel.BasicAck (ea.DeliveryTag, false);
-                    Console.WriteLine ("-----------------------------------------------------------------------");
-                    Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                    await Task.Yield ();
-                } catch (Exception e) {
-                    Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine (e.Message);
-                    Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine (e.StackTrace);
-                    Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine (e.InnerException);
+                    channel.BasicAck(ea.DeliveryTag, false);
+                    Console.WriteLine("-----------------------------------------------------------------------");
+                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                    await Task.Yield();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
+                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
+                    Console.WriteLine(e.InnerException);
                     // return null;
                 }
 
             };
 
-            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            Console.WriteLine("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
         }
-        public void ListenForLeaningPlanUnSubscriber () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Consuming from the queue");
-                Console.WriteLine ("-----------------------------------------------------------------------");
-                try {
+        public void ListenForLeaningPlanUnSubscriber()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Consuming from the queue");
+                Console.WriteLine("-----------------------------------------------------------------------");
+                try
+                {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
                     var learningPlanFeedBack = (LearningPlanSubscriptionWrapper)body.DeSerialize(typeof(LearningPlanSubscriptionWrapper));
                     await graphfunctions.UnSubscribeLearningPlanAndRelationshipsAsync(learningPlanFeedBack);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
-                    Console.WriteLine ("User Name is {0} ");
+                    Console.WriteLine("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
-                    channel.BasicAck (ea.DeliveryTag, false);
-                    Console.WriteLine ("-----------------------------------------------------------------------");
-                    Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                    await Task.Yield ();
-                } catch (Exception e) {
-                    Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine (e.Message);
-                    Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine (e.StackTrace);
-                    Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine (e.InnerException);
+                    channel.BasicAck(ea.DeliveryTag, false);
+                    Console.WriteLine("-----------------------------------------------------------------------");
+                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                    await Task.Yield();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
+                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
+                    Console.WriteLine(e.InnerException);
                     // return null;
                 }
 
             };
 
-            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume ("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
+            Console.WriteLine("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume("Profile_KnowledgeGraph_LearningPlanFeedBack", false, consumer);
         }
-        public void ListenForQuestionFeedBack () {
-            var channel = queues.connection.CreateModel ();
-            var consumer = new AsyncEventingBasicConsumer (channel);
-            consumer.Received += async (model, ea) => {
-                Console.WriteLine ("Consuming from the queue");
-                Console.WriteLine ("-----------------------------------------------------------------------");
-                try {
+        public void ListenForQuestionFeedBack()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Consuming from the queue");
+                Console.WriteLine("-----------------------------------------------------------------------");
+                try
+                {
                     var body = ea.Body;
                     //  var user = (User)body.DeSerialize(typeof(User));
                     var questionAmbiguityWrapper = (QuestionAmbiguityWrapper)body.DeSerialize(typeof(QuestionAmbiguityWrapper));
                     await graphfunctions.ReportQuestionAndRelationshipsAsync(questionAmbiguityWrapper);
                     // var message = Encoding.UTF8.GetString(body);
                     //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
-                    Console.WriteLine ("User Name is {0} ");
+                    Console.WriteLine("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
-                    channel.BasicAck (ea.DeliveryTag, false);
-                    Console.WriteLine ("-----------------------------------------------------------------------");
-                    Console.WriteLine (" - Routing Key <{0}>", routingKey);
-                    await Task.Yield ();
-                } catch (Exception e) {
-                    Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine (e.Message);
-                    Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine (e.StackTrace);
-                    Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine (e.InnerException);
+                    channel.BasicAck(ea.DeliveryTag, false);
+                    Console.WriteLine("-----------------------------------------------------------------------");
+                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                    await Task.Yield();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
+                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
+                    Console.WriteLine(e.InnerException);
                     // return null;
                 }
 
             };
 
-            Console.WriteLine ("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume ("Profile_KnowledgeGraph_QuestionFeedBack", false, consumer);
+            Console.WriteLine("Consuming from Profile's Knowledge Graph");
+            channel.BasicConsume("Profile_KnowledgeGraph_QuestionFeedBack", false, consumer);
         }
     }
 }
