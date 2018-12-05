@@ -514,7 +514,7 @@ namespace KnowledgeGraph.Database.Persistence
                     .Return<float>("lp.AvgRating")
                     .ResultsAsync);
               //  var avg_rating = LPqueryAvg[0];
-                Console.WriteLine("dasdsa");
+                Console.WriteLine("Rated LearningPlan");
                 // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
                 //  return  Ok(new List<float>(LPqueryAvg)[0]);
             
@@ -561,11 +561,11 @@ namespace KnowledgeGraph.Database.Persistence
                 .Where((User user) => user.UserId == learningPlanSubscriptionWrapper.UserId)
                 .AndWhere((LearningPlanWrapper lp) => lp.LearningPlanId == learningPlanSubscriptionWrapper.LearningPlanId)
 
-                .Merge("(user)-[g:Subscribe_LP]->(lp)")
-                .OnCreate()
-                .Set("g={LearningPlanSubscriber}")
-                .OnMatch()
-                .Set("g={LearningPlanSubscriber}")
+                .Create("(user)-[g:Subscribe_LP]->(lp)")
+                //.OnCreate()
+                //.Set("g={LearningPlanSubscriber}")
+                //.OnMatch()
+               // .Set("g={LearningPlanSubscriber}")
                // .WithParams(new
                // {
                    // usersubscribe = learningPlanFeedback.Subscribe,
@@ -586,7 +586,7 @@ namespace KnowledgeGraph.Database.Persistence
                
                 // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
                 .ResultsAsync);
-                Console.WriteLine("haha");
+                Console.WriteLine("Subscribed LearningPlan");
          //   return Ok(new List<int>(totalsubscriber)[0]);
         }
          public async Task UnSubscribeLearningPlanAndRelationshipsAsync(LearningPlanSubscriptionWrapper learningPlanSubscriptionWrapper)
@@ -613,7 +613,7 @@ namespace KnowledgeGraph.Database.Persistence
                .Return<int>("lp.Subscriber")
                 // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
                 .ResultsAsync);
-                Console.WriteLine("unsubscribed");
+                Console.WriteLine("Unsubscribed LearningPlan");
             //return Ok(new List<int>(totalsubscriber)[0]);
         }
         public async Task ReportQuestionAndRelationshipsAsync(QuestionAmbiguityWrapper questionAmbiguityWrapper)
@@ -648,7 +648,7 @@ namespace KnowledgeGraph.Database.Persistence
                .Return<int>("qe.Total_Ambiguity")
                 // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
                 .ResultsAsync);
-                Console.WriteLine("ques is ambigius");
+                Console.WriteLine("Question Reported");
            // return Ok(new List<int>(totalReport)[0]);
         }
     }
