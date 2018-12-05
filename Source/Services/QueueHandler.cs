@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using KnowledeGraph.ContentWrapper;
 using KnowledgeGraph.Database;
@@ -36,7 +36,7 @@ namespace KnowledgeGraph.Services {
             this.ListenForLeaningPlanUnSubscriber ();
             this.ListenForQuestionFeedBack ();
             this.QuestionBatchRequestHandler ();
-            Console.WriteLine("------");
+            Console.WriteLine ("------");
             //  this.QuizEngineQueueHandler();
         }
 
@@ -109,7 +109,7 @@ namespace KnowledgeGraph.Services {
         }
 
         public void QuestionBatchRequestHandler () {
-            Console.WriteLine("In Question Batch Request Handler");
+            Console.WriteLine ("In Question Batch Request Handler");
             var channel = queues.connection.CreateModel ();
             var consumer = new AsyncEventingBasicConsumer (channel);
             consumer.Received += async (model, ea) => {
@@ -120,13 +120,12 @@ namespace KnowledgeGraph.Services {
                     var batch_query = (QuestionBatchRequest) body.DeSerialize (typeof (QuestionBatchRequest));
                     this.questionidbatchlist = new GraphBatchResponse (batch_query.Username);
                     this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds (batch_query.Username, batch_query.Tech, batch_query.Concepts));
-                    Console.WriteLine(this.questionidbatchlist.questionids.Values);
-                    var values = this.questionidbatchlist.questionids.Values.SelectMany(v => v);
-                    foreach(var v in values)
-                    {
-                        Console.WriteLine(v);
+                    Console.WriteLine (this.questionidbatchlist.questionids.Values);
+                    var values = this.questionidbatchlist.questionids.Values.SelectMany (v => v);
+                    foreach (var v in values) {
+                        Console.WriteLine (v);
                     }
-                    channel.BasicPublish ("KnowledgeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize ());
+                    channel.BasicPublish ("KnowledgeGraphExchange", "Request.Question", null, this.questionidbatchlist.Serialize ());
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine (" - Routing Key <{0}>", routingKey);
                     Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
