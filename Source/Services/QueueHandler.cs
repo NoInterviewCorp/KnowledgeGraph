@@ -116,7 +116,7 @@ namespace KnowledgeGraph.Services {
                 try {
                     channel.BasicAck (ea.DeliveryTag, false);
                     var body = ea.Body;
-                    batch_query = (QuestionBatchRequest) body.DeSerialize (typeof (QuestionBatchRequest));
+                    var batch_query = (QuestionBatchRequest) body.DeSerialize (typeof (QuestionBatchRequest));
                     this.questionidbatchlist = new GraphBatchResponse (batch_query.Username);
                     this.questionidbatchlist.questionids = (graphfunctions.GetQuestionBatchIds (batch_query.Username, batch_query.Tech, batch_query.Concepts));
                     channel.BasicPublish ("KnowledgeGraphExchange", "Models.QuestionId", null, this.questionidbatchlist.Serialize ());
