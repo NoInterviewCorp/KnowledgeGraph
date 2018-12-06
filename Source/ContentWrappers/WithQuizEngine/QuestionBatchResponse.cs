@@ -5,7 +5,7 @@ namespace KnowledgeGraph.RabbitMQModels
     public class GraphBatchResponse
     {
         public string Username { get; set; }
-        public List<string> QuestionIds = new List<string>();
+        public List<string> IdRequestList = new List<string>();
 
         public GraphBatchResponse()
         {
