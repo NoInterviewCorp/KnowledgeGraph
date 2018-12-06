@@ -413,7 +413,7 @@ namespace KnowledgeGraph.Database.Persistence
                         var relations = graph.Cypher
                             .Match($"path = (u:User{{ UserId: '{username}' }})-[R]-(c:Concept{{ Name: '{concept}' }})")
                             .Where("not type(R)=\"TESTED_HIMSELF_ON\"")
-                            .ReturnDistinct<string>("type(R)")
+                            .Return<string>("type(R)")
                             .OrderBy("R.Intensity")
                             .Results
                             .ToList().Take(3);
