@@ -134,7 +134,9 @@ namespace KnowledgeGraph.Services
                     var body = ea.Body;
                     var batch_query = (QuestionBatchRequest)body.DeSerialize(typeof(QuestionBatchRequest));
                     this.questionidbatchlist = new GraphBatchResponse(batch_query.Username);
-                    this.questionidbatchlist.QuestionIds.AddRange(graphfunctions.GetQuestionBatchIds(batch_query.Username, batch_query.Tech, batch_query.Concepts));
+                    var questionQuery = graphfunctions.GetQuestionBatchIds(batch_query.Username, batch_query.Tech, batch_query.Concepts);
+                    Console.WriteLine("Question query returned for "+questionQuery.Count+" quesitons");
+                    this.questionidbatchlist.QuestionIds.AddRange(questionQuery);
                     foreach (var v in questionidbatchlist.QuestionIds)
                     {
                         Console.WriteLine(v);

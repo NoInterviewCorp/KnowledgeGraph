@@ -318,7 +318,7 @@ namespace KnowledgeGraph.Database.Persistence
                 {
                     name = concept
                 })
-                .Return(q => q.As<Question>().Id)
+                .Return(q => q.As<Question>().QuestionId)
                 .Results
                 .ToList();
             Ids.Add(concept, tempid);
@@ -367,7 +367,7 @@ namespace KnowledgeGraph.Database.Persistence
                         .ExecuteWithoutResults();
                     var tempids = graph.Cypher
                         .Match($"(q:Question)-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
-                        .Return(q => q.As<Question>().Id)
+                        .Return(q => q.As<Question>().QuestionId)
                         .Results
                         .ToList();
                     var shuffeledquestionsids = tempids.OrderBy(a => Guid.NewGuid()).ToList().Take(2);
@@ -400,7 +400,7 @@ namespace KnowledgeGraph.Database.Persistence
                             .ExecuteWithoutResults();
                         var tempids = graph.Cypher
                             .Match($"(q:Question)-[:EVALUATES]->(c:Concept{{ Name: '{concept}' }})")
-                            .Return(q => q.As<Question>().Id)
+                            .Return(q => q.As<Question>().QuestionId)
                             .Results
                             .ToList();
                         var shuffeledquestionsids = tempids.OrderBy(a => Guid.NewGuid()).ToList().Take(2);
@@ -427,7 +427,7 @@ namespace KnowledgeGraph.Database.Persistence
                                     taxonomy = BloomTaxonomy.Knowledge.ToString();
                                     var tempids = graph.Cypher
                                         .Match($"(q:Question{{BloomLevel: '{taxonomy}' }})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
-                                        .Return(q => q.As<Question>().Id)
+                                        .Return(q => q.As<Question>().QuestionId)
                                         .Results
                                         .ToList();
                                     var shuffeledquestionsids = tempids.OrderBy(a => Guid.NewGuid()).ToList().Take(2);
@@ -439,7 +439,7 @@ namespace KnowledgeGraph.Database.Persistence
                                     taxonomy = BloomTaxonomy.Comprehension.ToString();
                                     tempids = graph.Cypher
                                         .Match($"(q:Question{{BloomLevel: '{taxonomy}' }})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
-                                        .Return(q => q.As<Question>().Id)
+                                        .Return(q => q.As<Question>().QuestionId)
                                         .Results
                                         .ToList();
                                     shuffeledquestionsids = tempids.OrderBy(a => Guid.NewGuid()).ToList().Take(2);
@@ -451,7 +451,7 @@ namespace KnowledgeGraph.Database.Persistence
                                     taxonomy = BloomTaxonomy.Application.ToString();
                                     tempids = graph.Cypher
                                         .Match($"(q:Question{{BloomLevel: '{taxonomy}' }})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
-                                        .Return(q => q.As<Question>().Id)
+                                        .Return(q => q.As<Question>().QuestionId)
                                         .Results
                                         .ToList();
                                     shuffeledquestionsids = tempids.OrderBy(a => Guid.NewGuid()).ToList().Take(2);
@@ -463,7 +463,7 @@ namespace KnowledgeGraph.Database.Persistence
                                     taxonomy = BloomTaxonomy.Analysis.ToString();
                                     tempids = graph.Cypher
                                         .Match($"(q:Question{{BloomLevel: '{taxonomy}' }})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
-                                        .Return(q => q.As<Question>().Id)
+                                        .Return(q => q.As<Question>().QuestionId)
                                         .Results
                                         .ToList();
                                     shuffeledquestionsids = tempids.OrderBy(a => Guid.NewGuid()).ToList().Take(2);
@@ -475,7 +475,7 @@ namespace KnowledgeGraph.Database.Persistence
                                     taxonomy = BloomTaxonomy.Synthesis.ToString();
                                     tempids = graph.Cypher
                                         .Match($"(q:Question{{BloomLevel:'{taxonomy}'}})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
-                                        .Return(q => q.As<Question>().Id)
+                                        .Return(q => q.As<Question>().QuestionId)
                                         .Results
                                         .ToList();
                                     shuffeledquestionsids = tempids.OrderBy(a => Guid.NewGuid()).ToList().Take(2);
@@ -487,7 +487,7 @@ namespace KnowledgeGraph.Database.Persistence
                                     taxonomy = BloomTaxonomy.Evaluation.ToString();
                                     tempids = graph.Cypher
                                         .Match($"(q:Question{{BloomLevel: '{taxonomy}' }})-[:EVALUATES]-(c:Concept{{ Name:'{concept}' }})")
-                                        .Return(q => q.As<Question>().Id)
+                                        .Return(q => q.As<Question>().QuestionId)
                                         .Results
                                         .ToList();
                                     shuffeledquestionsids = tempids.OrderBy(a => Guid.NewGuid()).ToList().Take(2);

@@ -14,7 +14,6 @@ namespace KnowledgeGraph.RabbitMQModels
         public GraphBatchResponse(string _username)
         {
             Username = _username;
-            QuestionIds.Clear();
         }
     }
 }
