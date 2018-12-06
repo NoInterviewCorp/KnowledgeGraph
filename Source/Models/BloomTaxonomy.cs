@@ -1,5 +1,7 @@
-namespace KnowledgeGraph.Models {
-    public enum BloomTaxonomy : byte {
+namespace KnowledgeGraph.Models
+{
+    public enum BloomTaxonomy : byte
+    {
         Knowledge = 1,
         Comprehension,
         Application,

@@ -6,8 +6,10 @@ using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using MongoDB.Driver.Core;
 
-namespace KnowledgeGraph.Models {
-    public class Concept {
+namespace KnowledgeGraph.Models
+{
+    public class Concept
+    {
         public string Name { get; set; }
         public BloomTaxonomy bloomtaxonomy;
 

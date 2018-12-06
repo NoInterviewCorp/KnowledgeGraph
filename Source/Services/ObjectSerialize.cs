@@ -27,7 +27,7 @@ namespace KnowledgeGraph.Services
                 Console.WriteLine(json);
                 return JsonConvert.DeserializeObject(json, type);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);

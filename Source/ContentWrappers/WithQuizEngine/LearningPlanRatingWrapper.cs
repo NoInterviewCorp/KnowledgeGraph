@@ -4,7 +4,7 @@ namespace KnowledeGraph.ContentWrapper
     {
         public string UserId { get; set; }
         public string LearningPlanId { get; set; }
-        public int Star {get ;set;}
+        public int Star { get; set; }
 
     }
 }
