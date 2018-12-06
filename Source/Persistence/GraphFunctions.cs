@@ -385,11 +385,13 @@ namespace KnowledgeGraph.Database.Persistence {
                             .Results
                             .ToList ().Take (3);
                         List<string> TempIds = new List<string> ();
+                        var taxonomy = BloomTaxonomy.Knowledge.ToString();
                         foreach (var relation in relations) {
                             switch (relation) {
                                 case "KNOWLEDGE":
+                                    taxonomy = BloomTaxonomy.Knowledge.ToString();
                                     var tempids = graph.Cypher
-                                        .Match ($"(q:Question{{BloomLevel:1}})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
+                                        .Match ($"(q:Question{{BloomLevel: '{taxonomy}' }})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
@@ -399,8 +401,9 @@ namespace KnowledgeGraph.Database.Persistence {
                                     // mappedids.Add (concept, Ids);
                                     break;
                                 case "COMPREHENSION":
+                                    taxonomy = BloomTaxonomy.Comprehension.ToString();
                                     tempids = graph.Cypher
-                                        .Match ($"(q:Question{{BloomLevel:2}})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
+                                        .Match ($"(q:Question{{BloomLevel: '{taxonomy}' }})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
@@ -410,8 +413,9 @@ namespace KnowledgeGraph.Database.Persistence {
                                     // mappedids.Add (concept, Ids);
                                     break;
                                 case "APPLICATION":
+                                    taxonomy = BloomTaxonomy.Application.ToString();
                                     tempids = graph.Cypher
-                                        .Match ($"(q:Question{{BloomLevel:3}})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
+                                        .Match ($"(q:Question{{BloomLevel: '{taxonomy}' }})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
@@ -421,8 +425,9 @@ namespace KnowledgeGraph.Database.Persistence {
                                     // mappedids.Add (concept, Ids);
                                     break;
                                 case "ANALYSIS":
+                                    taxonomy = BloomTaxonomy.Analysis.ToString();
                                     tempids = graph.Cypher
-                                        .Match ($"(q:Question{{BloomLevel:4}})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
+                                        .Match ($"(q:Question{{BloomLevel: '{taxonomy}' }})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
@@ -432,8 +437,9 @@ namespace KnowledgeGraph.Database.Persistence {
                                     // mappedids.Add (concept, Ids);
                                     break;
                                 case "SYNTHESIS":
+                                    taxonomy = BloomTaxonomy.Synthesis.ToString();
                                     tempids = graph.Cypher
-                                        .Match ($"(q:Question{{BloomLevel:5}})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
+                                        .Match ($"(q:Question{{BloomLevel:'{taxonomy}'}})-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
@@ -443,8 +449,9 @@ namespace KnowledgeGraph.Database.Persistence {
                                     // mappedids.Add (concept, Ids);
                                     break;
                                 case "EVALUATION":
+                                    taxonomy = BloomTaxonomy.Evaluation.ToString();
                                     tempids = graph.Cypher
-                                        .Match ($"(q:Question{{BloomLevel:6}})-[:EVALUATES]-(c:Concept{{ Name:'{concept}' }})")
+                                        .Match ($"(q:Question{{BloomLevel: '{taxonomy}' }})-[:EVALUATES]-(c:Concept{{ Name:'{concept}' }})")
                                         .Return (q => q.As<Question> ().Id)
                                         .Results
                                         .ToList ();
