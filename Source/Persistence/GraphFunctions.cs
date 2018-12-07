@@ -620,7 +620,7 @@ namespace KnowledgeGraph.Database.Persistence
                         .Return(t => t.As<Technology>())
                         .ResultsAsync
                 );
-            var userReport = new UserReport();
+            var userReport = new UserReport() { UserId = userId };
             foreach (var tech in testedTechs)
             {
                 var testedConcepts = new List<Concept>(
@@ -660,7 +660,11 @@ namespace KnowledgeGraph.Database.Persistence
                             EvaluationIntensity = eI.As<int>()
                         })
                         .ResultsAsync;
-                    var conceptReport = new List<ConceptReport>(await conceptReportIEnum).Single();
+                    var conceptReport = new List<ConceptReport>(await conceptReportIEnum).SingleOrDefault();
+                    if (conceptReport == null)
+                    {
+                        conceptReport = new ConceptReport();
+                    }
                     conceptReport.ConceptName = concept.Name;
                     technologyReport.ConceptReports.Add(conceptReport);
                 }
