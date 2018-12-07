@@ -115,60 +115,6 @@ namespace KnowledgeGraph.Services
             };
             channel.BasicConsume("QuizEngine_KnowledgeGraph_QuestionBatch", false, consumer);
         }
-        // public void QuestionRequestHandler () {
-        //     var channel = queues.connection.CreateModel ();
-        //     var consumer = new AsyncEventingBasicConsumer (channel);
-        //     consumer.Received += async (model, ea) => {
-        //         Console.WriteLine ("Recieved Request for Questions");
-        //         try {
-        //             channel.BasicAck (ea.DeliveryTag, false);
-        //             var body = ea.Body;
-        //             question_query = (QuestionRequest) body.DeSerialize (typeof (QuestionRequest));
-        //             this.questionidlist = new QuestionIdsResponse (batch_query.Username);
-        //             this.questionidlist.IdRequestList = (graphfunctions.GetQuestionIds (question_query.Username, question_query.Tech, question_query.Concept));
-        //             channel.BasicPublish ("KnowledgeGraphExchange", "Routing Key", null, this.questionidlist.Serialize ());
-        //             var routingKey = ea.RoutingKey;
-        //             Console.WriteLine (" - Routing Key <{0}>", routingKey);
-        //             Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
-        //             await Task.Yield ();
-        //         } catch (Exception e) {
-        //             Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
-        //             Console.WriteLine (e.Message);
-        //             Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
-        //             Console.WriteLine (e.StackTrace);
-        //             Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
-        //             Console.WriteLine (e.InnerException);
-        //         }
-        //     };
-        //     channel.BasicConsume ("QuizEngine_KnowledgeGraph", false, consumer);
-        // }
-        // public void ConceptRequestHandler () {
-        //     var channel = queues.connection.CreateModel ();
-        //     var consumer = new AsyncEventingBasicConsumer (channel);
-        //     consumer.Received += async (model, ea) => {
-        //         Console.WriteLine ("Recieved Request for Concepts");
-        //         try {
-        //             var body = ea.Body;
-        //             channel.BasicAck (ea.DeliveryTag, false);
-        //             concept_query = (ConceptRequest) body.DeSerialize (typeof (ConceptRequest));
-        //             this.concept_list = new ConceptResponse (concept_query.Username);
-        //             this.concept_list.concepts.AddRange (graphfunctions.GetConceptFromTechnology (concept_query.Tech));
-        //             channel.BasicPublish ("KnowledgeGraphExchange", "Routing Key", null, this.concept_list.Serialize ());
-        //             var routingKey = ea.RoutingKey;
-        //             Console.WriteLine (" - Routing Key <{0}>", routingKey);
-        //             Console.WriteLine ("- Delivery Tag <{0}>", ea.DeliveryTag);
-        //             await Task.Yield ();
-        //         } catch (Exception e) {
-        //             Console.WriteLine ("----------------------EXCEPTION-MESSAGE------------------------------------");
-        //             Console.WriteLine (e.Message);
-        //             Console.WriteLine ("----------------------STACK-TRACE-----------------------------------------");
-        //             Console.WriteLine (e.StackTrace);
-        //             Console.WriteLine ("-------------------------INNER-EXCEPTION-----------------------------");
-        //             Console.WriteLine (e.InnerException);
-        //         }
-        //     };
-        //     channel.BasicConsume ("QuizEngine_KnowledgeGraph_Concepts", false, consumer);
-        // }
         public void ListenForUser()
         {
             var channel = queues.connection.CreateModel();
@@ -267,7 +213,7 @@ namespace KnowledgeGraph.Services
             };
 
             Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_ResourceFeedBack", false, consumer);
+            channel.BasicConsume("Profile_KnowledgeGraph_ResourceRatingWrapper", false, consumer);
 
         }
         public void ListenForLeaningPlanSubscriber()
@@ -384,7 +330,7 @@ namespace KnowledgeGraph.Services
 
             };
             Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_QuestionFeedBack", false, consumer);
+            channel.BasicConsume("Profile_KnowledgeGraph_QuestionAmbiguityWrapper ", false, consumer);
         }
         public void UpdateResultHandler()
         {
