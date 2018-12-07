@@ -7,6 +7,7 @@ using KnowledgeGraph.Models;
 using KnowledeGraph.ContentWrapper;
 using KnowledgeGraph.Services;
 using Neo4jClient;
+using KnowledeGraph.Models;
 
 namespace KnowledgeGraph.Database.Persistence
 {
@@ -609,6 +610,63 @@ namespace KnowledgeGraph.Database.Persistence
                     break;
             }
             Console.WriteLine("---Intensity increased in {0}---", (BloomTaxonomy)bloom);
+        }
+
+        public async Task<UserReport> GenerateUserReport(string userId)
+        {
+            var testedTechs = new List<Technology>(
+                    await graph.Cypher
+                        .Match($"(u:User{{UserId:'{userId}' }})-[:EVALUATED_HIMSELF_ON]->(t:Technology)")
+                        .Return(t => t.As<Technology>())
+                        .ResultsAsync
+                );
+            var userReport = new UserReport();
+            foreach (var tech in testedTechs)
+            {
+                var testedConcepts = new List<Concept>(
+                    await graph.Cypher
+                        .Match($"(u:User {{UserId:{userId} }} )-[:TESTED_HIMSELF_ON]->(c:Concept)-[:BELONGS_TO]->(t:Technology{{Name:'{tech.Name}'}})")
+                        .Return(c => c.As<Concept>())
+                        .ResultsAsync
+                );
+                tech.Concepts = testedConcepts;
+                var technologyReport = new TechnologyReport() { TechnologyName = tech.Name };
+                foreach (var concept in testedConcepts)
+                {
+                    var conceptReportIEnum = graph.Cypher
+                        .Match($"(u:User{{UserId: '{userId}' }} )")
+                        .With("u")
+                        .Match(
+                            $"(u)-[k:Knowledge]->(c:Concept {{Name: '{concept.Name}' }}",
+                            $"(u)-[co:Comprehension]->(c:Concept {{Name: '{concept.Name}' }}",
+                            $"(u)-[ap:Application]->(c:Concept {{Name: '{concept.Name}' }}",
+                            $"(u)-[an:Analysis]->(c:Concept {{Name: '{concept.Name}' }}",
+                            $"(u)-[s:Synthesis]->(c:Concept {{Name: '{concept.Name}' }}",
+                            $"(u)-[e:Evaluation]->(c:Concept {{Name: '{concept.Name}' }}"
+                        )
+                        .With("k.Intensity as kI")
+                        .With("co.Intensity as coI")
+                        .With("ap.Intensity as apI")
+                        .With("an.Intensiy as anI")
+                        .With("s.Intensity as sI")
+                        .With("e.Intensity as eI")
+                        .Return<ConceptReport>((kI, coI, apI, anI, sI, eI) => new ConceptReport
+                        {
+                            KnowledgeIntensity = kI.As<int>(),
+                            ComprehensionIntensity = coI.As<int>(),
+                            ApplicationIntensity = apI.As<int>(),
+                            AnalysisIntensity = anI.As<int>(),
+                            SynthesisIntensity = sI.As<int>(),
+                            EvaluationIntensity = eI.As<int>()
+                        })
+                        .ResultsAsync;
+                    var conceptReport = new List<ConceptReport>(await conceptReportIEnum).Single();
+                    conceptReport.ConceptName = concept.Name;
+                    technologyReport.ConceptReports.Add(conceptReport);
+                }
+                userReport.TechnologyReports.Add(technologyReport);
+            }
+            return userReport;
         }
     }
 }

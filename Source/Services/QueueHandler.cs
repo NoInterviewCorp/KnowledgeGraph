@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KnowledeGraph.ContentWrapper;
+using KnowledeGraph.Models;
 using KnowledgeGraph.Database;
 using KnowledgeGraph.Database.Persistence;
 using KnowledgeGraph.Models;
@@ -23,16 +24,17 @@ namespace KnowledgeGraph.Services
         {
             queues = _queues;
             graphfunctions = _graphfunctions;
-            this.HandleLearningPlanFromQueue();
-            this.HandleResourceFromQueue();
-            this.HandleLearningPlanInfoRequest();
-            this.ListenForUser();
-            this.ListenForLeaningPlanRating();
-            this.ListenForResourceFeedBack();
-            this.ListenForLeaningPlanSubscriber();
-            this.ListenForLeaningPlanUnSubscriber();
-            this.ListenForQuestionFeedBack();
-            this.QuestionBatchRequestHandler();
+            HandleLearningPlanFromQueue();
+            HandleResourceFromQueue();
+            HandleLearningPlanInfoRequest();
+            HandleReportGeneration();
+            ListenForUser();
+            ListenForLeaningPlanRating();
+            ListenForResourceFeedBack();
+            ListenForLeaningPlanSubscriber();
+            ListenForLeaningPlanUnSubscriber();
+            ListenForQuestionFeedBack();
+            QuestionBatchRequestHandler();
             Console.WriteLine("------");
             //  this.QuizEngineQueueHandler();
         }
@@ -125,6 +127,54 @@ namespace KnowledgeGraph.Services
             };
             channel.BasicConsume("AverageRating_TotalSubs_Request", false, consumer);
             Console.WriteLine(" [x] Awaiting RPC requests for LearningPlanInfo");
+        }
+
+        public void HandleReportGeneration()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+
+            consumer.Received += async (model, ea) =>
+            {
+                UserReport response = new UserReport();
+                Console.WriteLine("---------------------------------------------------------------------");
+                Console.WriteLine("Recieved Request for Report Generation");
+                var body = ea.Body;
+                var props = ea.BasicProperties;
+                var replyProps = channel.CreateBasicProperties();
+                replyProps.CorrelationId = props.CorrelationId;
+                string messages = "";
+                try
+                {
+                    messages = (string)body.DeSerialize(typeof(string));
+                    Console.WriteLine("Recieved request of Report for " + messages);
+                    response = await graphfunctions.GenerateUserReport(messages);
+                }
+                catch (Exception e)
+                {
+                    ConsoleWriter.ConsoleAnException(e);
+                }
+                finally
+                {
+                    // Serialize Response
+                    var responseBytes = response.Serialize();
+                    Console.WriteLine("Publishing back with correlationtid" + props.CorrelationId);
+                    channel.BasicPublish(
+                        exchange: queues.ExchangeName,
+                        routingKey: props.ReplyTo,
+                        basicProperties: replyProps,
+                        body: responseBytes
+                    );
+
+                    channel.BasicAck(
+                        deliveryTag: ea.DeliveryTag,
+                        multiple: false
+                    );
+                }
+                await Task.Yield();
+            };
+            channel.BasicConsume("Report_Request", false, consumer);
+            Console.WriteLine(" [x] Awaiting RPC requests for UserReportGeneration");
         }
 
         public void QuestionBatchRequestHandler()

@@ -8,6 +8,6 @@ namespace KnowledgeGraph.Models
     {
         public int Rating { get; set; }
         // public int Subscribe { get; set; }
-        //  public int Ambigous { get; set; }
+        // public int Ambigous { get; set; }
     }
 }
