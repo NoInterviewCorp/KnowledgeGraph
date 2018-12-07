@@ -625,7 +625,7 @@ namespace KnowledgeGraph.Database.Persistence
             {
                 var testedConcepts = new List<Concept>(
                     await graph.Cypher
-                        .Match($"(u:User {{UserId:{userId} }} )-[:TESTED_HIMSELF_ON]->(c:Concept)-[:BELONGS_TO]->(t:Technology{{Name:'{tech.Name}'}})")
+                        .Match($"(u:User {{UserId:'{userId}' }} )-[:TESTED_HIMSELF_ON]->(c:Concept)-[:BELONGS_TO]->(t:Technology{{Name:'{tech.Name}'}})")
                         .Return(c => c.As<Concept>())
                         .ResultsAsync
                 );
