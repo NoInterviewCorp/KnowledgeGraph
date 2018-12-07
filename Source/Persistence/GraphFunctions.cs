@@ -637,12 +637,12 @@ namespace KnowledgeGraph.Database.Persistence
                         .Match($"(u:User{{UserId: '{userId}' }} )")
                         .With("u")
                         .Match(
-                            $"(u)-[k:Knowledge]->(c:Concept {{Name: '{concept.Name}' }}",
-                            $"(u)-[co:Comprehension]->(c:Concept {{Name: '{concept.Name}' }}",
-                            $"(u)-[ap:Application]->(c:Concept {{Name: '{concept.Name}' }}",
-                            $"(u)-[an:Analysis]->(c:Concept {{Name: '{concept.Name}' }}",
-                            $"(u)-[s:Synthesis]->(c:Concept {{Name: '{concept.Name}' }}",
-                            $"(u)-[e:Evaluation]->(c:Concept {{Name: '{concept.Name}' }}"
+                            $"(u)-[k:Knowledge]->(:Concept {{Name: '{concept.Name}' }}",
+                            $"(u)-[co:Comprehension]->(:Concept {{Name: '{concept.Name}' }}",
+                            $"(u)-[ap:Application]->(:Concept {{Name: '{concept.Name}' }}",
+                            $"(u)-[an:Analysis]->(:Concept {{Name: '{concept.Name}' }}",
+                            $"(u)-[s:Synthesis]->(:Concept {{Name: '{concept.Name}' }}",
+                            $"(u)-[e:Evaluation]->(:Concept {{Name: '{concept.Name}' }}"
                         )
                         .With("k.Intensity as kI")
                         .With("co.Intensity as coI")
