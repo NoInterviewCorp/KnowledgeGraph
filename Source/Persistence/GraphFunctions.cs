@@ -297,7 +297,7 @@ namespace KnowledgeGraph.Database.Persistence
         public async Task UserAndRelationshipsAsync(UserWrapper userWrapper)
         {
             await graph.Cypher
-                 .Merge("(user:UserWrapper { UserId: {id} })")
+                 .Merge("(user:User { UserId: {id} })")
                  .OnCreate()
                  .Set("user = {userWrapper}")
                  .WithParams(new
