@@ -97,7 +97,7 @@ namespace KnowledgeGraph.Services
                 try
                 {
                     messages = (List<string>)body.DeSerialize(typeof(List<string>));
-                    Console.WriteLine("Recieved request for Learningplan with " + messages.Count+" IDS");
+                    Console.WriteLine("Recieved request for Learningplan with " + messages.Count + " IDS");
                     response = await graphfunctions.GetLearningPlanInfoAsync(messages);
                 }
                 catch (Exception e)
@@ -108,10 +108,10 @@ namespace KnowledgeGraph.Services
                 {
                     // Serialize Response
                     var responseBytes = response.Serialize();
-
+                    Console.WriteLine("Publishing back to " + props.ReplyTo);
                     channel.BasicPublish(
                         exchange: queues.ExchangeName,
-                        routingKey: props.ReplyTo,
+                        routingKey: "Response.LP",
                         basicProperties: replyProps,
                         body: responseBytes
                     );
@@ -225,7 +225,7 @@ namespace KnowledgeGraph.Services
                     // return null;
                 }
 
-            };  
+            };
 
             Console.WriteLine("Consuming from Profile's Knowledge Graph");
             channel.BasicConsume("Profile_KnowledgeGraph_LearningPlanRatingWrapper", false, consumer);
