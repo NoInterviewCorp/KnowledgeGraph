@@ -33,6 +33,7 @@ namespace KnowledgeGraph.Services
             this.ListenForLeaningPlanUnSubscriber();
             this.ListenForQuestionFeedBack();
             this.QuestionBatchRequestHandler();
+            this.UpdateResultHandler();
             Console.WriteLine("------");
             //  this.QuizEngineQueueHandler();
         }
@@ -352,12 +353,14 @@ namespace KnowledgeGraph.Services
             var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.Received += async (model, ea) =>
             {
-                Console.WriteLine("Recieved Request for Concepts");
+                Console.WriteLine("Listening to Results");
                 try
                 {
                     channel.BasicAck(ea.DeliveryTag, false);
                     var body = ea.Body;
                     var result_query = (ResultWrapper)body.DeSerialize(typeof(ResultWrapper));
+                    Console.WriteLine(result_query.Username);
+                    Console.WriteLine(result_query.Concept,result_query.Bloom);
                     graphfunctions.IncreaseIntensityOnConcept(result_query.Username, result_query.Concept, result_query.Bloom);
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine(" - Routing Key <{0}>", routingKey);
