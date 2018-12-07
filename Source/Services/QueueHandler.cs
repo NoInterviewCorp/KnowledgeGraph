@@ -173,7 +173,7 @@ namespace KnowledgeGraph.Services
                 }
                 await Task.Yield();
             };
-            channel.BasicConsume("Report_Request", false, consumer);
+            channel.BasicConsume("UserReport_Request", false, consumer);
             Console.WriteLine(" [x] Awaiting RPC requests for UserReportGeneration");
         }
 
