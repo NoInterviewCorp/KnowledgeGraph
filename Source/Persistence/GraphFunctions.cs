@@ -294,6 +294,20 @@ namespace KnowledgeGraph.Database.Persistence
             return learningPlanInfos;
         }
 
+        public async Task UserAndRelationshipsAsync(UserWrapper userWrapper)
+        {
+            await graph.Cypher
+                 .Merge("(user:UserWrapper { UserId: {id} })")
+                 .OnCreate()
+                 .Set("user = {userWrapper}")
+                 .WithParams(new
+                 {
+                     id = userWrapper.UserId,
+                     userWrapper
+                 })
+               .ExecuteWithoutResultsAsync();
+        }
+
         public List<string> GetConceptFromTechnology(string tech)
         {
             List<string> data = new List<string>();

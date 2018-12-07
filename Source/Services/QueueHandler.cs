@@ -156,12 +156,7 @@ namespace KnowledgeGraph.Services
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
+                    ConsoleWriter.ConsoleAnException(e);
                 }
             };
             channel.BasicConsume("QuizEngine_KnowledgeGraph_QuestionBatch", false, consumer);
@@ -176,10 +171,11 @@ namespace KnowledgeGraph.Services
                 Console.WriteLine("-----------------------------------------------------------------------");
                 channel.BasicAck(ea.DeliveryTag, false);
                 var body = ea.Body;
-                var user = (User)body.DeSerialize(typeof(User));
+                var user = (UserWrapper)body.DeSerialize(typeof(UserWrapper));
+                await graphfunctions.UserAndRelationshipsAsync(user);
                 // var message = Encoding.UTF8.GetString(body);
                 // var user = JsonConvert.DeserializeObject<User>(message);
-                Console.WriteLine("User Name is {0} " + user.FullName);
+                Console.WriteLine("User Name is {0} " + user.UserId);
                 var routingKey = ea.RoutingKey;
                 Console.WriteLine("-----------------------------------------------------------------------");
                 Console.WriteLine(" - Routing Key <{0}>", routingKey);
@@ -200,11 +196,8 @@ namespace KnowledgeGraph.Services
                 try
                 {
                     var body = ea.Body;
-                    //  var user = (User)body.DeSerialize(typeof(User));
                     var learningPlanRatingWrapper = (LearningPlanRatingWrapper)body.DeSerialize(typeof(LearningPlanRatingWrapper));
                     await graphfunctions.RatingLearningPlanAndRelationshipsAsync(learningPlanRatingWrapper);
-                    // var message = Encoding.UTF8.GetString(body);
-                    //  var LP = JsonConvert.DeserializeObject<LearningPlanFeedBack>(message);
                     Console.WriteLine("User Name is {0} ");
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine("-----------------------------------------------------------------------");
@@ -213,13 +206,7 @@ namespace KnowledgeGraph.Services
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
-                    // return null;
+                    ConsoleWriter.ConsoleAnException(e);
                 }
 
             };
@@ -252,13 +239,7 @@ namespace KnowledgeGraph.Services
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
-                    // return null;
+                    ConsoleWriter.ConsoleAnException(e);
                 }
 
             };
@@ -292,13 +273,7 @@ namespace KnowledgeGraph.Services
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
-                    // return null;
+                    ConsoleWriter.ConsoleAnException(e);
                 }
 
             };
@@ -331,13 +306,7 @@ namespace KnowledgeGraph.Services
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
-                    // return null;
+                    ConsoleWriter.ConsoleAnException(e);
                 }
 
             };
@@ -370,13 +339,7 @@ namespace KnowledgeGraph.Services
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
-                    // return null;
+                    ConsoleWriter.ConsoleAnException(e);
                 }
 
             };
@@ -403,12 +366,7 @@ namespace KnowledgeGraph.Services
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
+                    ConsoleWriter.ConsoleAnException(e);
                 }
             };
             channel.BasicConsume("QuizEngine_KnowledgeGraph_Result", false, consumer);
