@@ -623,6 +623,13 @@ namespace KnowledgeGraph.Database.Persistence
             var userReport = new UserReport() { UserId = userId };
             foreach (var tech in testedTechs)
             {
+                string intensityStringForWith =
+                    "k.Intensity as kI,"
+                    + "co.Intensity as coI,"
+                    + "ap.Intensity as apI,"
+                    + "an.Intensiy as anI,"
+                    + "s.Intensity as sI,"
+                    + "e.Intensity as eI";
                 var testedConcepts = new List<Concept>(
                     await graph.Cypher
                         .Match($"(u:User {{UserId:'{userId}' }} )-[:TESTED_HIMSELF_ON]->(c:Concept)-[:BELONGS_TO]->(t:Technology{{Name:'{tech.Name}'}})")
@@ -644,13 +651,7 @@ namespace KnowledgeGraph.Database.Persistence
                             $"(u)-[s:Synthesis]->(:Concept {{Name: '{concept.Name}' }})",
                             $"(u)-[e:Evaluation]->(:Concept {{Name: '{concept.Name}' }})"
                         )
-                        .With("k,co,ap,an,s,e")
-                        .With("k.Intensity as kI")
-                        .With("co.Intensity as coI")
-                        .With("ap.Intensity as apI")
-                        .With("an.Intensiy as anI")
-                        .With("s.Intensity as sI")
-                        .With("e.Intensity as eI")
+                        .With(intensityStringForWith)
                         .Return<ConceptReport>((kI, coI, apI, anI, sI, eI) => new ConceptReport
                         {
                             KnowledgeIntensity = kI.As<int>(),
