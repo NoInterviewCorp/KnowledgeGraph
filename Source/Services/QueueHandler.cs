@@ -82,9 +82,9 @@ namespace KnowledgeGraph.Services
         public void HandleLearningPlanInfoRequest()
         {
             var channel = queues.connection.CreateModel();
-            var consumer = new AsyncEventingBasicConsumer(channel);
+            var consumer = new EventingBasicConsumer(channel);
 
-            consumer.Received += async (model, ea) =>
+            consumer.Received += (model, ea) =>
             {
                 List<LearningPlanInfo> response = new List<LearningPlanInfo>();
                 Console.WriteLine("---------------------------------------------------------------------");
@@ -98,7 +98,7 @@ namespace KnowledgeGraph.Services
                 {
                     messages = (List<string>)body.DeSerialize(typeof(List<string>));
                     Console.WriteLine("Recieved request for Learningplan with " + messages.Count + " IDS");
-                    response = await graphfunctions.GetLearningPlanInfoAsync(messages);
+                    response = graphfunctions.GetLearningPlanInfoAsync(messages);
                 }
                 catch (Exception e)
                 {
@@ -120,12 +120,9 @@ namespace KnowledgeGraph.Services
                         deliveryTag: ea.DeliveryTag,
                         multiple: false
                     );
-
-                    await Task.Yield();
                 }
 
             };
-
             channel.BasicConsume("AverageRating_TotalSubs_Request", false, consumer);
             Console.WriteLine(" [x] Awaiting RPC requests for LearningPlanInfo");
         }

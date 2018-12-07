@@ -237,14 +237,17 @@ namespace KnowledgeGraph.Database.Persistence
             return resQuery;
         }
 
-        public async Task<List<LearningPlanInfo>> GetLearningPlanInfoAsync(List<string> learningPlanIds)
+        public List<LearningPlanInfo> GetLearningPlanInfoAsync(List<string> learningPlanIds)
         {
             List<LearningPlanInfo> learningPlanInfos = new List<LearningPlanInfo>();
             foreach (string learningPlanId in learningPlanIds)
             {
                 LearningPlanInfo learningPlanInfo = new LearningPlanInfo() { LearningPlanId = learningPlanId };
-
-                var avgRatingResult = graph.Cypher
+                try
+                {
+                    learningPlanInfo.AverageRating = new List<float>
+                                (
+                                    graph.Cypher
                                         .Match("(:User)-[g:RATING_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
                                         .With("lp, avg(g.Rating) as avg_rating ")
                                         .Set("lp.AvgRating = avg_rating")
@@ -253,8 +256,20 @@ namespace KnowledgeGraph.Database.Persistence
                                             id = learningPlanId,
                                         })
                                         .Return<float>("lp.AvgRating")
-                                        .ResultsAsync;
-                var totalSubsResult = graph.Cypher
+                                        .Results
+                                )
+                                .SingleOrDefault();
+                }
+                catch
+                {
+                    learningPlanInfo.AverageRating = 0;
+                }
+
+                try
+                {
+                    learningPlanInfo.TotalSubscribers = new List<int>
+                                    (
+                                        graph.Cypher
                                         .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
                                         .With("lp,  count(g.Subscribe) as total_subscriber ")
                                         .Set("lp.Subscriber = total_subscriber")
@@ -263,25 +278,7 @@ namespace KnowledgeGraph.Database.Persistence
                                             id = learningPlanId,
                                         })
                                         .Return<int>("lp.Subscriber")
-                                        .ResultsAsync;
-                try
-                {
-                    learningPlanInfo.AverageRating = new List<float>
-                                (
-                                    await avgRatingResult
-                                )
-                                .SingleOrDefault();
-                }
-                catch
-                {
-                    learningPlanInfo.AverageRating = 0;
-                }
-                
-                try
-                {
-                    learningPlanInfo.TotalSubscribers = new List<int>
-                                    (
-                                        await totalSubsResult
+                                        .Results
                                     )
                                     .SingleOrDefault();
                 }
