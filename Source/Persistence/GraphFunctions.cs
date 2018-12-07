@@ -570,46 +570,12 @@ namespace KnowledgeGraph.Database.Persistence
         }
         public void IncreaseIntensityOnConcept(string username, string concept, int bloom)
         {
-            switch (bloom)
-            {
-                case 1:
-                    graph.Cypher
-                        .Match($"(u:User{{ UserId: '{username}' }})-[R:Knowledge]-(c:Concept{{ Name:'{concept}'}})")
-                        .Set("R.Intensity = R.Intensity+1")
-                        .ExecuteWithoutResults();
-                    break;
-                case 2:
-                    graph.Cypher
-                        .Match($"(u:User{{ UserId: '{username}' }})-[R:Comprehension]-(c:Concept{{ Name:'{concept}'}})")
-                        .Set("R.Intensity = R.Intensity+1")
-                        .ExecuteWithoutResults();
-                    break;
-                case 3:
-                    graph.Cypher
-                        .Match($"(u:User{{ UserId: '{username}' }})-[R:Application]-(c:Concept{{ Name:'{concept}'}})")
-                        .Set("R.Intensity = R.Intensity+1")
-                        .ExecuteWithoutResults();
-                    break;
-                case 4:
-                    graph.Cypher
-                        .Match($"(u:User{{ UserId: '{username}' }})-[R:Analysis]-(c:Concept{{ Name:'{concept}'}})")
-                        .Set("R.Intensity = R.Intensity+1")
-                        .ExecuteWithoutResults();
-                    break;
-                case 5:
-                    graph.Cypher
-                        .Match($"(u:User{{ UserId: '{username}' }})-[R:Synthesis]-(c:Concept{{ Name:'{concept}'}})")
-                        .Set("R.Intensity = R.Intensity+1")
-                        .ExecuteWithoutResults();
-                    break;
-                case 6:
-                    graph.Cypher
-                        .Match($"(u:User{{ UserId: '{username}' }})-[R:Evaluation]-(c:Concept{{ Name:'{concept}'}})")
-                        .Set("R.Intensity = R.Intensity+1")
-                        .ExecuteWithoutResults();
-                    break;
-            }
-            Console.WriteLine("---Intensity increased in {0}---", (BloomTaxonomy)bloom);
+            var intensity  = (BloomTaxonomy) bloom;
+            graph.Cypher
+                .Match($"(u:User{{ UserId: '{username}' }})-[R:'{intensity}']-(c:Concept{{ Name:'{concept}'}})")
+                .Set("R.Intensity = R.Intensity+1")
+                .ExecuteWithoutResults();
+            Console.WriteLine("---Intensity increased in {0}---", intensity);
         }
 
         public async Task<UserReport> GenerateUserReport(string userId)
