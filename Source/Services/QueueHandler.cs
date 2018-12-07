@@ -226,7 +226,7 @@ namespace KnowledgeGraph.Services
                     // return null;
                 }
 
-            };
+            };  
 
             Console.WriteLine("Consuming from Profile's Knowledge Graph");
             channel.BasicConsume("Profile_KnowledgeGraph_LearningPlanRatingWrapper", false, consumer);
