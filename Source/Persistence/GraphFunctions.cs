@@ -644,6 +644,7 @@ namespace KnowledgeGraph.Database.Persistence
                             $"(u)-[s:Synthesis]->(:Concept {{Name: '{concept.Name}' }})",
                             $"(u)-[e:Evaluation]->(:Concept {{Name: '{concept.Name}' }})"
                         )
+                        .With("k,co,ap,an,s,e")
                         .With("k.Intensity as kI")
                         .With("co.Intensity as coI")
                         .With("ap.Intensity as apI")
