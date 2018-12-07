@@ -266,7 +266,6 @@ namespace KnowledgeGraph.Database.Persistence
             data.AddRange(temp);
             return data;
         }
-
         public List<string> GetQuestionBatchIds(string username, string technology, List<string> concepts)
         {
             List<string> Ids = new List<string>();
@@ -291,13 +290,19 @@ namespace KnowledgeGraph.Database.Persistence
                     graph.Cypher
                         .Match($"(u:User{{ UserId: '{username}' }})")
                         .Match($"(c:Concept{{ Name: '{concept}' }})")
-                        .Create("(u)-[:TESTED_HIMSELF_ON]->(c)")
-                        .Create("(u)-[:Knowledge{Intensity:0}]->(c)")
-                        .Create("(u)-[:Comprehension{Intensity:0}]->(c)")
-                        .Create("(u)-[:Application{Intensity:0}]->(c)")
-                        .Create("(u)-[:Analysis{Intensity:0}]->(c)")
-                        .Create("(u)-[:Synthesis{Intensity:0}]->(c)")
-                        .Create("(u)-[:Evaluation{Intensity:0}]->(c)")
+                        .Merge("(u)-[:TESTED_HIMSELF_ON]->(c)")
+                        .Merge("(u)-[:Knowledge]->(c)")
+                        .OnCreate().Set("Intensity:0")
+                        .Merge("(u)-[:Comprehension]->(c)")
+                        .OnCreate().Set("Intensity:0")
+                        .Merge("(u)-[:Application]->(c)")
+                        .OnCreate().Set("Intensity:0")
+                        .Merge("(u)-[:Analysis]->(c)")
+                        .OnCreate().Set("Intensity:0")
+                        .Merge("(u)-[:Synthesis]->(c)")
+                        .OnCreate().Set("Intensity:0")
+                        .Merge("(u)-[:Evaluation]->(c)")
+                        .OnCreate().Set("Intensity:0")
                         .ExecuteWithoutResults();
                     var tempids = graph.Cypher
                         .Match($"(q:Question)-[:EVALUATES]-(c:Concept{{ Name: '{concept}' }})")
@@ -326,13 +331,20 @@ namespace KnowledgeGraph.Database.Persistence
                         graph.Cypher
                             .Match($"(u:User{{ UserId: '{username}' }})")
                             .Match($"(c:Concept{{ Name: '{concept}' }})")
-                            .Create("(u)-[:TESTED_HIMSELF_ON]->(c)")
-                            .Create("(u)-[:Knowledge{Intensity:0}]->(c)")
-                            .Create("(u)-[:Comprehension{Intensity:0}]->(c)")
-                            .Create("(u)-[:Application{Intensity:0}]->(c)")
-                            .Create("(u)-[:Analysis{Intensity:0}]->(c)")
-                            .Create("(u)-[:Synthesis{Intensity:0}]->(c)")
-                            .Create("(u)-[:Evaluation{Intensity:0}]->(c)")
+                            .Merge("(u)-[:TESTED_HIMSELF_ON]->(c)")
+                            .OnCreate().Set("Intensity:0")
+                            .Merge("(u)-[:Knowledge]->(c)")
+                            .OnCreate().Set("Intensity:0")
+                            .Merge("(u)-[:Comprehension]->(c)")
+                            .OnCreate().Set("Intensity:0")
+                            .Merge("(u)-[:Application]->(c)")
+                            .OnCreate().Set("Intensity:0")
+                            .Merge("(u)-[:Analysis]->(c)")
+                            .OnCreate().Set("Intensity:0")
+                            .Merge("(u)-[:Synthesis]->(c)")
+                            .OnCreate().Set("Intensity:0")
+                            .Merge("(u)-[:Evaluation]->(c)")
+                            .OnCreate().Set("Intensity:0")
                             .ExecuteWithoutResults();
                         var tempids = graph.Cypher
                             .Match($"(q:Question)-[:EVALUATES]->(c:Concept{{ Name: '{concept}' }})")
