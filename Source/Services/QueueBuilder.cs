@@ -23,7 +23,8 @@ namespace KnowledgeGraph.Services
             connection = _factory.CreateConnection();
             Model = connection.CreateModel();
             Model.ExchangeDeclare(ExchangeName, "topic");
-
+            
+            Model.QueueDeclare("QuizEngine_KnowledgeGraph_Result", false, false, false, null);
             Model.QueueDeclare("Contributer_KnowledgeGraph_LearningPlan", false, false, false, null);
             Model.QueueDeclare("Contributer_KnowledgeGraph_Resources", false, false, false, null);
             Model.QueueDeclare("Contributer_QuizEngine_Questions", false, false, false, null);
@@ -33,7 +34,6 @@ namespace KnowledgeGraph.Services
             Model.QueueDeclare("Profile_KnowledgeGraph_ResourceRatingWrapper", false, false, false, null);
             Model.QueueDeclare("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", false, false, false, null);
             Model.QueueDeclare("QuizEngine_KnowledgeGraph_QuestionBatch", false, false, false, null);
-            Model.QueueDeclare("QuizEngine_KnowledgeGraph_Result", false, false, false, null);
             Model.QueueDeclare("QuizEngine_Profile_QuizData", false, false, false, null);
             Model.QueueDeclare("KnowledgeGraph_Contributer_Ids", false, false, false, null);
 
