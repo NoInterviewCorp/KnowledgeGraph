@@ -237,27 +237,24 @@ namespace KnowledgeGraph.Database.Persistence
             return resQuery;
         }
 
-        public async Task<LearningPlanInfo> GetLearningPlanInfoAsync(string learningPlanId)
+        public async Task<List<LearningPlanInfo>> GetLearningPlanInfoAsync(List<string> learningPlanIds)
         {
-            LearningPlanInfo learningPlanInfo = new LearningPlanInfo() { LearningPlanId = learningPlanId };
-            learningPlanInfo.AverageRating = new List<float>
-                            (
-                                await graph.Cypher
-                                    .Match("(:User)-[g:RATING_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
-                                    .With("lp, avg(g.Rating) as avg_rating ")
-                                    .Set("lp.AvgRating = avg_rating")
-                                    .WithParams(new
-                                    {
-                                        id = learningPlanId,
-                                    })
-                                    .Return<float>("lp.AvgRating")
-                                    .ResultsAsync
+            List<LearningPlanInfo> learningPlanInfos = new List<LearningPlanInfo>();
+            foreach (string learningPlanId in learningPlanIds)
+            {
+                LearningPlanInfo learningPlanInfo = new LearningPlanInfo() { LearningPlanId = learningPlanId };
 
-                            )
-                            .SingleOrDefault();
-            learningPlanInfo.TotalSubscribers = new List<int>
-                                (
-                                    await graph.Cypher
+                var avgRatingResult = graph.Cypher
+                                        .Match("(:User)-[g:RATING_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
+                                        .With("lp, avg(g.Rating) as avg_rating ")
+                                        .Set("lp.AvgRating = avg_rating")
+                                        .WithParams(new
+                                        {
+                                            id = learningPlanId,
+                                        })
+                                        .Return<float>("lp.AvgRating")
+                                        .ResultsAsync;
+                var totalSubsResult = graph.Cypher
                                         .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
                                         .With("lp,  count(g.Subscribe) as total_subscriber ")
                                         .Set("lp.Subscriber = total_subscriber")
@@ -266,10 +263,36 @@ namespace KnowledgeGraph.Database.Persistence
                                             id = learningPlanId,
                                         })
                                         .Return<int>("lp.Subscriber")
-                                        .ResultsAsync
+                                        .ResultsAsync;
+                try
+                {
+                    learningPlanInfo.AverageRating = new List<float>
+                                (
+                                    await avgRatingResult
                                 )
                                 .SingleOrDefault();
-            return learningPlanInfo;
+                }
+                catch
+                {
+                    learningPlanInfo.AverageRating = 0;
+                }
+                
+                try
+                {
+                    learningPlanInfo.TotalSubscribers = new List<int>
+                                    (
+                                        await totalSubsResult
+                                    )
+                                    .SingleOrDefault();
+                }
+                catch
+                {
+                    learningPlanInfo.TotalSubscribers = 0;
+                }
+
+                learningPlanInfos.Add(learningPlanInfo);
+            }
+            return learningPlanInfos;
         }
 
         public List<string> GetConceptFromTechnology(string tech)
