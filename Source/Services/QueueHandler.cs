@@ -108,7 +108,7 @@ namespace KnowledgeGraph.Services
                 {
                     // Serialize Response
                     var responseBytes = response.Serialize();
-                    Console.WriteLine("Publishing back to " + props.ReplyTo);
+                    Console.WriteLine("Publishing back with correlationtid" + props.CorrelationId);
                     channel.BasicPublish(
                         exchange: queues.ExchangeName,
                         routingKey: "Response.LP",
