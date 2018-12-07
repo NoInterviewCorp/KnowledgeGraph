@@ -67,28 +67,15 @@ namespace KnowledgeGraph.Database.Persistence
                         )
                         .Merge("(lp)-[:CONTAINS]->(r)");
                 }
-                Console.WriteLine("----------------LP->RESOURCE----------------------------");
-                Console.WriteLine(resourceQuery.Query.QueryText);
                 await resourceQuery.ExecuteWithoutResultsAsync();
                 return lpResult;
             }
             catch (Exception e)
             {
-                Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                Console.WriteLine(e.Message);
-                Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                Console.WriteLine(e.StackTrace);
-                Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                Console.WriteLine(e.InnerException);
+                ConsoleWriter.ConsoleAnException(e);
                 return null;
             }
-            // return null;
         }
-
-        // public void CreateQuestionsAndRelationships(ResourceWrapper resource)
-        // {
-        //     throw new System.NotImplementedException();
-        // }
 
         public async Task<ResourceWrapper> CreateResourceAndRelationships(ResourceWrapper resource)
         {
@@ -242,19 +229,49 @@ namespace KnowledgeGraph.Database.Persistence
                             .Merge($"(q)-[:EVALUATES]->(c{h}{i})")
                             .WithParams((questionParamsObj["conceptParamsObj" + h + i] as IDictionary<string, Object>));
                     }
-                    Console.WriteLine("---------------------QUESTION-CREATE-----------------------------");
-                    Console.WriteLine(questionQuery.Query.QueryText);
                     await questionQuery.ExecuteWithoutResultsAsync();
-                    Console.WriteLine("---------------------QUESTION->CONCEPT------------------------------------");
-                    Console.WriteLine(questionConceptQuery.Query.QueryText);
                     await questionConceptQuery.ExecuteWithoutResultsAsync();
-                    Console.WriteLine("---------------------QUESTION->TECHNOLOGY---------------------------------");
-                    Console.WriteLine(questionTechQuery.Query.QueryText);
                     await questionTechQuery.ExecuteWithoutResultsAsync();
                 }
             }
             return resQuery;
         }
+
+        public async Task<LearningPlanInfo> GetLearningPlanInfoAsync(string learningPlanId)
+        {
+            LearningPlanInfo learningPlanInfo = new LearningPlanInfo() { LearningPlanId = learningPlanId };
+            learningPlanInfo.AverageRating = new List<float>
+                            (
+                                await graph.Cypher
+                                    .Match("(:User)-[g:RATING_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
+                                    .With("lp, avg(g.Rating) as avg_rating ")
+                                    .Set("lp.AvgRating = avg_rating")
+                                    .WithParams(new
+                                    {
+                                        id = learningPlanId,
+                                    })
+                                    .Return<float>("lp.AvgRating")
+                                    .ResultsAsync
+
+                            )
+                            .SingleOrDefault();
+            learningPlanInfo.TotalSubscribers = new List<int>
+                                (
+                                    await graph.Cypher
+                                        .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
+                                        .With("lp,  count(g.Subscribe) as total_subscriber ")
+                                        .Set("lp.Subscriber = total_subscriber")
+                                        .WithParams(new
+                                        {
+                                            id = learningPlanId,
+                                        })
+                                        .Return<int>("lp.Subscriber")
+                                        .ResultsAsync
+                                )
+                                .SingleOrDefault();
+            return learningPlanInfo;
+        }
+
         public List<string> GetConceptFromTechnology(string tech)
         {
             List<string> data = new List<string>();
@@ -410,17 +427,11 @@ namespace KnowledgeGraph.Database.Persistence
                 .WithParams(new
                 {
                     id = learningPlanRatingWrapper.LearningPlanId,
-                    // rating=
                 })
                 .Return<float>("lp.AvgRating")
                 .ResultsAsync);
-            //  var avg_rating = LPqueryAvg[0];
             Console.WriteLine("Rated LearningPlan");
-            // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
-            //  return  Ok(new List<float>(LPqueryAvg)[0]);
 
-            // return Ok(new List<float>(LPqueryAvg));
-            // throw new NotImplementedException();
         }
         public async Task RatingResourceAndRelationshipsAsync(ResourceRatingWrapper resourceRatingWrapper)
         {
@@ -447,52 +458,34 @@ namespace KnowledgeGraph.Database.Persistence
                 .WithParams(new
                 {
                     id = resourceRatingWrapper.ResourceId,
-                    // rating=
                 })
                 .Return<float>("(Re.AvgRating)")
                 .ResultsAsync);
             Console.WriteLine("rated resource");
-            // return Ok(new List<float>(Re_queryAvg)[0]);
         }
         public async Task SubscribeLearningPlanAndRelationshipsAsync(LearningPlanSubscriptionWrapper learningPlanSubscriptionWrapper)
         {
-            // GiveStarPayload LearningPlanSubscriber = new GiveStarPayload { Subscribe = learningPlanFeedback.Subscribe };
             await graph.Cypher
                 .Match("(user:User)", "(lp:LearningPlan)")
                 .Where((User user) => user.UserId == learningPlanSubscriptionWrapper.UserId)
                 .AndWhere((LearningPlanWrapper lp) => lp.LearningPlanId == learningPlanSubscriptionWrapper.LearningPlanId)
-
                 .Create("(user)-[g:Subscribe_LP]->(lp)")
-                //.OnCreate()
-                //.Set("g={LearningPlanSubscriber}")
-                //.OnMatch()
-                // .Set("g={LearningPlanSubscriber}")
-                // .WithParams(new
-                // {
-                // usersubscribe = learningPlanFeedback.Subscribe,
-                // LearningPlanSubscriber
-                //  })
                 .ExecuteWithoutResultsAsync();
+
             var totalsubscriber = new List<int>(await graph.Cypher
                .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
-                // .Match((GiveStarPayload sub)=>sub.Subscribe==1)
                 .With("lp,  count(g.Subscribe) as total_subscriber ")
                 .Set("lp.Subscriber = total_subscriber")
                 .WithParams(new
                 {
                     id = learningPlanSubscriptionWrapper.LearningPlanId,
-                    // rating=
                 })
                 .Return<int>("lp.Subscriber")
-
-                // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
                 .ResultsAsync);
             Console.WriteLine("Subscribed LearningPlan");
-            //   return Ok(new List<int>(totalsubscriber)[0]);
         }
         public async Task UnSubscribeLearningPlanAndRelationshipsAsync(LearningPlanSubscriptionWrapper learningPlanSubscriptionWrapper)
         {
-            //GiveStarPayload LearningPlanSubscriber = new GiveStarPayload { Subscribe = learningPlanFeedback.Subscribe };
             await graph.Cypher
                 .Match("(user:User)", "(lp:LearningPlan)")
                 .Where((User user) => user.UserId == learningPlanSubscriptionWrapper.UserId)
@@ -503,23 +496,18 @@ namespace KnowledgeGraph.Database.Persistence
                 .ExecuteWithoutResultsAsync();
             var totalsubscriber = new List<int>(await graph.Cypher
                 .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
-                // .Match((GiveStarPayload sub)=>sub.Subscribe==1)
                 .With("lp,  count(g.Subscribe) as total_subscriber ")
                 .Set("lp.Subscriber = total_subscriber")
                 .WithParams(new
                 {
                     id = learningPlanSubscriptionWrapper.LearningPlanId,
-                    // rating=
                 })
                 .Return<int>("lp.Subscriber")
-                // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
                 .ResultsAsync);
             Console.WriteLine("Unsubscribed LearningPlan");
-            //return Ok(new List<int>(totalsubscriber)[0]);
         }
         public async Task ReportQuestionAndRelationshipsAsync(QuestionAmbiguityWrapper questionAmbiguityWrapper)
         {
-            // GiveStarPayload QuestionReport = new GiveStarPayload { Ambigous = questionFeedBack.Ambiguity };
             await graph.Cypher
                 .Match("(user:User)", "(qe:Question)")
                 .Where((User user) => user.UserId == questionAmbiguityWrapper.UserId)
@@ -530,29 +518,19 @@ namespace KnowledgeGraph.Database.Persistence
                 .Set("g={QuestionReport}")
                 .OnMatch()
                 .Set("g={QuestionReport}")
-                //.WithParams(new
-                // {
-                //     userreport = questionFeedBack.Ambiguity,
-                //     QuestionReport
-                // })
                 .ExecuteWithoutResultsAsync();
             var totalReport = new List<int>(await graph.Cypher
                .Match("(:User)-[g:Report_Question]->(qe:Question {QuestionId:{id}})")
-                // .Match((GiveStarPayload sub)=>sub.Subscribe==1)
                 .With("qe,  count(g.ambigous) as total_ambiguity ")
                 .Set("qe.Total_Ambiguity = total_ambiguity")
                 .WithParams(new
                 {
                     id = questionAmbiguityWrapper.QuestionId,
-                    // rating=
                 })
                 .Return<int>("qe.Total_Ambiguity")
-                // .Return (g => Avg(g.As<GiveStarPayload>().Rating))
                 .ResultsAsync);
             Console.WriteLine("Question Reported");
-            // return Ok(new List<int>(totalReport)[0]);
             Console.WriteLine("ques is ambigius");
-            // return Ok(new List<int>(totalReport)[0]);
         }
         public void IncreaseIntensityOnConcept(string username, string concept, int bloom)
         {

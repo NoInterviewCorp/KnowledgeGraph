@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using KnowledeGraph.ContentWrapper;
 using KnowledgeGraph.Database;
@@ -24,6 +25,7 @@ namespace KnowledgeGraph.Services
             graphfunctions = _graphfunctions;
             this.HandleLearningPlanFromQueue();
             this.HandleResourceFromQueue();
+            this.HandleLearningPlanInfoRequest();
             this.ListenForUser();
             this.ListenForLeaningPlanRating();
             this.ListenForResourceFeedBack();
@@ -76,6 +78,59 @@ namespace KnowledgeGraph.Services
             Console.WriteLine("Consuming from Contributor's Knowledge Graph");
             channel.BasicConsume("Contributer_KnowledgeGraph_Resources", false, consumer);
         }
+
+        public void HandleLearningPlanInfoRequest()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+
+            consumer.Received += async (model, ea) =>
+            {
+                LearningPlanInfo response = null;
+                Console.WriteLine("---------------------------------------------------------------------");
+                Console.WriteLine("Recieved Request for LearningPlanInfo");
+                var body = ea.Body;
+                var props = ea.BasicProperties;
+                var replyProps = channel.CreateBasicProperties();
+                replyProps.CorrelationId = props.CorrelationId;
+                string message = "";
+                try
+                {
+                    message = Encoding.UTF8.GetString(body);
+                    Console.WriteLine("Recieved request for Learningplan with id " + message);
+                    response = await graphfunctions.GetLearningPlanInfoAsync(message);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(" [.] " + e.Message);
+                    response = new LearningPlanInfo { LearningPlanId = message };
+                }
+                finally
+                {
+                    // Serialize Response
+                    var responseBytes = response.Serialize();
+
+                    channel.BasicPublish(
+                        exchange: queues.ExchangeName,
+                        routingKey: props.ReplyTo,
+                        basicProperties: replyProps,
+                        body: responseBytes
+                    );
+
+                    channel.BasicAck(
+                        deliveryTag: ea.DeliveryTag,
+                        multiple: false
+                    );
+
+                    await Task.Yield();
+                }
+
+            };
+
+            channel.BasicConsume("AverageRating_TotalSubs_Response", false, consumer);
+            Console.WriteLine(" [x] Awaiting RPC requests for LearningPlanInfo");
+        }
+
         public void QuestionBatchRequestHandler()
         {
             Console.WriteLine("In Question Batch Request Handler");
@@ -91,7 +146,7 @@ namespace KnowledgeGraph.Services
                     var batch_query = (QuestionBatchRequest)body.DeSerialize(typeof(QuestionBatchRequest));
                     this.questionidbatchlist = new GraphBatchResponse(batch_query.Username);
                     var questionQuery = graphfunctions.GetQuestionBatchIds(batch_query.Username, batch_query.Tech, batch_query.Concepts);
-                    Console.WriteLine("Question query returned for "+questionQuery.Count+" quesitons");
+                    Console.WriteLine("Question query returned for " + questionQuery.Count + " quesitons");
                     this.questionidbatchlist.IdRequestList.AddRange(questionQuery);
                     foreach (var v in questionidbatchlist.IdRequestList)
                     {
