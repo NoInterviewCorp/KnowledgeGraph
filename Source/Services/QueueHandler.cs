@@ -330,7 +330,7 @@ namespace KnowledgeGraph.Services
 
             };
             Console.WriteLine("Consuming from Profile's Knowledge Graph");
-            channel.BasicConsume("Profile_KnowledgeGraph_QuestionAmbiguityWrapper ", false, consumer);
+            channel.BasicConsume("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", false, consumer);
         }
         public void UpdateResultHandler()
         {
