@@ -11,8 +11,6 @@ namespace KnowledgeGraph.Database.Persistence
         Task<ResourceWrapper> CreateResourceAndRelationships(ResourceWrapper resource);
         Task<List<LearningPlanInfo>> GetLearningPlanInfoAsync(List<string> learningPlanIds);
         Task<UserReport> GenerateUserReport(string userId);
-        List<int> GetQuestionIds(string technology, string username);
-        List<string> GetConceptFromTechnology(string tech);
         List<string> GetQuestionBatchIds(string username, string technology, List<string> concepts);
         Task RatingLearningPlanAndRelationshipsAsync(LearningPlanRatingWrapper lpr);
         Task RatingResourceAndRelationshipsAsync(ResourceRatingWrapper Re);
