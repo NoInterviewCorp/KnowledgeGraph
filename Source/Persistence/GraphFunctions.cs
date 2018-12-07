@@ -243,8 +243,7 @@ namespace KnowledgeGraph.Database.Persistence
             foreach (string learningPlanId in learningPlanIds)
             {
                 LearningPlanInfo learningPlanInfo = new LearningPlanInfo() { LearningPlanId = learningPlanId };
-
-                var avgRatingResult = graph.Cypher
+                var avgRating = graph.Cypher
                                         .Match("(:User)-[g:RATING_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
                                         .With("lp, avg(g.Rating) as avg_rating ")
                                         .Set("lp.AvgRating = avg_rating")
@@ -254,7 +253,7 @@ namespace KnowledgeGraph.Database.Persistence
                                         })
                                         .Return<float>("lp.AvgRating")
                                         .ResultsAsync;
-                var totalSubsResult = graph.Cypher
+                var totSubs = graph.Cypher
                                         .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan {LearningPlanId:{id}})")
                                         .With("lp,  count(g.Subscribe) as total_subscriber ")
                                         .Set("lp.Subscriber = total_subscriber")
@@ -266,9 +265,10 @@ namespace KnowledgeGraph.Database.Persistence
                                         .ResultsAsync;
                 try
                 {
+
                     learningPlanInfo.AverageRating = new List<float>
                                 (
-                                    await avgRatingResult
+                                    await avgRating
                                 )
                                 .SingleOrDefault();
                 }
@@ -276,12 +276,11 @@ namespace KnowledgeGraph.Database.Persistence
                 {
                     learningPlanInfo.AverageRating = 0;
                 }
-                
                 try
                 {
                     learningPlanInfo.TotalSubscribers = new List<int>
                                     (
-                                        await totalSubsResult
+                                        await totSubs
                                     )
                                     .SingleOrDefault();
                 }
@@ -293,6 +292,20 @@ namespace KnowledgeGraph.Database.Persistence
                 learningPlanInfos.Add(learningPlanInfo);
             }
             return learningPlanInfos;
+        }
+
+        public async Task UserAndRelationshipsAsync(UserWrapper userWrapper)
+        {
+            await graph.Cypher
+                 .Merge("(user:User { UserId: {id} })")
+                 .OnCreate()
+                 .Set("user = {userWrapper}")
+                 .WithParams(new
+                 {
+                     id = userWrapper.UserId,
+                     userWrapper
+                 })
+               .ExecuteWithoutResultsAsync();
         }
 
         public List<string> GetConceptFromTechnology(string tech)
