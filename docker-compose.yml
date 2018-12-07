@@ -6,6 +6,7 @@ services:
       - neo4j
     networks:
       - potentiometer-network
+    restart: always
   neo4j:
     image: neo4j:latest
     ports:
@@ -17,6 +18,7 @@ services:
       - NEO4J_dbms_connector_bolt_listen__address=:7687
     networks:
       - potentiometer-network
+    restart: always
 networks:
     potentiometer-network:
         name: potentiometer-network
