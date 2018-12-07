@@ -5,5 +5,9 @@ namespace KnowledgeGraph.RabbitMQModels
         public string Username;
         public string Concept;
         public int Bloom;
+        public ResultWrapper()
+        {
+            
+        }
     }
 }

@@ -15,15 +15,7 @@ namespace KnowledgeGraph.Services
     public class QueueHandler
     {
         public QueueBuilder queues;
-        private QuizEngineQuery query;
         private IGraphFunctions graphfunctions;
-        private List<int> IDs;
-        private LearningPlan lgiearningPlan;
-        private QuestionBatchRequest batch_query;
-        private QuestionRequest question_query;
-        private ConceptRequest concept_query;
-        private ConceptResponse concept_list;
-        private QuestionIdsResponse questionidlist;
         private GraphBatchResponse questionidbatchlist;
 
         public QueueHandler(QueueBuilder _queues, IGraphFunctions _graphfunctions)
@@ -84,42 +76,6 @@ namespace KnowledgeGraph.Services
             Console.WriteLine("Consuming from Contributor's Knowledge Graph");
             channel.BasicConsume("Contributer_KnowledgeGraph_Resources", false, consumer);
         }
-
-        public void QuizEngineQueueHandler()
-        {
-            var channel = queues.connection.CreateModel();
-            var consumer = new AsyncEventingBasicConsumer(channel);
-            Console.WriteLine("Question request queue started");
-            consumer.Received += async (model, ea) =>
-            {
-                Console.WriteLine("Recieved Request for Questions");
-                try
-                {
-                    channel.BasicAck(ea.DeliveryTag, false);
-                    var body = ea.Body;
-                    query = (QuizEngineQuery)body.DeSerialize(typeof(QuizEngineQuery));
-                    IDs.Clear();
-                    IDs.AddRange(graphfunctions.GetQuestionIds(query.tech, query.username));
-                    channel.BasicPublish("KnowledgeGraphExchange", "Models.QuestionId", null, IDs.Serialize());
-                    var routingKey = ea.RoutingKey;
-                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
-                    Console.WriteLine("- Delivery Tag <{0}>", ea.DeliveryTag);
-                    await Task.Yield();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("----------------------EXCEPTION-MESSAGE------------------------------------");
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("----------------------STACK-TRACE-----------------------------------------");
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine("-------------------------INNER-EXCEPTION-----------------------------");
-                    Console.WriteLine(e.InnerException);
-                }
-            };
-            Console.WriteLine("Consuming from the queue");
-            channel.BasicConsume("QuizEngine_KnowledgeGraph_QuestionBatch", false, consumer);
-        }
-
         public void QuestionBatchRequestHandler()
         {
             Console.WriteLine("In Question Batch Request Handler");

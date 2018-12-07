@@ -24,7 +24,6 @@ namespace KnowledgeGraph.Services
             Model = connection.CreateModel();
             Model.ExchangeDeclare(ExchangeName, "topic");
 
-            Model.QueueDeclare("KnowledgeGraph_Contributer_Ids", false, false, false, null);
             Model.QueueDeclare("Contributer_KnowledgeGraph_LearningPlan", false, false, false, null);
             Model.QueueDeclare("Contributer_KnowledgeGraph_Resources", false, false, false, null);
             Model.QueueDeclare("Contributer_QuizEngine_Questions", false, false, false, null);
@@ -33,11 +32,10 @@ namespace KnowledgeGraph.Services
             Model.QueueDeclare("Profile_KnowledgeGraph_LearningPlanSubscriptionWrapper", false, false, false, null);
             Model.QueueDeclare("Profile_KnowledgeGraph_ResourceRatingWrapper", false, false, false, null);
             Model.QueueDeclare("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", false, false, false, null);
-            Model.QueueDeclare("QuizEngine_KnowledgeGraph_Concepts", false, false, false, null);
             Model.QueueDeclare("QuizEngine_KnowledgeGraph_QuestionBatch", false, false, false, null);
-            Model.QueueDeclare("Profile_KnowledgeGraph_LearningPlanFeedBack", false, false, false, null);
-            Model.QueueDeclare("Profile_KnowledgeGraph_ResourceFeedBack", false, false, false, null);
-            Model.QueueDeclare("Profile_KnowledgeGraph_QuestionFeedBack", false, false, false, null);
+            Model.QueueDeclare("QuizEngine_KnowledgeGraph_Result", false, false, false, null);
+            Model.QueueDeclare("QuizEngine_Profile_QuizData", false, false, false, null);
+            Model.QueueDeclare("KnowledgeGraph_Contributer_Ids", false, false, false, null);
 
             Model.QueueBind("KnowledgeGraph_Contributer_Ids", ExchangeName, "Request.Question");
             Model.QueueBind("Contributer_KnowledgeGraph_LearningPlan", ExchangeName, "Models.LearningPlan");
@@ -49,7 +47,8 @@ namespace KnowledgeGraph.Services
             Model.QueueBind("Profile_KnowledgeGraph_ResourceRatingWrapper", ExchangeName, "Send.ResourceFeedBack");
             Model.QueueBind("Profile_KnowledgeGraph_QuestionAmbiguityWrapper", ExchangeName, "Send.QuestionFeedBack");
             Model.QueueBind("QuizEngine_KnowledgeGraph_QuestionBatch", ExchangeName, "Question.Batch");
-            Model.QueueBind("QuizEngine_KnowledgeGraph_Concepts", ExchangeName, "Request.Concepts");
+            Model.QueueBind("QuizEngine_KnowledgeGraph_Rusult", ExchangeName, "Result.Update");
+            Model.QueueBind("QuizEngine_Profile_QuizData",ExchangeName,"User.QuizData");
         }
     }
 }

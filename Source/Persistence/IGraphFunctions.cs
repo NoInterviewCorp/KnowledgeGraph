@@ -12,7 +12,6 @@ namespace KnowledgeGraph.Database.Persistence
         List<int> GetQuestionIds(string technology, string username);
         List<string> GetConceptFromTechnology(string tech);
         List<string> GetQuestionBatchIds(string username, string technology, List<string> concepts);
-        Dictionary<string, List<string>> GetQuestionIds(string username, string technology, string concept);
         Task RatingLearningPlanAndRelationshipsAsync(LearningPlanRatingWrapper lpr);
         Task RatingResourceAndRelationshipsAsync(ResourceRatingWrapper Re);
         Task SubscribeLearningPlanAndRelationshipsAsync(LearningPlanSubscriptionWrapper lp);
