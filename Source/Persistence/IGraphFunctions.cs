@@ -8,7 +8,8 @@ namespace KnowledgeGraph.Database.Persistence
     {
         Task<LearningPlanWrapper> CreateLearningPlanAndRelationshipsAsync(LearningPlanWrapper lp);
         Task<ResourceWrapper> CreateResourceAndRelationships(ResourceWrapper resource);
-        Task<LearningPlanInfo> GetLearningPlanInfoAsync(string learningPlanId);
+        Task<List<LearningPlanInfo>> GetLearningPlanInfoAsync(List<string> learningPlanIds);
+        
         List<int> GetQuestionIds(string technology, string username);
         List<string> GetConceptFromTechnology(string tech);
         List<string> GetQuestionBatchIds(string username, string technology, List<string> concepts);

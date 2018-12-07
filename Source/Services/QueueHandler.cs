@@ -86,24 +86,23 @@ namespace KnowledgeGraph.Services
 
             consumer.Received += async (model, ea) =>
             {
-                LearningPlanInfo response = null;
+                List<LearningPlanInfo> response = new List<LearningPlanInfo>();
                 Console.WriteLine("---------------------------------------------------------------------");
                 Console.WriteLine("Recieved Request for LearningPlanInfo");
                 var body = ea.Body;
                 var props = ea.BasicProperties;
                 var replyProps = channel.CreateBasicProperties();
                 replyProps.CorrelationId = props.CorrelationId;
-                string message = "";
+                List<string> messages = new List<string>();
                 try
                 {
-                    message = Encoding.UTF8.GetString(body);
-                    Console.WriteLine("Recieved request for Learningplan with id " + message);
-                    response = await graphfunctions.GetLearningPlanInfoAsync(message);
+                    messages = (List<string>)body.DeSerialize(typeof(List<string>));
+                    Console.WriteLine("Recieved request for Learningplan with " + messages.Count+" IDS");
+                    response = await graphfunctions.GetLearningPlanInfoAsync(messages);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(" [.] " + e.Message);
-                    response = new LearningPlanInfo { LearningPlanId = message };
+                    ConsoleWriter.ConsoleAnException(e);
                 }
                 finally
                 {
