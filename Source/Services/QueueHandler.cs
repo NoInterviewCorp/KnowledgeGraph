@@ -126,7 +126,7 @@ namespace KnowledgeGraph.Services
 
             };
 
-            channel.BasicConsume("AverageRating_TotalSubs_Response", false, consumer);
+            channel.BasicConsume("AverageRating_TotalSubs_Request", false, consumer);
             Console.WriteLine(" [x] Awaiting RPC requests for LearningPlanInfo");
         }
 
