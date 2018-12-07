@@ -42,7 +42,7 @@ namespace KnowledgeGraph
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, QueueHandler queueHandler)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, QueueHandler queueHandler,QueueBuilder queueBuilder)
         {
             if (env.IsDevelopment())
             {
