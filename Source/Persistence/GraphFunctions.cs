@@ -589,9 +589,16 @@ namespace KnowledgeGraph.Database.Persistence
             var userReport = new UserReport() { UserId = userId };
             foreach (var tech in testedTechs)
             {
+                string intensityStringForWith =
+                    "k.Intensity as kI,"
+                    + "co.Intensity as coI,"
+                    + "ap.Intensity as apI,"
+                    + "an.Intensiy as anI,"
+                    + "s.Intensity as sI,"
+                    + "e.Intensity as eI";
                 var testedConcepts = new List<Concept>(
                     await graph.Cypher
-                        .Match($"(u:User {{UserId:{userId} }} )-[:TESTED_HIMSELF_ON]->(c:Concept)-[:BELONGS_TO]->(t:Technology{{Name:'{tech.Name}'}})")
+                        .Match($"(u:User {{UserId:'{userId}' }} )-[:TESTED_HIMSELF_ON]->(c:Concept)-[:BELONGS_TO]->(t:Technology{{Name:'{tech.Name}'}})")
                         .Return(c => c.As<Concept>())
                         .ResultsAsync
                 );
@@ -603,19 +610,14 @@ namespace KnowledgeGraph.Database.Persistence
                         .Match($"(u:User{{UserId: '{userId}' }} )")
                         .With("u")
                         .Match(
-                            $"(u)-[k:Knowledge]->(c:Concept {{Name: '{concept.Name}' }}",
-                            $"(u)-[co:Comprehension]->(c:Concept {{Name: '{concept.Name}' }}",
-                            $"(u)-[ap:Application]->(c:Concept {{Name: '{concept.Name}' }}",
-                            $"(u)-[an:Analysis]->(c:Concept {{Name: '{concept.Name}' }}",
-                            $"(u)-[s:Synthesis]->(c:Concept {{Name: '{concept.Name}' }}",
-                            $"(u)-[e:Evaluation]->(c:Concept {{Name: '{concept.Name}' }}"
+                            $"(u)-[k:Knowledge]->(:Concept {{Name: '{concept.Name}' }})",
+                            $"(u)-[co:Comprehension]->(:Concept {{Name: '{concept.Name}' }})",
+                            $"(u)-[ap:Application]->(:Concept {{Name: '{concept.Name}' }})",
+                            $"(u)-[an:Analysis]->(:Concept {{Name: '{concept.Name}' }})",
+                            $"(u)-[s:Synthesis]->(:Concept {{Name: '{concept.Name}' }})",
+                            $"(u)-[e:Evaluation]->(:Concept {{Name: '{concept.Name}' }})"
                         )
-                        .With("k.Intensity as kI")
-                        .With("co.Intensity as coI")
-                        .With("ap.Intensity as apI")
-                        .With("an.Intensiy as anI")
-                        .With("s.Intensity as sI")
-                        .With("e.Intensity as eI")
+                        .With(intensityStringForWith)
                         .Return<ConceptReport>((kI, coI, apI, anI, sI, eI) => new ConceptReport
                         {
                             KnowledgeIntensity = kI.As<int>(),
