@@ -45,6 +45,10 @@ namespace KnowledgeGraph.Services
             queueBinds.Add(new QueueBinder("Contributer_QuizEngine_Questions", "Send.Question"));
             queueBinds.Add(new QueueBinder("AverageRating_TotalSubs_Request", "Request.LP"));
             queueBinds.Add(new QueueBinder("AverageRating_TotalSubs_Response", "Response.LP"));
+            queueBinds.Add(new QueueBinder("Contributer_KnowledgeGraph_Subscriptions","Request.Subscriptions"));
+            queueBinds.Add(new QueueBinder("KnowledgeGraph_Contributer_Subscriptions","Reponse.Subscriptions"));
+            queueBinds.Add(new QueueBinder("Contributer_KnowledgeGraph_PopularPlans", "Request.PopularPlans"));
+            queueBinds.Add(new QueueBinder("KnowledgeGraph_Contributer_PopularPlans", "Reponse.PopularPlans"));
             DeclareAndBindAQueue();
         }
         private void DeclareAndBindAQueue()

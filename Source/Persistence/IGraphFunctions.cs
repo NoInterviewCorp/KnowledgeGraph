@@ -15,11 +15,11 @@ namespace KnowledgeGraph.Database.Persistence
         Task RatingLearningPlanAndRelationshipsAsync(LearningPlanRatingWrapper lpr);
         Task RatingResourceAndRelationshipsAsync(ResourceRatingWrapper Re);
         Task SubscribeLearningPlanAndRelationshipsAsync(LearningPlanSubscriptionWrapper lp);
-         Task SubscribeLearningPlanAndRelationshipsAsync1(string id);
+        Task<List<string>> SubscribeLearningPlanAndRelationshipsAsync1(string id);
         Task UnSubscribeLearningPlanAndRelationshipsAsync(LearningPlanSubscriptionWrapper lp);
         Task ReportQuestionAndRelationshipsAsync(QuestionAmbiguityWrapper qe);
         Task UserAndRelationshipsAsync(UserWrapper userWrapper);
         void IncreaseIntensityOnConcept(string username, string concept, int bloom);
-        Task PopularLearningPlanAndRelationshipsAsync1(string techName);
+        Task<List<string>> PopularLearningPlanAndRelationshipsAsync1(string techName);
     }
 }

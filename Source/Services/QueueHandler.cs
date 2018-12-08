@@ -28,6 +28,8 @@ namespace KnowledgeGraph.Services
             HandleResourceFromQueue();
             HandleLearningPlanInfoRequest();
             HandleReportGeneration();
+            HandleUserSubscriptionRequest();
+            HandlerPopularPlanRequest();
             ListenForUser();
             ListenForLeaningPlanRating();
             ListenForResourceFeedBack();
@@ -176,6 +178,102 @@ namespace KnowledgeGraph.Services
             };
             channel.BasicConsume("UserReport_Request", false, consumer);
             Console.WriteLine(" [x] Awaiting RPC requests for UserReportGeneration");
+        }
+
+        public void HandleUserSubscriptionRequest()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+
+            consumer.Received += async (model, ea) =>
+            {
+                var response = new List<string>();
+                Console.WriteLine("---------------------------------------------------------------------");
+                Console.WriteLine("Recieved Request for User's Subscription");
+                var body = ea.Body;
+                var props = ea.BasicProperties;
+                var replyProps = channel.CreateBasicProperties();
+                replyProps.CorrelationId = props.CorrelationId;
+                string messages = "";
+                try
+                {
+                    messages = (string)body.DeSerialize(typeof(string));
+                    Console.WriteLine("Recieved request of Subscription for " + messages);
+                    response.AddRange(await graphfunctions.SubscribeLearningPlanAndRelationshipsAsync1(messages));
+                }
+                catch (Exception e)
+                {
+                    ConsoleWriter.ConsoleAnException(e);
+                }
+                finally
+                {
+                    // Serialize Response
+                    var responseBytes = response.Serialize();
+                    Console.WriteLine("Publishing back with correlationtid -> " + props.CorrelationId);
+                    channel.BasicPublish(
+                        exchange: queues.ExchangeName,
+                        routingKey: props.ReplyTo,
+                        basicProperties: replyProps,
+                        body: responseBytes
+                    );
+
+                    channel.BasicAck(
+                        deliveryTag: ea.DeliveryTag,
+                        multiple: false
+                    );
+                }
+                await Task.Yield();
+            };
+            channel.BasicConsume("Contributer_KnowledgeGraph_Subscriptions", false, consumer);
+            Console.WriteLine(" [x] Awaiting RPC requests for UserSubscriptionRequest");
+        }
+
+        public void HandlerPopularPlanRequest()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+
+            consumer.Received += async (model, ea) =>
+            {
+                var response = new List<string>();
+                Console.WriteLine("---------------------------------------------------------------------");
+                Console.WriteLine("Recieved Request for Popular plans");
+                var body = ea.Body;
+                var props = ea.BasicProperties;
+                var replyProps = channel.CreateBasicProperties();
+                replyProps.CorrelationId = props.CorrelationId;
+                string messages = "";
+                try
+                {
+                    messages = (string)body.DeSerialize(typeof(string));
+                    Console.WriteLine("Recieved request of Popular plans for " + messages);
+                    response.AddRange(await graphfunctions.PopularLearningPlanAndRelationshipsAsync1(messages));
+                }
+                catch (Exception e)
+                {
+                    ConsoleWriter.ConsoleAnException(e);
+                }
+                finally
+                {
+                    // Serialize Response
+                    var responseBytes = response.Serialize();
+                    Console.WriteLine("Publishing back with correlationtid -> " + props.CorrelationId);
+                    channel.BasicPublish(
+                        exchange: queues.ExchangeName,
+                        routingKey: props.ReplyTo,
+                        basicProperties: replyProps,
+                        body: responseBytes
+                    );
+
+                    channel.BasicAck(
+                        deliveryTag: ea.DeliveryTag,
+                        multiple: false
+                    );
+                }
+                await Task.Yield();
+            };
+            channel.BasicConsume("Contributer_KnowledgeGraph_PopularPlans", false, consumer);
+            Console.WriteLine(" [x] Awaiting RPC requests for UserSubscriptionRequest");
         }
 
         public void QuestionBatchRequestHandler()
@@ -410,7 +508,7 @@ namespace KnowledgeGraph.Services
                     var body = ea.Body;
                     var result_query = (ResultWrapper)body.DeSerialize(typeof(ResultWrapper));
                     Console.WriteLine(result_query.Username);
-                    Console.WriteLine(result_query.Concept,result_query.Bloom);
+                    Console.WriteLine(result_query.Concept, result_query.Bloom);
                     graphfunctions.IncreaseIntensityOnConcept(result_query.Username, result_query.Concept, result_query.Bloom);
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine(" - Routing Key <{0}>", routingKey);
