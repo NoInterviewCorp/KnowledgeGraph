@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KnowledgeGraph.Models;
+using KnowledgeGraph.RabbitMQModels;
 using KnowledgeGraph.Services;
 using Neo4jClient;
 
@@ -135,6 +136,32 @@ namespace KnowledgeGraph.Database.Persistence
                 .ExecuteWithoutResults();
             Console.WriteLine("---Intensity increased in {0}---", intensity);
         }
-
+        public List<string> RecommendResource(string username)
+        {
+            List<string> ResourceIds = new List<string>();
+            var intensity = graph.Cypher
+                .Match($"(u:User{{UserId: '{username}'-[R]-(c:Concept) }})")
+                .With("sum(R.Intensity) as sumI, c.Name as cName")
+                // .Return<IntensityMap>("sum(R.Intensity),c.Name")
+                .Return<IntensityMap>((sumI,cName)=>new IntensityMap
+                {
+                    Intensity = sumI.As<int>(),
+                    Name = cName.As<string>()
+                })
+                .OrderByDescending("sum(sumI)")
+                .Results
+                .ToList().Take(3);
+            foreach (var concept in intensity)
+            {
+                var Ids = graph.Cypher
+                    .Match($"(r:Resource)-[:EXPLAINS]-(c:Concept{{Name:' {concept.Name}' }})")
+                    .Return<string>("r.ResourceId")
+                    .Results
+                    .ToList().Take(5);
+                ResourceIds.AddRange(Ids);
+                
+            }
+            return ResourceIds;
+        }
     }
 }
