@@ -410,7 +410,7 @@ namespace KnowledgeGraph.Services
                     var body = ea.Body;
                     var result_query = (ResultWrapper)body.DeSerialize(typeof(ResultWrapper));
                     Console.WriteLine(result_query.Username);
-                    Console.WriteLine(result_query.Concept,result_query.Bloom);
+                    Console.WriteLine(result_query.Concept, result_query.Bloom);
                     graphfunctions.IncreaseIntensityOnConcept(result_query.Username, result_query.Concept, result_query.Bloom);
                     var routingKey = ea.RoutingKey;
                     Console.WriteLine(" - Routing Key <{0}>", routingKey);
@@ -423,6 +423,38 @@ namespace KnowledgeGraph.Services
                 }
             };
             channel.BasicConsume("QuizEngine_KnowledgeGraph_Result", false, consumer);
+        }
+        public void RecommendedResourceHandler()
+        {
+            var channel = queues.connection.CreateModel();
+            var consumer = new AsyncEventingBasicConsumer(channel);
+            consumer.Received += async (model, ea) =>
+            {
+                Console.WriteLine("Listening to Results");
+                try
+                {
+                    channel.BasicAck(ea.DeliveryTag, false);
+                    var body = ea.Body;
+                    var result_query = (string)body.DeSerialize(typeof(string));
+                    var resource_query = new RecommendedResourceWrapper(result_query);
+                    resource_query.ResourceIds.AddRange(graphfunctions.RecommendResource(result_query));
+                    var routingKey = ea.RoutingKey;
+                    Console.WriteLine(" - Routing Key <{0}>", routingKey);
+                    Console.WriteLine("- Delivery Tag <{0}>", ea.DeliveryTag);
+                    queues.Model.BasicPublish(
+                        exchange: "KnowledgeGraphExchange",
+                        routingKey: "Request.Resource",
+                        basicProperties: null,
+                        body: resource_query.Serialize()
+                    );
+                    await Task.Yield();
+                }
+                catch (Exception e)
+                {
+                    ConsoleWriter.ConsoleAnException(e);
+                }
+            };
+            channel.BasicConsume("QuizEngine_KnowledgeGraph_RecommendResource", false, consumer);
         }
     }
 }
