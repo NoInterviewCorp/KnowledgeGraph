@@ -519,6 +519,41 @@ namespace KnowledgeGraph.Database.Persistence
                 .ResultsAsync);
             Console.WriteLine("Subscribed LearningPlan");
         }
+
+        public async Task SubscribeLearningPlanAndRelationshipsAsync1(string id)
+        {
+            // await graph.Cypher
+            //     .Match("(user:User)", "(lp:LearningPlan)")
+            //     .Where((User user) => user.UserId == learningPlanSubscriptionWrapper.UserId)
+            //     .AndWhere((LearningPlanWrapper lp) => lp.LearningPlanId == learningPlanSubscriptionWrapper.LearningPlanId)
+            //     .Create("(user)-[g:Subscribe_LP]->(lp)")
+            //     .ExecuteWithoutResultsAsync();
+
+            await graph.Cypher
+           .Match("(user:User)-[g:Subscribe_LP]->(lp:LearningPlan)")
+           .Where((User user) => user.UserId == id)
+            //    .With("lp,  count(g.Subscribe) as total_subscriber ")
+            // .Set("lp.Subscriber = total_subscriber")
+            .Return((lp) => new
+            {
+                totalSubscribeLearningPlan = lp.CollectAs<LearningPlan>()
+            })
+           .ResultsAsync;
+            Console.WriteLine("Subscribed LearningPlan");
+        }
+        public async Task PopularLearningPlanAndRelationshipsAsync1(string techName)
+        {
+            await graph.Cypher
+           .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan)")
+           .Where((LearningPlan lp) => lp.PlanName == techName)
+            .ReturnDistinct((lp) => new
+            {
+                lp = lp.As<LearningPlan>()
+            })
+            .OrderBy("lp.TotalSubscribers DESC, lp.AverageRating DESC")
+            .ResultsAsync;
+            Console.WriteLine("Subscribed LearningPlan");
+        }
         public async Task UnSubscribeLearningPlanAndRelationshipsAsync(LearningPlanSubscriptionWrapper learningPlanSubscriptionWrapper)
         {
             await graph.Cypher
