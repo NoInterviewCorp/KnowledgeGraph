@@ -6,5 +6,6 @@ namespace KnowledgeGraph.Models
     public class Technology
     {
         public string Name { get; set; }
+        public List<Concept> Concepts { get; set; }
     }
 }

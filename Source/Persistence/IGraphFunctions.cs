@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using KnowledeGraph.ContentWrapper;
+using KnowledeGraph.Models;
 using KnowledgeGraph.Models;
 namespace KnowledgeGraph.Database.Persistence
 {
@@ -9,8 +10,7 @@ namespace KnowledgeGraph.Database.Persistence
         Task<LearningPlanWrapper> CreateLearningPlanAndRelationshipsAsync(LearningPlanWrapper lp);
         Task<ResourceWrapper> CreateResourceAndRelationships(ResourceWrapper resource);
         Task<List<LearningPlanInfo>> GetLearningPlanInfoAsync(List<string> learningPlanIds);
-        List<int> GetQuestionIds(string technology, string username);
-        List<string> GetConceptFromTechnology(string tech);
+        Task<UserReport> GenerateUserReport(string userId);
         List<string> GetQuestionBatchIds(string username, string technology, List<string> concepts);
         Task RatingLearningPlanAndRelationshipsAsync(LearningPlanRatingWrapper lpr);
         Task RatingResourceAndRelationshipsAsync(ResourceRatingWrapper Re);

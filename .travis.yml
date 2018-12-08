@@ -10,3 +10,5 @@ dotnet: 2.1
 script:
   - dotnet restore
   - dotnet build
+after-success:
+  - /bin/bash ./deploy.sh
