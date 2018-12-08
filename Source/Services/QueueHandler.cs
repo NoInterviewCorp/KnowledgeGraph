@@ -188,6 +188,7 @@ namespace KnowledgeGraph.Services
             consumer.Received += async (model, ea) =>
             {
                 var response = new List<string>();
+                var lpInfo = new List<LearningPlanInfo>();
                 Console.WriteLine("---------------------------------------------------------------------");
                 Console.WriteLine("Recieved Request for User's Subscription");
                 var body = ea.Body;
@@ -200,6 +201,7 @@ namespace KnowledgeGraph.Services
                     messages = (string)body.DeSerialize(typeof(string));
                     Console.WriteLine("Recieved request of Subscription for " + messages);
                     response.AddRange(await graphfunctions.SubscribeLearningPlanAndRelationshipsAsync1(messages));
+                    lpInfo.AddRange(await graphfunctions.GetLearningPlanInfoAsync(response));
                 }
                 catch (Exception e)
                 {
@@ -208,7 +210,7 @@ namespace KnowledgeGraph.Services
                 finally
                 {
                     // Serialize Response
-                    var responseBytes = response.Serialize();
+                    var responseBytes = lpInfo.Serialize();
                     Console.WriteLine("Publishing back with correlationtid -> " + props.CorrelationId);
                     channel.BasicPublish(
                         exchange: queues.ExchangeName,
@@ -232,9 +234,9 @@ namespace KnowledgeGraph.Services
         {
             var channel = queues.connection.CreateModel();
             var consumer = new AsyncEventingBasicConsumer(channel);
-
             consumer.Received += async (model, ea) =>
             {
+                var lpInfo = new List<LearningPlanInfo>();
                 var response = new List<string>();
                 Console.WriteLine("---------------------------------------------------------------------");
                 Console.WriteLine("Recieved Request for Popular plans");
@@ -248,6 +250,7 @@ namespace KnowledgeGraph.Services
                     messages = (string)body.DeSerialize(typeof(string));
                     Console.WriteLine("Recieved request of Popular plans for " + messages);
                     response.AddRange(await graphfunctions.PopularLearningPlanAndRelationshipsAsync1(messages));
+                    lpInfo.AddRange(await graphfunctions.GetLearningPlanInfoAsync(response));
                 }
                 catch (Exception e)
                 {
@@ -256,7 +259,7 @@ namespace KnowledgeGraph.Services
                 finally
                 {
                     // Serialize Response
-                    var responseBytes = response.Serialize();
+                    var responseBytes = lpInfo.Serialize();
                     Console.WriteLine("Publishing back with correlationtid -> " + props.CorrelationId);
                     channel.BasicPublish(
                         exchange: queues.ExchangeName,
