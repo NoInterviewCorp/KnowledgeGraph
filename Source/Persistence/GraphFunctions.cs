@@ -174,7 +174,7 @@ namespace KnowledgeGraph.Database.Persistence
             Console.WriteLine("Subscribed LearningPlan");
         }
 
-        public async Task SubscribeLearningPlanAndRelationshipsAsync1(string id)
+        public async Task<List<string>> SubscribeLearningPlanAndRelationshipsAsync1(string id)
         {
             // await graph.Cypher
             //     .Match("(user:User)", "(lp:LearningPlan)")
@@ -183,30 +183,22 @@ namespace KnowledgeGraph.Database.Persistence
             //     .Create("(user)-[g:Subscribe_LP]->(lp)")
             //     .ExecuteWithoutResultsAsync();
 
-            await graph.Cypher
-           .Match("(user:User)-[g:Subscribe_LP]->(lp:LearningPlan)")
-           .Where((User user) => user.UserId == id)
-            //    .With("lp,  count(g.Subscribe) as total_subscriber ")
-            // .Set("lp.Subscriber = total_subscriber")
-            .Return((lp) => new
-            {
-                totalSubscribeLearningPlan = lp.CollectAs<LearningPlan>()
-            })
-           .ResultsAsync;
-            Console.WriteLine("Subscribed LearningPlan");
+            var response = new List<string>(await graph.Cypher
+                .Match("(user:User)-[g:Subscribe_LP]->(lp:LearningPlan)")
+                .Where((User user) => user.UserId == id)
+                .Return<string>("lp.LearningPlan")
+                .ResultsAsync);
+            return response;
         }
-        public async Task PopularLearningPlanAndRelationshipsAsync1(string techName)
+        public async Task<List<string>> PopularLearningPlanAndRelationshipsAsync1(string techName)
         {
-            await graph.Cypher
-           .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan)")
-           .Where((LearningPlan lp) => lp.PlanName == techName)
-            .ReturnDistinct((lp) => new
-            {
-                lp = lp.As<LearningPlan>()
-            })
-            .OrderBy("lp.TotalSubscribers DESC, lp.AverageRating DESC")
-            .ResultsAsync;
-            Console.WriteLine("Subscribed LearningPlan");
+            techName = techName.ToUpper();
+            var response = new List<string>(await graph.Cypher
+                .Match($"(lp:LearningPlan)-[:TEACHES]->(t:Technology {{Name:'{techName}' }})")
+                .Return<string>("lp.LearningPlanId")
+                .OrderBy("lp.TotalSubscribers DESC, lp.AverageRating DESC")
+                .ResultsAsync);
+            return response;
         }
         public async Task UnSubscribeLearningPlanAndRelationshipsAsync(LearningPlanSubscriptionWrapper learningPlanSubscriptionWrapper)
         {
