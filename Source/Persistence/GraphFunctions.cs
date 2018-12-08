@@ -194,7 +194,7 @@ namespace KnowledgeGraph.Database.Persistence
         {
             techName = techName.ToUpper();
             var response = new List<string>(await graph.Cypher
-                .Match($"(lp:LearningPlan)-[:TEACHES]->(t:Technology {{Name:{techName} }})")
+                .Match($"(lp:LearningPlan)-[:TEACHES]->(t:Technology {{Name:'{techName}' }})")
                 .Return<string>("lp.LearningPlanId")
                 .OrderBy("lp.TotalSubscribers DESC, lp.AverageRating DESC")
                 .ResultsAsync);
