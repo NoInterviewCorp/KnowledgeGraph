@@ -192,6 +192,7 @@ namespace KnowledgeGraph.Database.Persistence
         }
         public async Task<List<string>> PopularLearningPlanAndRelationshipsAsync1(string techName)
         {
+            techName = techName.ToUpper();
             var response = new List<string>(await graph.Cypher
                 .Match($"(lp:LearningPlan)-[:TEACHES]->(t:Technology {{Name:{techName} }})")
                 .Return<string>("lp.LearningPlanId")
