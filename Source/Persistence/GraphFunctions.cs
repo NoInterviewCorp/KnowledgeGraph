@@ -186,7 +186,7 @@ namespace KnowledgeGraph.Database.Persistence
             var response = new List<string>(await graph.Cypher
                 .Match("(user:User)-[g:Subscribe_LP]->(lp:LearningPlan)")
                 .Where((User user) => user.UserId == id)
-                .Return<string>("lp.LearningPlan")
+                .Return<string>("lp.LearningPlanId")
                 .ResultsAsync);
             return response;
         }
