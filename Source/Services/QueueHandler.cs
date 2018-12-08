@@ -202,6 +202,7 @@ namespace KnowledgeGraph.Services
                     Console.WriteLine("Recieved request of Subscription for " + messages);
                     response.AddRange(await graphfunctions.SubscribeLearningPlanAndRelationshipsAsync1(messages));
                     lpInfo.AddRange(await graphfunctions.GetLearningPlanInfoAsync(response));
+                    Console.WriteLine("recieved " + lpInfo.Count + " subscripiton plans");
                 }
                 catch (Exception e)
                 {
@@ -251,6 +252,7 @@ namespace KnowledgeGraph.Services
                     Console.WriteLine("Recieved request of Popular plans for " + messages);
                     response.AddRange(await graphfunctions.PopularLearningPlanAndRelationshipsAsync1(messages));
                     lpInfo.AddRange(await graphfunctions.GetLearningPlanInfoAsync(response));
+                    Console.WriteLine("recieved " + lpInfo.Count + " popular plans");
                 }
                 catch (Exception e)
                 {
