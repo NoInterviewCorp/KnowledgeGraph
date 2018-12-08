@@ -6,8 +6,8 @@ namespace KnowledgeGraph.Models
     {
         public string LearningPlanId { get; set; }
         public string AuthorId { get; set; }
-        public int TotalSubscribers { get; set; }
-        public float AverageRating { get; set; }
+        public int Subscriber { get; set; }
+        public float AvgRating { get; set; }
         public TechnologyWrapper Technology { get; set; }
         public List<ResourceWrapper> Resources { get; set; }
     }

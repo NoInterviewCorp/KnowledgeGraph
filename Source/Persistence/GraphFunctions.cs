@@ -193,8 +193,7 @@ namespace KnowledgeGraph.Database.Persistence
         public async Task<List<string>> PopularLearningPlanAndRelationshipsAsync1(string techName)
         {
             var response = new List<string>(await graph.Cypher
-                .Match("(:User)-[g:Subscribe_LP]->(lp:LearningPlan)")
-                .Where((LearningPlan lp) => lp.PlanName == techName)
+                .Match($"(lp:LearningPlan)-[:TEACHES]->(t:Technology {{Name:{techName} }})")
                 .Return<string>("lp.LearningPlanId")
                 .OrderBy("lp.TotalSubscribers DESC, lp.AverageRating DESC")
                 .ResultsAsync);
