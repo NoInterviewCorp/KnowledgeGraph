@@ -142,7 +142,6 @@ namespace KnowledgeGraph.Database.Persistence
             var intensity = graph.Cypher
                 .Match($"(u:User{{UserId: '{username}'-[R]-(c:Concept) }})")
                 .With("sum(R.Intensity) as sumI, c.Name as cName")
-                // .Return<IntensityMap>("sum(R.Intensity),c.Name")
                 .Return<IntensityMap>((sumI,cName)=>new IntensityMap
                 {
                     Intensity = sumI.As<int>(),

@@ -16,6 +16,8 @@ services:
       - NEO4J_AUTH=neo4j/qwertyuiop
       - NEO4J_dbms_connector_http_listen__address=:7474
       - NEO4J_dbms_connector_bolt_listen__address=:7687
+    volumes:
+      - ./db/dbms:/data/dbms
     networks:
       - potentiometer-network
     restart: always
