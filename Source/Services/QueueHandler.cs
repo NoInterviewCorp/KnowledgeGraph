@@ -38,6 +38,7 @@ namespace KnowledgeGraph.Services
             ListenForQuestionFeedBack();
             QuestionBatchRequestHandler();
             UpdateResultHandler();
+            RecommendedResourceHandler();
             Console.WriteLine("------");
             //  this.QuizEngineQueueHandler();
         }
