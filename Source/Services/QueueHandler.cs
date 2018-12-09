@@ -533,7 +533,7 @@ namespace KnowledgeGraph.Services
             var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.Received += async (model, ea) =>
             {
-                Console.WriteLine("Listening to Results");
+                Console.WriteLine("Got Request to Recommend Resource");
                 try
                 {
                     channel.BasicAck(ea.DeliveryTag, false);
