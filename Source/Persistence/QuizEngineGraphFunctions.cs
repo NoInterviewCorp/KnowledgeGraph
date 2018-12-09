@@ -131,7 +131,7 @@ namespace KnowledgeGraph.Database.Persistence
         {
             var intensity = (BloomTaxonomy)bloom;
             graph.Cypher
-                .Match($"(u:User{{ UserId: '{username}' }})-[R:'{intensity}']-(c:Concept{{ Name:'{concept}'}})")
+                .Match($"(u:User{{ UserId: '{username}' }})-[R:{intensity}]-(c:Concept{{ Name:'{concept}'}})")
                 .Set("R.Intensity = R.Intensity+1")
                 .ExecuteWithoutResults();
             Console.WriteLine("---Intensity increased in {0}---", intensity);
@@ -154,7 +154,7 @@ namespace KnowledgeGraph.Database.Persistence
             foreach (var concept in intensity)
             {
                 var Ids = graph.Cypher
-                    .Match($"(r:Resource)-[:EXPLAINS]-(c:Concept{{Name:' {concept.Name}' }})")
+                    .Match($"(r:Resource)-[:EXPLAINS]-(c:Concept{{Name:'{concept.Name}' }})")
                     .Return<string>("r.ResourceId")
                     .Results
                     .ToList().Take(5);
