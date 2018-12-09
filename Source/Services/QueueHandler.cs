@@ -38,6 +38,7 @@ namespace KnowledgeGraph.Services
             ListenForQuestionFeedBack();
             QuestionBatchRequestHandler();
             UpdateResultHandler();
+            RecommendedResourceHandler();
             Console.WriteLine("------");
             //  this.QuizEngineQueueHandler();
         }
@@ -558,7 +559,7 @@ namespace KnowledgeGraph.Services
                     ConsoleWriter.ConsoleAnException(e);
                 }
             };
-            channel.BasicConsume("QuizEngine_KnowledgeGraph_RecommendResource", false, consumer);
+            channel.BasicConsume("QuizEngine_KnowledgeGraph_RecommendedResource", false, consumer);
         }
     }
 }
