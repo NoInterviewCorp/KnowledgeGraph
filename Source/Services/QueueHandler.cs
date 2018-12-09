@@ -531,6 +531,7 @@ namespace KnowledgeGraph.Services
         {
             var channel = queues.connection.CreateModel();
             var consumer = new AsyncEventingBasicConsumer(channel);
+            Console.WriteLine("Lestening to Recommend Resource Requests");
             consumer.Received += async (model, ea) =>
             {
                 Console.WriteLine("Got Request to Recommend Resource");
