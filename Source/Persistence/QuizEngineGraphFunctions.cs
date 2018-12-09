@@ -143,12 +143,8 @@ namespace KnowledgeGraph.Database.Persistence
                 .Match($"(u:User{{UserId: '{username}'-[R]-(c:Concept) }})")
                 .With("sum(R.Intensity) as sumI, c.Name as cName")
                 // .Return<IntensityMap>("sum(R.Intensity),c.Name")
-                .Return<IntensityMap>((sumI,cName)=>new IntensityMap
-                {
-                    Intensity = sumI.As<int>(),
-                    Name = cName.As<string>()
-                })
-                .OrderByDescending("sum(sumI)")
+                .Return<IntensityMap>("sum(R.Intensity),c.Name")
+                .OrderBy("sum(R.Intensity)")
                 .Results
                 .ToList().Take(3);
             foreach (var concept in intensity)
